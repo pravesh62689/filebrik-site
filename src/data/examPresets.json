@@ -16,7 +16,10 @@
     "format": "image/jpeg",
     "officialUrl": "https://upsconline.nic.in",
     "officialQuote": "The photograph should be in JPG format. The digital size of file must be between 20 KB to 300 KB each. The resolution must be minimum 350 pixels to maximum 1000 pixels in height and width.",
-    "verifiedDate": "2026-11-20"
+    "verifiedDate": "2026-11-25",
+    "verificationStatus": "check official notice",
+    "snapshot": "data/raw/snapshots/upsc-photo-2026-11-25.txt",
+    "verifiedNote": "⚠ check official notice — portal captured, but exact photo/signature KB & pixel table is inside the downloadable exam notice PDF"
   },
   {
     "id": "upsc-signature",
@@ -35,7 +38,10 @@
     "format": "image/jpeg",
     "officialUrl": "https://upsconline.nic.in",
     "officialQuote": "The signature should be in JPG format. The digital size of file must be between 20 KB to 300 KB each. The resolution must be minimum 350 pixels to maximum 1000 pixels.",
-    "verifiedDate": "2026-11-20"
+    "verifiedDate": "2026-11-25",
+    "verificationStatus": "check official notice",
+    "snapshot": "data/raw/snapshots/upsc-signature-2026-11-25.txt",
+    "verifiedNote": "⚠ check official notice — portal captured, but exact photo/signature KB & pixel table is inside the downloadable exam notice PDF"
   },
   {
     "id": "ssc-photo",
@@ -54,7 +60,10 @@
     "format": "image/jpeg",
     "officialUrl": "https://ssc.gov.in",
     "officialQuote": "Scanned colour passport size photograph in JPEG format (20 KB to 50 KB). Image dimension of the photograph should be about 3.5 cm (width) x 4.5 cm (height).",
-    "verifiedDate": "2026-11-20"
+    "verifiedDate": "2026-11-25",
+    "verificationStatus": "check official notice",
+    "snapshot": "data/raw/snapshots/ssc-photo-2026-11-25.txt",
+    "verifiedNote": "⚠ check official notice — portal captured, but exact photo/signature KB & pixel table is inside the downloadable exam notice PDF"
   },
   {
     "id": "ssc-signature",
@@ -73,7 +82,10 @@
     "format": "image/jpeg",
     "officialUrl": "https://ssc.gov.in",
     "officialQuote": "Scanned signature in JPEG format (10 to 20 KB). Image dimension should be about 4.0 cm (width) x 2.0 cm (height).",
-    "verifiedDate": "2026-11-20"
+    "verifiedDate": "2026-11-25",
+    "verificationStatus": "check official notice",
+    "snapshot": "data/raw/snapshots/ssc-signature-2026-11-25.txt",
+    "verifiedNote": "⚠ check official notice — portal captured, but exact photo/signature KB & pixel table is inside the downloadable exam notice PDF"
   },
   {
     "id": "ibps-photo",
@@ -92,7 +104,10 @@
     "format": "image/jpeg",
     "officialUrl": "https://www.ibps.in",
     "officialQuote": "Photograph must be a recent passport style colour picture. Dimensions 200 x 230 pixels (preferred). Size of file should be between 20kb–50kb.",
-    "verifiedDate": "2026-11-20"
+    "verifiedDate": "2026-11-25",
+    "verifiedNote": "⚠ check official notice — domain is not .gov.in / .nic.in / nta.ac.in; verify against official gazette/notification PDF",
+    "verificationStatus": "check official notice",
+    "snapshot": "data/raw/snapshots/ibps-photo-2026-11-25.txt"
   },
   {
     "id": "ibps-signature",
@@ -111,7 +126,10 @@
     "format": "image/jpeg",
     "officialUrl": "https://www.ibps.in",
     "officialQuote": "The applicant has to sign on white paper with Black Ink pen. Dimensions 140 x 60 pixels. Size of file should be between 10kb – 20kb.",
-    "verifiedDate": "2026-11-20"
+    "verifiedDate": "2026-11-25",
+    "verifiedNote": "⚠ check official notice — domain is not .gov.in / .nic.in / nta.ac.in; verify against official gazette/notification PDF",
+    "verificationStatus": "check official notice",
+    "snapshot": "data/raw/snapshots/ibps-signature-2026-11-25.txt"
   },
   {
     "id": "ibps-thumb",
@@ -130,7 +148,10 @@
     "format": "image/jpeg",
     "officialUrl": "https://www.ibps.in",
     "officialQuote": "The applicant has to put his left thumb impression on a white paper with black or blue ink. Dimensions 240 x 240 pixels in 200 DPI. File size: 20 KB – 50 KB.",
-    "verifiedDate": "2026-11-20"
+    "verifiedDate": "2026-11-25",
+    "verifiedNote": "⚠ check official notice — domain is not .gov.in / .nic.in / nta.ac.in; verify against official gazette/notification PDF",
+    "verificationStatus": "check official notice",
+    "snapshot": "data/raw/snapshots/ibps-thumb-2026-11-25.txt"
   },
   {
     "id": "rrb-photo",
@@ -149,7 +170,10 @@
     "format": "image/jpeg",
     "officialUrl": "https://www.rrbcdg.gov.in",
     "officialQuote": "Colour passport photograph of size 35mm x 45mm in JPEG format, scanned with 100 DPI. File size between 30 KB to 70 KB.",
-    "verifiedDate": "2026-11-20"
+    "verifiedDate": "2026-11-25",
+    "verificationStatus": "check official notice",
+    "snapshot": "data/raw/snapshots/rrb-photo-2026-11-25.txt",
+    "verifiedNote": "⚠ check official notice — portal captured, but exact photo/signature KB & pixel table is inside the downloadable exam notice PDF"
   },
   {
     "id": "rrb-signature",
@@ -168,7 +192,10 @@
     "format": "image/jpeg",
     "officialUrl": "https://www.rrbcdg.gov.in",
     "officialQuote": "Scanned running signature on white paper with black ink pen. File size between 30 KB to 70 KB.",
-    "verifiedDate": "2026-11-20"
+    "verifiedDate": "2026-11-25",
+    "verificationStatus": "check official notice",
+    "snapshot": "data/raw/snapshots/rrb-signature-2026-11-25.txt",
+    "verifiedNote": "⚠ check official notice — portal captured, but exact photo/signature KB & pixel table is inside the downloadable exam notice PDF"
   },
   {
     "id": "nta-neet-photo",
@@ -187,7 +214,10 @@
     "format": "image/jpeg",
     "officialUrl": "https://neet.nta.nic.in",
     "officialQuote": "The recent photograph should be either in colour or black and white with 80% face visible. JPG format, size 10 KB to 200 KB.",
-    "verifiedDate": "2026-11-20"
+    "verifiedDate": "2026-11-25",
+    "verificationStatus": "check official notice",
+    "snapshot": null,
+    "verifiedNote": "⚠ check official notice — official portal unreachable during live snapshot capture; check official notice PDF directly"
   },
   {
     "id": "nta-postcard-photo",
@@ -206,7 +236,10 @@
     "format": "image/jpeg",
     "officialUrl": "https://neet.nta.nic.in",
     "officialQuote": "Postcard size picture (4 inch x 6 inch) in JPG format with white background. File size 10 KB to 200 KB.",
-    "verifiedDate": "2026-11-20"
+    "verifiedDate": "2026-11-25",
+    "verificationStatus": "check official notice",
+    "snapshot": null,
+    "verifiedNote": "⚠ check official notice — official portal unreachable during live snapshot capture; check official notice PDF directly"
   },
   {
     "id": "nta-signature",
@@ -225,7 +258,10 @@
     "format": "image/jpeg",
     "officialUrl": "https://neet.nta.nic.in",
     "officialQuote": "Signature in JPG format with black ink on white paper. File size: 4 KB to 30 KB.",
-    "verifiedDate": "2026-11-20"
+    "verifiedDate": "2026-11-25",
+    "verificationStatus": "check official notice",
+    "snapshot": null,
+    "verifiedNote": "⚠ check official notice — official portal unreachable during live snapshot capture; check official notice PDF directly"
   },
   {
     "id": "passport-seva-photo",
@@ -244,7 +280,10 @@
     "format": "image/jpeg",
     "officialUrl": "https://www.passportindia.gov.in",
     "officialQuote": "Photograph size should be 4.5 cm x 3.5 cm with plain white background and 70-80% face coverage. Size between 10 KB and 300 KB.",
-    "verifiedDate": "2026-11-20"
+    "verifiedDate": "2026-11-25",
+    "verificationStatus": "check official notice",
+    "snapshot": "data/raw/snapshots/passport-seva-photo-2026-11-25.txt",
+    "verifiedNote": "⚠ check official notice — portal captured, but exact photo/signature KB & pixel table is inside the downloadable exam notice PDF"
   },
   {
     "id": "pan-photo",
@@ -261,9 +300,12 @@
     "aspectRatio": "1:1",
     "dpi": 200,
     "format": "image/jpeg",
-    "officialUrl": "https://www.onlineservices.nsdl.com",
+    "officialUrl": "https://www.incometax.gov.in",
     "officialQuote": "Photo dimension: 3.5 x 2.5 cm (213 x 213 pixels) at 200 DPI. File size should not exceed 50 KB.",
-    "verifiedDate": "2026-11-20"
+    "verifiedDate": "2026-11-25",
+    "verifiedNote": "⚠ check official notice — portal captured, but exact photo/signature KB & pixel table is inside the downloadable exam notice PDF",
+    "verificationStatus": "check official notice",
+    "snapshot": "data/raw/snapshots/pan-photo-2026-11-25.txt"
   },
   {
     "id": "pan-signature",
@@ -280,9 +322,12 @@
     "aspectRatio": "2:1",
     "dpi": 200,
     "format": "image/jpeg",
-    "officialUrl": "https://www.onlineservices.nsdl.com",
+    "officialUrl": "https://www.incometax.gov.in",
     "officialQuote": "Signature dimension: 2 x 4.5 cm at 200 DPI. File size should not exceed 50 KB.",
-    "verifiedDate": "2026-11-20"
+    "verifiedDate": "2026-11-25",
+    "verifiedNote": "⚠ check official notice — portal captured, but exact photo/signature KB & pixel table is inside the downloadable exam notice PDF",
+    "verificationStatus": "check official notice",
+    "snapshot": "data/raw/snapshots/pan-signature-2026-11-25.txt"
   },
   {
     "id": "uppsc-photo",
@@ -301,7 +346,10 @@
     "format": "image/jpeg",
     "officialUrl": "https://uppsc.up.nic.in",
     "officialQuote": "Scanned photograph size must be between 20 KB and 50 KB. Width 3.5 cm x Height 4.5 cm.",
-    "verifiedDate": "2026-11-20"
+    "verifiedDate": "2026-11-25",
+    "verificationStatus": "check official notice",
+    "snapshot": "data/raw/snapshots/uppsc-photo-2026-11-25.txt",
+    "verifiedNote": "⚠ check official notice — portal captured, but exact photo/signature KB & pixel table is inside the downloadable exam notice PDF"
   },
   {
     "id": "bpsc-photo",
@@ -318,9 +366,12 @@
     "aspectRatio": "1:1",
     "dpi": 200,
     "format": "image/jpeg",
-    "officialUrl": "https://bpsc.bih.nic.in",
+    "officialUrl": "https://bpsc.bihar.gov.in",
     "officialQuote": "Photograph must be between 15 KB to 25 KB with clear light background.",
-    "verifiedDate": "2026-11-20"
+    "verifiedDate": "2026-11-25",
+    "verificationStatus": "check official notice",
+    "snapshot": "data/raw/snapshots/bpsc-photo-2026-11-25.txt",
+    "verifiedNote": "⚠ check official notice — portal captured, but exact photo/signature KB & pixel table is inside the downloadable exam notice PDF"
   },
   {
     "id": "mpsc-photo",
@@ -339,7 +390,10 @@
     "format": "image/jpeg",
     "officialUrl": "https://mpsc.gov.in",
     "officialQuote": "File size 20 KB to 50 KB. Dimension minimum 350x450 pixels.",
-    "verifiedDate": "2026-11-20"
+    "verifiedDate": "2026-11-25",
+    "verificationStatus": "check official notice",
+    "snapshot": "data/raw/snapshots/mpsc-photo-2026-11-25.txt",
+    "verifiedNote": "⚠ check official notice — portal captured, but exact photo/signature KB & pixel table is inside the downloadable exam notice PDF"
   },
   {
     "id": "tnpsc-photo",
@@ -358,7 +412,10 @@
     "format": "image/jpeg",
     "officialUrl": "https://www.tnpsc.gov.in",
     "officialQuote": "Passport size photograph with candidate name and date printed at bottom. Size 20 KB to 50 KB.",
-    "verifiedDate": "2026-11-20"
+    "verifiedDate": "2026-11-25",
+    "verificationStatus": "check official notice",
+    "snapshot": "data/raw/snapshots/tnpsc-photo-2026-11-25.txt",
+    "verifiedNote": "⚠ check official notice — portal captured, but exact photo/signature KB & pixel table is inside the downloadable exam notice PDF"
   },
   {
     "id": "rpsc-photo",
@@ -377,6 +434,9 @@
     "format": "image/jpeg",
     "officialUrl": "https://rpsc.rajasthan.gov.in",
     "officialQuote": "Recent colour photograph in JPG format. File size between 50 KB to 100 KB.",
-    "verifiedDate": "2026-11-20"
+    "verifiedDate": "2026-11-25",
+    "verificationStatus": "check official notice",
+    "snapshot": "data/raw/snapshots/rpsc-photo-2026-11-25.txt",
+    "verifiedNote": "⚠ check official notice — portal captured, but exact photo/signature KB & pixel table is inside the downloadable exam notice PDF"
   }
 ]

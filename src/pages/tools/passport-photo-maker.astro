@@ -5,7 +5,7 @@ import AdSlot from '../../components/AdSlot.astro';
 ---
 <Layout
   title="Passport Photo Maker & Printable Sheet"
-  description="Create official 2x2 inch (51x51mm) and 35x45mm passport photos on printable sheets."
+  description="Create official 630x810 px (35x45mm) and 2x2 inch (600x600 px) passport photos plus 4x6 printable sheets."
   toolSlug="passport-photo-maker"
 >
   <main class="tool-page-wrap">
@@ -14,31 +14,37 @@ import AdSlot from '../../components/AdSlot.astro';
         <div class="tool-main-pane">
           <div class="privacy-pill">🛡️ 100% Client-Side Memory • Zero Cloud Storage</div>
           <h1 class="tool-header-title">Passport Photo Maker</h1>
-          <p class="tool-header-sub">Auto-crop to standard biometric passport dimensions and generate ready-to-print 4x6 photo sheets.</p>
+          <p class="tool-header-sub">Auto-crop to exact 630×810 px (35×45 mm) and 2×2 inch passport dimensions, with printable 4×6 sheet output.</p>
 
           <div class="fb-dropzone" id="dropzone">
             <div class="drop-icon">🛂</div>
-            <h3>Drop your files here</h3>
-            <p>or click to select from your device</p>
-            <input type="file" id="fileInput" style="display:none;" />
+            <h3>Drop your portrait photo here</h3>
+            <p>or click to select JPG/PNG from your device</p>
+            <input type="file" id="fileInput" accept="image/*" style="display:none;" />
           </div>
 
           <div class="settings-box">
             <div class="form-row">
-              <label>Processing Option</label>
-              <select class="fb-select" id="toolOption">
-                <option value="default">Standard Optimization (Recommended)</option>
-                <option value="high">High Quality Retention</option>
-                <option value="max">Maximum Compression</option>
+              <label for="sizePreset">Passport Size Standard</label>
+              <select class="fb-select" id="sizePreset">
+                <option value="630x810">India / Passport Seva Standard — 630×810 px (35×45 mm)</option>
+                <option value="600x600">USA / OCI Biometric — 600×600 px (2×2 inch)</option>
+                <option value="413x531">UK / Schengen Visa — 413×531 px (35×45 mm @ 300 DPI)</option>
               </select>
             </div>
-            <button id="actionBtn" class="fb-btn fb-btn-primary" disabled>Process File</button>
+            <button id="actionBtn" class="fb-btn fb-btn-primary" disabled>Generate Passport Photo</button>
           </div>
 
           <div id="resultBox" class="result-box" style="display:none;">
-            <h4>✓ Processing Complete</h4>
-            <p id="resultText">File generated successfully in browser memory.</p>
-            <a id="downloadBtn" class="fb-btn fb-btn-success" href="#" download="processed-passport-photo-maker">Download Result</a>
+            <h4>✓ Passport Photo Ready (<span id="dimLabel">630×810 px</span>)</h4>
+            <p id="resultText"></p>
+            <div class="preview-wrap">
+              <img id="previewImg" alt="Passport photo output" style="max-height:240px;border:1px solid #cbd5e1;" />
+            </div>
+            <div class="btn-row">
+              <a id="downloadBtn" class="fb-btn fb-btn-success" href="#" download="passport-630x810.jpg">Download Single Photo</a>
+              <a id="downloadSheetBtn" class="fb-btn fb-btn-secondary" href="#" download="passport-4x6-sheet.jpg">Download 4×6 Printable Sheet</a>
+            </div>
           </div>
         </div>
 
@@ -49,12 +55,20 @@ import AdSlot from '../../components/AdSlot.astro';
     </div>
   </main>
 
-  <script is:inline>
-    const dropzone = document.getElementById('dropzone');
-    const input = document.getElementById('fileInput');
-    const btn = document.getElementById('actionBtn');
-    const resultBox = document.getElementById('resultBox');
-    let loaded = null;
+  <script>
+    import { injectJfifDpi } from '../../lib/dpiInject';
+
+    const dropzone = document.getElementById('dropzone')!;
+    const input = document.getElementById('fileInput') as HTMLInputElement;
+    const presetSelect = document.getElementById('sizePreset') as HTMLSelectElement;
+    const btn = document.getElementById('actionBtn') as HTMLButtonElement;
+    const resultBox = document.getElementById('resultBox')!;
+    const dimLabel = document.getElementById('dimLabel')!;
+    const resultText = document.getElementById('resultText')!;
+    const previewImg = document.getElementById('previewImg') as HTMLImageElement;
+    const downloadBtn = document.getElementById('downloadBtn') as HTMLAnchorElement;
+    const downloadSheetBtn = document.getElementById('downloadSheetBtn') as HTMLAnchorElement;
+    let loaded: File | null = null;
 
     dropzone.addEventListener('click', () => input.click());
     dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag-active'); });
@@ -62,30 +76,101 @@ import AdSlot from '../../components/AdSlot.astro';
     dropzone.addEventListener('drop', (e) => {
       e.preventDefault();
       dropzone.classList.remove('drag-active');
-      if (e.dataTransfer.files[0]) handle(e.dataTransfer.files[0]);
+      if (e.dataTransfer?.files[0]) handle(e.dataTransfer.files[0]);
     });
-    input.addEventListener('change', () => { if (input.files[0]) handle(input.files[0]); });
+    input.addEventListener('change', () => { if (input.files?.[0]) handle(input.files[0]); });
 
-    function handle(f) {
+    function handle(f: File) {
       loaded = f;
-      dropzone.querySelector('h3').textContent = f.name;
-      dropzone.querySelector('p').textContent = (f.size / 1024).toFixed(1) + ' KB';
+      dropzone.querySelector('h3')!.textContent = f.name;
+      dropzone.querySelector('p')!.textContent = (f.size / 1024).toFixed(1) + ' KB';
       btn.disabled = false;
     }
 
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       if (!loaded) return;
       btn.disabled = true;
-      btn.textContent = 'Processing in memory...';
-      setTimeout(() => {
-        const url = URL.createObjectURL(loaded);
-        const downloadBtn = document.getElementById('downloadBtn');
-        downloadBtn.href = url;
-        downloadBtn.download = 'processed-' + loaded.name;
+      btn.textContent = 'Generating passport canvas...';
+
+      try {
+        const [targetW, targetH] = presetSelect.value.split('x').map(Number);
+
+        const img = new Image();
+        const objUrl = URL.createObjectURL(loaded);
+        img.src = objUrl;
+        await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
+        URL.revokeObjectURL(objUrl);
+
+        // Single cropped canvas at exact targetW x targetH
+        const canvas = document.createElement('canvas');
+        canvas.width = targetW;
+        canvas.height = targetH;
+        const ctx = canvas.getContext('2d')!;
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, targetW, targetH);
+
+        // Cover-crop center
+        const srcRatio = img.naturalWidth / img.naturalHeight;
+        const dstRatio = targetW / targetH;
+        let sx = 0, sy = 0, sw = img.naturalWidth, sh = img.naturalHeight;
+        if (srcRatio > dstRatio) {
+          sw = img.naturalHeight * dstRatio;
+          sx = (img.naturalWidth - sw) / 2;
+        } else {
+          sh = img.naturalWidth / dstRatio;
+          sy = (img.naturalHeight - sh) / 2;
+        }
+        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetW, targetH);
+
+        const rawBlob = await new Promise<Blob>((resolve) =>
+          canvas.toBlob((b) => resolve(b!), 'image/jpeg', 0.92)
+        );
+        const dpiBuffer = injectJfifDpi(await rawBlob.arrayBuffer(), 300);
+        const singleBlob = new Blob([dpiBuffer], { type: 'image/jpeg' });
+        const singleUrl = URL.createObjectURL(singleBlob);
+
+        // Also build 4x6 printable sheet (1800x1200 @ 300 DPI)
+        const sheetCanvas = document.createElement('canvas');
+        sheetCanvas.width = 1800;
+        sheetCanvas.height = 1200;
+        const sCtx = sheetCanvas.getContext('2d')!;
+        sCtx.fillStyle = '#FFFFFF';
+        sCtx.fillRect(0, 0, 1800, 1200);
+        const cols = 4, rows = 2;
+        const cellW = Math.min(413, Math.floor((1800 - 150) / cols));
+        const cellH = Math.round(cellW * (targetH / targetW));
+        const gapX = Math.floor((1800 - cols * cellW) / (cols + 1));
+        const gapY = Math.floor((1200 - rows * cellH) / (rows + 1));
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            const x = gapX + c * (cellW + gapX);
+            const y = gapY + r * (cellH + gapY);
+            sCtx.drawImage(canvas, x, y, cellW, cellH);
+            sCtx.strokeStyle = '#CBD5E1';
+            sCtx.strokeRect(x, y, cellW, cellH);
+          }
+        }
+        const sheetBlob = await new Promise<Blob>((resolve) =>
+          sheetCanvas.toBlob((b) => resolve(b!), 'image/jpeg', 0.92)
+        );
+
+        previewImg.src = singleUrl;
+        dimLabel.textContent = `${targetW}×${targetH} px`;
+        downloadBtn.href = singleUrl;
+        downloadBtn.download = `passport-${targetW}x${targetH}.jpg`;
+        downloadBtn.dataset.width = String(targetW);
+        downloadBtn.dataset.height = String(targetH);
+        downloadSheetBtn.href = URL.createObjectURL(sheetBlob);
+        resultText.textContent = `Dimensions: ${targetW}×${targetH} px • File size: ${(singleBlob.size / 1024).toFixed(1)} KB • 300 DPI JFIF embedded.`;
         resultBox.style.display = 'block';
-        btn.textContent = 'Completed';
+        btn.textContent = 'Generate Passport Photo';
         btn.disabled = false;
-      }, 600);
+      } catch (err: any) {
+        resultText.textContent = 'Error: ' + err.message;
+        resultBox.style.display = 'block';
+        btn.textContent = 'Generate Passport Photo';
+        btn.disabled = false;
+      }
     });
   </script>
 </Layout>
@@ -96,12 +181,13 @@ import AdSlot from '../../components/AdSlot.astro';
   .privacy-pill { display: inline-block; background: #ECFDF5; color: #047857; font-size: 0.8rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: var(--fb-radius-md); margin-bottom: 1rem; }
   .tool-header-title { font-size: 2.25rem; font-weight: 900; margin-bottom: 0.5rem; }
   .tool-header-sub { font-size: 1rem; color: var(--fb-text-muted); margin-bottom: 2rem; }
-  .fb-dropzone { border: 2px dashed var(--fb-border); border-radius: var(--fb-radius-xl); padding: 3.5rem 2rem; text-align: center; cursor: pointer; background: var(--fb-surface); transition: all 0.2s; margin-bottom: 2rem; }
+  .fb-dropzone { border: 2px dashed var(--fb-border); border-radius: var(--fb-radius-lg); padding: 3.5rem 2rem; text-align: center; cursor: pointer; background: var(--fb-surface); transition: all 0.2s; margin-bottom: 2rem; }
   .drop-icon { font-size: 3rem; margin-bottom: 1rem; }
   .settings-box { background: var(--fb-surface); border: 1px solid var(--fb-border); border-radius: var(--fb-radius-lg); padding: 1.5rem; margin-bottom: 2rem; }
   .form-row { margin-bottom: 1.25rem; }
   .form-row label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; }
-  .fb-select { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--fb-border); border-radius: var(--fb-radius-md); font-size: 0.95rem; font-family: inherit; }
   .result-box { background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: var(--fb-radius-lg); padding: 1.5rem; margin-bottom: 2rem; }
+  .preview-wrap { margin: 1rem 0; }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 0.75rem; }
   @media (max-width: 900px) { .tool-grid-layout { grid-template-columns: 1fr; } }
 </style>

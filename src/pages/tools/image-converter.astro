@@ -5,7 +5,7 @@ import AdSlot from '../../components/AdSlot.astro';
 ---
 <Layout
   title="Image Format Converter"
-  description="Fast client-side conversion between WebP, PNG, JPEG, and AVIF image formats."
+  description="Fast client-side conversion between WebP, PNG, and JPEG image formats."
   toolSlug="image-converter"
 >
   <main class="tool-page-wrap">
@@ -14,31 +14,35 @@ import AdSlot from '../../components/AdSlot.astro';
         <div class="tool-main-pane">
           <div class="privacy-pill">🛡️ 100% Client-Side Memory • Zero Cloud Storage</div>
           <h1 class="tool-header-title">Image Format Converter</h1>
-          <p class="tool-header-sub">Convert between popular image formats directly in local memory with zero server upload.</p>
+          <p class="tool-header-sub">Convert between WebP, PNG, and JPEG directly in browser memory with zero server upload.</p>
 
           <div class="fb-dropzone" id="dropzone">
             <div class="drop-icon">🔄</div>
-            <h3>Drop your files here</h3>
+            <h3>Drop your image here</h3>
             <p>or click to select from your device</p>
-            <input type="file" id="fileInput" style="display:none;" />
+            <input type="file" id="fileInput" accept="image/*" style="display:none;" />
           </div>
 
           <div class="settings-box">
             <div class="form-row">
-              <label>Processing Option</label>
-              <select class="fb-select" id="toolOption">
-                <option value="default">Standard Optimization (Recommended)</option>
-                <option value="high">High Quality Retention</option>
-                <option value="max">Maximum Compression</option>
+              <label for="formatSelect">Target Output Format</label>
+              <select class="fb-select" id="formatSelect">
+                <option value="image/webp">WebP (.webp) — Modern High Compression</option>
+                <option value="image/jpeg">JPEG (.jpg) — Portal & Exam Standard</option>
+                <option value="image/png">PNG (.png) — Lossless Transparency</option>
               </select>
             </div>
-            <button id="actionBtn" class="fb-btn fb-btn-primary" disabled>Process File</button>
+            <div class="form-row">
+              <label for="qualityInput">Quality: <span id="qualityVal">85</span>%</label>
+              <input type="range" id="qualityInput" min="20" max="100" value="85" style="width:100%;" />
+            </div>
+            <button id="actionBtn" class="fb-btn fb-btn-primary" disabled>Convert Image</button>
           </div>
 
           <div id="resultBox" class="result-box" style="display:none;">
-            <h4>✓ Processing Complete</h4>
-            <p id="resultText">File generated successfully in browser memory.</p>
-            <a id="downloadBtn" class="fb-btn fb-btn-success" href="#" download="processed-image-converter">Download Result</a>
+            <h4>✓ Conversion Complete</h4>
+            <p id="resultText"></p>
+            <a id="downloadBtn" class="fb-btn fb-btn-success" href="#" download="converted.webp">Download Converted Image</a>
           </div>
         </div>
 
@@ -49,12 +53,19 @@ import AdSlot from '../../components/AdSlot.astro';
     </div>
   </main>
 
-  <script is:inline>
-    const dropzone = document.getElementById('dropzone');
-    const input = document.getElementById('fileInput');
-    const btn = document.getElementById('actionBtn');
-    const resultBox = document.getElementById('resultBox');
-    let loaded = null;
+  <script>
+    const dropzone = document.getElementById('dropzone')!;
+    const input = document.getElementById('fileInput') as HTMLInputElement;
+    const btn = document.getElementById('actionBtn') as HTMLButtonElement;
+    const formatSelect = document.getElementById('formatSelect') as HTMLSelectElement;
+    const qualityInput = document.getElementById('qualityInput') as HTMLInputElement;
+    const qualityVal = document.getElementById('qualityVal')!;
+    const resultBox = document.getElementById('resultBox')!;
+    const resultText = document.getElementById('resultText')!;
+    const downloadBtn = document.getElementById('downloadBtn') as HTMLAnchorElement;
+    let loaded: File | null = null;
+
+    qualityInput.addEventListener('input', () => { qualityVal.textContent = qualityInput.value; });
 
     dropzone.addEventListener('click', () => input.click());
     dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag-active'); });
@@ -62,30 +73,60 @@ import AdSlot from '../../components/AdSlot.astro';
     dropzone.addEventListener('drop', (e) => {
       e.preventDefault();
       dropzone.classList.remove('drag-active');
-      if (e.dataTransfer.files[0]) handle(e.dataTransfer.files[0]);
+      if (e.dataTransfer?.files[0]) handle(e.dataTransfer.files[0]);
     });
-    input.addEventListener('change', () => { if (input.files[0]) handle(input.files[0]); });
+    input.addEventListener('change', () => { if (input.files?.[0]) handle(input.files[0]); });
 
-    function handle(f) {
+    function handle(f: File) {
       loaded = f;
-      dropzone.querySelector('h3').textContent = f.name;
-      dropzone.querySelector('p').textContent = (f.size / 1024).toFixed(1) + ' KB';
+      dropzone.querySelector('h3')!.textContent = f.name;
+      dropzone.querySelector('p')!.textContent = (f.size / 1024).toFixed(1) + ' KB';
       btn.disabled = false;
     }
 
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       if (!loaded) return;
       btn.disabled = true;
-      btn.textContent = 'Processing in memory...';
-      setTimeout(() => {
-        const url = URL.createObjectURL(loaded);
-        const downloadBtn = document.getElementById('downloadBtn');
-        downloadBtn.href = url;
-        downloadBtn.download = 'processed-' + loaded.name;
+      btn.textContent = 'Converting in memory...';
+
+      try {
+        const targetMime = formatSelect.value;
+        const quality = parseInt(qualityInput.value, 10) / 100;
+        const ext = targetMime === 'image/webp' ? 'webp' : targetMime === 'image/png' ? 'png' : 'jpg';
+
+        const img = new Image();
+        const objUrl = URL.createObjectURL(loaded);
+        img.src = objUrl;
+        await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
+        URL.revokeObjectURL(objUrl);
+
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext('2d')!;
+        if (targetMime === 'image/jpeg') {
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        ctx.drawImage(img, 0, 0);
+
+        const blob = await new Promise<Blob>((resolve, reject) =>
+          canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('Encoding failed'))), targetMime, quality)
+        );
+
+        downloadBtn.href = URL.createObjectURL(blob);
+        downloadBtn.download = loaded.name.replace(/\.[^.]+$/, '') + '.' + ext;
+        downloadBtn.dataset.mime = blob.type;
+        resultText.textContent = `Converted ${loaded.name} (${img.naturalWidth}×${img.naturalHeight}) to ${ext.toUpperCase()} (${(blob.size / 1024).toFixed(1)} KB).`;
         resultBox.style.display = 'block';
-        btn.textContent = 'Completed';
+        btn.textContent = 'Convert Image';
         btn.disabled = false;
-      }, 600);
+      } catch (err: any) {
+        resultText.textContent = 'Error: ' + err.message;
+        resultBox.style.display = 'block';
+        btn.textContent = 'Convert Image';
+        btn.disabled = false;
+      }
     });
   </script>
 </Layout>
@@ -96,12 +137,11 @@ import AdSlot from '../../components/AdSlot.astro';
   .privacy-pill { display: inline-block; background: #ECFDF5; color: #047857; font-size: 0.8rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: var(--fb-radius-md); margin-bottom: 1rem; }
   .tool-header-title { font-size: 2.25rem; font-weight: 900; margin-bottom: 0.5rem; }
   .tool-header-sub { font-size: 1rem; color: var(--fb-text-muted); margin-bottom: 2rem; }
-  .fb-dropzone { border: 2px dashed var(--fb-border); border-radius: var(--fb-radius-xl); padding: 3.5rem 2rem; text-align: center; cursor: pointer; background: var(--fb-surface); transition: all 0.2s; margin-bottom: 2rem; }
+  .fb-dropzone { border: 2px dashed var(--fb-border); border-radius: var(--fb-radius-lg); padding: 3.5rem 2rem; text-align: center; cursor: pointer; background: var(--fb-surface); transition: all 0.2s; margin-bottom: 2rem; }
   .drop-icon { font-size: 3rem; margin-bottom: 1rem; }
   .settings-box { background: var(--fb-surface); border: 1px solid var(--fb-border); border-radius: var(--fb-radius-lg); padding: 1.5rem; margin-bottom: 2rem; }
   .form-row { margin-bottom: 1.25rem; }
   .form-row label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; }
-  .fb-select { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--fb-border); border-radius: var(--fb-radius-md); font-size: 0.95rem; font-family: inherit; }
   .result-box { background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: var(--fb-radius-lg); padding: 1.5rem; margin-bottom: 2rem; }
   @media (max-width: 900px) { .tool-grid-layout { grid-template-columns: 1fr; } }
 </style>

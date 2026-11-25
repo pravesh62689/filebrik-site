@@ -35,6 +35,13 @@ test('Exam presets data integrity: 20 official presets loaded', () => {
     assert.ok(p.minKB > 0, `${p.id} must have minKB`);
     assert.ok(p.maxKB >= p.minKB, `${p.id} maxKB >= minKB`);
     assert.ok(p.dpi >= 100, `${p.id} must have valid dpi`);
+    assert.ok(p.officialUrl && !/sarkari|testbook|collegedunia|jagran|adda247/i.test(p.officialUrl), `${p.id} must not use aggregator URLs`);
+    assert.ok(p.officialQuote, `${p.id} must have quote`);
+    assert.ok(p.verifiedDate, `${p.id} must have verifiedDate`);
+    assert.ok(p.verificationStatus === 'verified' || p.verificationStatus === 'check official notice', `${p.id} must declare verificationStatus`);
+    if (p.verificationStatus === 'verified') {
+      assert.ok(p.snapshot && fs.existsSync(path.join(rootDir, p.snapshot)), `${p.id} verified preset must have local snapshot`);
+    }
   }
 });
 

@@ -14,31 +14,42 @@ import AdSlot from '../../components/AdSlot.astro';
         <div class="tool-main-pane">
           <div class="privacy-pill">🛡️ 100% Client-Side Memory • Zero Cloud Storage</div>
           <h1 class="tool-header-title">Compress Image to Specific KB</h1>
-          <p class="tool-header-sub">Binary search optimization automatically scales and compresses your image to fit exact file size boundaries.</p>
+          <p class="tool-header-sub">Binary search quality and smart dimension scaling automatically compress your image inside exact KB boundaries.</p>
 
           <div class="fb-dropzone" id="dropzone">
             <div class="drop-icon">📉</div>
-            <h3>Drop your files here</h3>
-            <p>or click to select from your device</p>
-            <input type="file" id="fileInput" style="display:none;" />
+            <h3>Drop your image here</h3>
+            <p>or click to select JPG, PNG, or WebP from your device</p>
+            <input type="file" id="fileInput" accept="image/*" style="display:none;" />
           </div>
 
           <div class="settings-box">
+            <div class="form-grid-2">
+              <div class="form-row">
+                <label for="minKbInput">Minimum KB</label>
+                <input type="number" id="minKbInput" class="fb-input" value="20" min="2" max="5000" />
+              </div>
+              <div class="form-row">
+                <label for="maxKbInput">Maximum KB</label>
+                <input type="number" id="maxKbInput" class="fb-input" value="50" min="5" max="10000" />
+              </div>
+            </div>
             <div class="form-row">
-              <label>Processing Option</label>
-              <select class="fb-select" id="toolOption">
-                <option value="default">Standard Optimization (Recommended)</option>
-                <option value="high">High Quality Retention</option>
-                <option value="max">Maximum Compression</option>
+              <label for="kbPreset">Quick Portal Presets</label>
+              <select class="fb-select" id="kbPreset">
+                <option value="20-50">Exam Photo Standard (20 KB – 50 KB)</option>
+                <option value="10-20">Exam Signature Strict (10 KB – 20 KB)</option>
+                <option value="50-100">Document Upload (50 KB – 100 KB)</option>
+                <option value="100-200">NTA / NEET Portal (100 KB – 200 KB)</option>
               </select>
             </div>
-            <button id="actionBtn" class="fb-btn fb-btn-primary" disabled>Process File</button>
+            <button id="actionBtn" class="fb-btn fb-btn-primary" disabled>Compress to Target KB</button>
           </div>
 
           <div id="resultBox" class="result-box" style="display:none;">
-            <h4>✓ Processing Complete</h4>
-            <p id="resultText">File generated successfully in browser memory.</p>
-            <a id="downloadBtn" class="fb-btn fb-btn-success" href="#" download="processed-compress-image-kb">Download Result</a>
+            <h4>✓ Compression Complete</h4>
+            <p id="resultText"></p>
+            <a id="downloadBtn" class="fb-btn fb-btn-success" href="#" download="compressed.jpg">Download Compressed Image</a>
           </div>
         </div>
 
@@ -49,12 +60,23 @@ import AdSlot from '../../components/AdSlot.astro';
     </div>
   </main>
 
-  <script is:inline>
-    const dropzone = document.getElementById('dropzone');
-    const input = document.getElementById('fileInput');
-    const btn = document.getElementById('actionBtn');
-    const resultBox = document.getElementById('resultBox');
-    let loaded = null;
+  <script>
+    const dropzone = document.getElementById('dropzone')!;
+    const input = document.getElementById('fileInput') as HTMLInputElement;
+    const btn = document.getElementById('actionBtn') as HTMLButtonElement;
+    const minKbInput = document.getElementById('minKbInput') as HTMLInputElement;
+    const maxKbInput = document.getElementById('maxKbInput') as HTMLInputElement;
+    const kbPreset = document.getElementById('kbPreset') as HTMLSelectElement;
+    const resultBox = document.getElementById('resultBox')!;
+    const resultText = document.getElementById('resultText')!;
+    const downloadBtn = document.getElementById('downloadBtn') as HTMLAnchorElement;
+    let loaded: File | null = null;
+
+    kbPreset.addEventListener('change', () => {
+      const [mn, mx] = kbPreset.value.split('-');
+      minKbInput.value = mn;
+      maxKbInput.value = mx;
+    });
 
     dropzone.addEventListener('click', () => input.click());
     dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag-active'); });
@@ -62,30 +84,112 @@ import AdSlot from '../../components/AdSlot.astro';
     dropzone.addEventListener('drop', (e) => {
       e.preventDefault();
       dropzone.classList.remove('drag-active');
-      if (e.dataTransfer.files[0]) handle(e.dataTransfer.files[0]);
+      if (e.dataTransfer?.files[0]) handle(e.dataTransfer.files[0]);
     });
-    input.addEventListener('change', () => { if (input.files[0]) handle(input.files[0]); });
+    input.addEventListener('change', () => { if (input.files?.[0]) handle(input.files[0]); });
 
-    function handle(f) {
+    function handle(f: File) {
       loaded = f;
-      dropzone.querySelector('h3').textContent = f.name;
-      dropzone.querySelector('p').textContent = (f.size / 1024).toFixed(1) + ' KB';
+      dropzone.querySelector('h3')!.textContent = f.name;
+      dropzone.querySelector('p')!.textContent = (f.size / 1024).toFixed(1) + ' KB';
       btn.disabled = false;
     }
 
-    btn.addEventListener('click', () => {
+    function toBlob(canvas: HTMLCanvasElement, mime: string, q: number): Promise<Blob> {
+      return new Promise((resolve) => canvas.toBlob((b) => resolve(b!), mime, q));
+    }
+
+    btn.addEventListener('click', async () => {
       if (!loaded) return;
       btn.disabled = true;
-      btn.textContent = 'Processing in memory...';
-      setTimeout(() => {
-        const url = URL.createObjectURL(loaded);
-        const downloadBtn = document.getElementById('downloadBtn');
-        downloadBtn.href = url;
-        downloadBtn.download = 'processed-' + loaded.name;
+      btn.textContent = 'Compressing in memory...';
+
+      try {
+        const minKb = Math.max(1, parseFloat(minKbInput.value) || 20);
+        const maxKb = Math.max(minKb + 1, parseFloat(maxKbInput.value) || 50);
+
+        const img = new Image();
+        const objUrl = URL.createObjectURL(loaded);
+        img.src = objUrl;
+        await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
+        URL.revokeObjectURL(objUrl);
+
+        let scale = 1.0;
+        let finalBlob: Blob | null = null;
+
+        // Outer loop shrinks dimensions smoothly if min JPEG quality still exceeds maxKb
+        for (let attempt = 0; attempt < 12; attempt++) {
+          const w = Math.max(64, Math.round(img.naturalWidth * scale));
+          const h = Math.max(64, Math.round(img.naturalHeight * scale));
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d')!;
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, w, h);
+          ctx.drawImage(img, 0, 0, w, h);
+
+          // Check extremes
+          const minBlob = await toBlob(canvas, 'image/jpeg', 0.05);
+          const minBlobKb = minBlob.size / 1024;
+          if (minBlobKb >= minKb && minBlobKb <= maxKb) {
+            finalBlob = minBlob;
+            break;
+          }
+          if (minBlobKb > maxKb) {
+            // Even lowest quality exceeds maxKb -> shrink dimensions
+            scale *= Math.sqrt(maxKb / minBlobKb) * 0.9;
+            continue;
+          }
+
+          let low = 0.05;
+          let high = 0.99;
+          let bestCandidate: Blob = minBlob;
+
+          for (let i = 0; i < 12; i++) {
+            const q = (low + high) / 2;
+            const b = await toBlob(canvas, 'image/jpeg', q);
+            const kb = b.size / 1024;
+            if (kb >= minKb && kb <= maxKb) {
+              bestCandidate = b;
+              break;
+            }
+            if (kb > maxKb) {
+              high = q;
+            } else {
+              low = q;
+              bestCandidate = b;
+            }
+          }
+
+          const achievedKb = bestCandidate.size / 1024;
+          finalBlob = bestCandidate;
+          if (achievedKb >= minKb && achievedKb <= maxKb) {
+            break;
+          }
+          // If max quality (q=0.99) is smaller than minKb, slightly pad JPEG EXIF comment or upscale canvas
+          if (achievedKb < minKb && attempt < 11) {
+            scale = Math.min(3.5, scale * Math.sqrt(minKb / Math.max(1, achievedKb)) * 1.15);
+          } else {
+            break;
+          }
+        }
+
+        if (!finalBlob) throw new Error('Unable to generate JPEG blob');
+        const finalKb = finalBlob.size / 1024;
+        downloadBtn.href = URL.createObjectURL(finalBlob);
+        downloadBtn.download = loaded.name.replace(/\.[^.]+$/, '') + `-${Math.round(finalKb)}kb.jpg`;
+        downloadBtn.dataset.outputKb = finalKb.toFixed(2);
+        resultText.textContent = `Original: ${(loaded.size / 1024).toFixed(1)} KB → Compressed: ${finalKb.toFixed(1)} KB (Target: ${minKb}–${maxKb} KB)`;
         resultBox.style.display = 'block';
-        btn.textContent = 'Completed';
+        btn.textContent = 'Compress to Target KB';
         btn.disabled = false;
-      }, 600);
+      } catch (err: any) {
+        resultText.textContent = 'Error: ' + err.message;
+        resultBox.style.display = 'block';
+        btn.textContent = 'Compress to Target KB';
+        btn.disabled = false;
+      }
     });
   </script>
 </Layout>
@@ -96,12 +200,12 @@ import AdSlot from '../../components/AdSlot.astro';
   .privacy-pill { display: inline-block; background: #ECFDF5; color: #047857; font-size: 0.8rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: var(--fb-radius-md); margin-bottom: 1rem; }
   .tool-header-title { font-size: 2.25rem; font-weight: 900; margin-bottom: 0.5rem; }
   .tool-header-sub { font-size: 1rem; color: var(--fb-text-muted); margin-bottom: 2rem; }
-  .fb-dropzone { border: 2px dashed var(--fb-border); border-radius: var(--fb-radius-xl); padding: 3.5rem 2rem; text-align: center; cursor: pointer; background: var(--fb-surface); transition: all 0.2s; margin-bottom: 2rem; }
+  .fb-dropzone { border: 2px dashed var(--fb-border); border-radius: var(--fb-radius-lg); padding: 3.5rem 2rem; text-align: center; cursor: pointer; background: var(--fb-surface); transition: all 0.2s; margin-bottom: 2rem; }
   .drop-icon { font-size: 3rem; margin-bottom: 1rem; }
   .settings-box { background: var(--fb-surface); border: 1px solid var(--fb-border); border-radius: var(--fb-radius-lg); padding: 1.5rem; margin-bottom: 2rem; }
+  .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
   .form-row { margin-bottom: 1.25rem; }
   .form-row label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; }
-  .fb-select { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--fb-border); border-radius: var(--fb-radius-md); font-size: 0.95rem; font-family: inherit; }
   .result-box { background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: var(--fb-radius-lg); padding: 1.5rem; margin-bottom: 2rem; }
   @media (max-width: 900px) { .tool-grid-layout { grid-template-columns: 1fr; } }
 </style>

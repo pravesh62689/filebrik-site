@@ -6,15 +6,25 @@ interface Props {
 }
 
 const { slotType, reservedHeight = '280px' } = Astro.props;
+const adsEnabled = import.meta.env.PUBLIC_ADS_ENABLED === 'true';
 ---
-<div class={`ad-container ad-slot-${slotType}`} style={`min-height: ${reservedHeight};`}>
-  <div class="ad-label">Advertisement</div>
-  <div class="ad-content-slot" id={`ad-slot-${slotType}`}>
-    <!-- Programmatic ad script mounts here when PUBLIC_ADS_ENABLED=true -->
+{adsEnabled ? (
+  <div class={`ad-container ad-slot-${slotType}`} data-ad-slot={slotType} style={`min-height: ${reservedHeight};`}>
+    <div class="ad-label">Advertisement</div>
+    <div class="ad-content-slot" id={`ad-slot-${slotType}`}></div>
   </div>
-</div>
+) : (
+  <div class="ad-slot-disabled" data-ad-slot={slotType} data-ads-enabled="false" aria-hidden="true"></div>
+)}
 
 <style>
+  .ad-slot-disabled {
+    display: none;
+    height: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+  }
   .ad-container {
     width: 100%;
     background: var(--fb-surface);
@@ -44,5 +54,12 @@ const { slotType, reservedHeight = '280px' } = Astro.props;
   .ad-slot-banner {
     max-width: 728px;
     margin: 2rem auto;
+  }
+  @media (max-width: 900px) {
+    .ad-container {
+      min-height: 90px !important;
+      max-height: 120px !important;
+      margin: 0.75rem auto;
+    }
   }
 </style>

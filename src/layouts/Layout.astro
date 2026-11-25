@@ -2,6 +2,8 @@
 // src/layouts/Layout.astro
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import '../styles/tokens.css';
+import '../styles/global.css';
 
 interface Props {
   title: string;
@@ -11,6 +13,7 @@ interface Props {
 
 const { title, description, toolSlug } = Astro.props;
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site || 'https://filebrik.com');
+const adsEnabled = import.meta.env.PUBLIC_ADS_ENABLED === 'true';
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -20,6 +23,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site || 'https://filebrik
   <title>{title} | FileBrik</title>
   <meta name="description" content={description}>
   <link rel="canonical" href={canonicalUrl.href}>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
   <!-- Open Graph / Meta -->
   <meta property="og:type" content="website">
@@ -28,12 +32,8 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site || 'https://filebrik
   <meta property="og:description" content={description}>
   <meta property="og:site_name" content="FileBrik">
 
-  <!-- Core Tokens & Global CSS -->
-  <link rel="stylesheet" href="/styles/tokens.css">
-  <link rel="stylesheet" href="/styles/global.css">
-
-  <script is:inline>
-    // Initialize client push worker registration
+  <script is:inline define:vars={{ adsEnabled }}>
+    window.PUBLIC_ADS_ENABLED = adsEnabled;
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js').catch(() => {});
@@ -41,9 +41,10 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site || 'https://filebrik
     }
   </script>
 </head>
-<body>
+<body data-tool-slug={toolSlug || ''}>
   <Header />
   <slot />
+  <div id="fb-desktop-slider" aria-hidden="true" hidden></div>
   <Footer />
 </body>
 </html>

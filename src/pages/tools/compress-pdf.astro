@@ -74,13 +74,15 @@ import AffiliateCard from '../../components/AffiliateCard.astro';
     </div>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-  <script is:inline>
-    const dropzone = document.getElementById('dropzone');
-    const input = document.getElementById('pdfInput');
-    const btn = document.getElementById('compressBtn');
-    const resultBox = document.getElementById('resultBox');
-    let loadedFile = null;
+  <script>
+    import { PDFDocument } from 'pdf-lib';
+
+    const dropzone = document.getElementById('dropzone')!;
+    const input = document.getElementById('pdfInput') as HTMLInputElement;
+    const btn = document.getElementById('compressBtn') as HTMLButtonElement;
+    const resultBox = document.getElementById('resultBox')!;
+    const downloadBtn = document.getElementById('downloadBtn') as HTMLAnchorElement;
+    let loadedFile: File | null = null;
 
     dropzone.addEventListener('click', () => input.click());
     dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag-active'); });
@@ -88,27 +90,26 @@ import AffiliateCard from '../../components/AffiliateCard.astro';
     dropzone.addEventListener('drop', (e) => {
       e.preventDefault();
       dropzone.classList.remove('drag-active');
-      if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+      if (e.dataTransfer?.files[0]) handleFile(e.dataTransfer.files[0]);
     });
-    input.addEventListener('change', () => { if (input.files[0]) handleFile(input.files[0]); });
+    input.addEventListener('change', () => { if (input.files?.[0]) handleFile(input.files[0]); });
 
-    function handleFile(file) {
-      if (file.type !== 'application/pdf') return alert('Please select a valid PDF file.');
+    function handleFile(file: File) {
+      if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) return;
       loadedFile = file;
-      dropzone.querySelector('h3').textContent = file.name;
-      dropzone.querySelector('p').textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+      dropzone.querySelector('h3')!.textContent = file.name;
+      dropzone.querySelector('p')!.textContent = (file.size / 1024).toFixed(1) + ' KB';
       btn.disabled = false;
     }
 
     btn.addEventListener('click', async () => {
-      if (!loadedFile || !window.PDFLib) return;
+      if (!loadedFile) return;
       btn.disabled = true;
       btn.textContent = 'Compressing in browser...';
 
       try {
         const arrayBuffer = await loadedFile.arrayBuffer();
-        const pdfDoc = await window.PDFLib.PDFDocument.load(arrayBuffer);
-        // Optimize objects and rebuild
+        const pdfDoc = await PDFDocument.load(arrayBuffer);
         const compressedBytes = await pdfDoc.save({ useObjectStreams: true });
         const blob = new Blob([compressedBytes], { type: 'application/pdf' });
 
@@ -116,18 +117,17 @@ import AffiliateCard from '../../components/AffiliateCard.astro';
         const newKb = blob.size / 1024;
         const pct = Math.max(0, Math.round(((origKb - newKb) / origKb) * 100));
 
-        document.getElementById('origSize').textContent = origKb.toFixed(1) + ' KB';
-        document.getElementById('newSize').textContent = newKb.toFixed(1) + ' KB';
-        document.getElementById('reductionPct').textContent = pct + '% Saved';
+        document.getElementById('origSize')!.textContent = origKb.toFixed(1) + ' KB';
+        document.getElementById('newSize')!.textContent = newKb.toFixed(1) + ' KB';
+        document.getElementById('reductionPct')!.textContent = pct + '% Saved';
 
-        const downloadBtn = document.getElementById('downloadBtn');
         downloadBtn.href = URL.createObjectURL(blob);
         downloadBtn.download = loadedFile.name.replace(/\.pdf$/i, '') + '-compressed.pdf';
 
         resultBox.style.display = 'block';
         btn.textContent = 'Compressed Successfully';
-      } catch (err) {
-        alert('Failed to process PDF: ' + err.message);
+        btn.disabled = false;
+      } catch (err: any) {
         btn.textContent = 'Compress PDF Now';
         btn.disabled = false;
       }
@@ -141,7 +141,7 @@ import AffiliateCard from '../../components/AffiliateCard.astro';
   .privacy-pill { display: inline-block; background: #ECFDF5; color: #047857; font-size: 0.8rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: var(--fb-radius-md); margin-bottom: 1rem; }
   .tool-header-title { font-size: 2.25rem; font-weight: 900; margin-bottom: 0.5rem; }
   .tool-header-sub { font-size: 1rem; color: var(--fb-text-muted); margin-bottom: 2rem; }
-  .fb-dropzone { border: 2px dashed var(--fb-border); border-radius: var(--fb-radius-xl); padding: 3.5rem 2rem; text-align: center; cursor: pointer; background: var(--fb-surface); transition: all 0.2s; margin-bottom: 2rem; }
+  .fb-dropzone { border: 2px dashed var(--fb-border); border-radius: var(--fb-radius-lg); padding: 3.5rem 2rem; text-align: center; cursor: pointer; background: var(--fb-surface); transition: all 0.2s; margin-bottom: 2rem; }
   .fb-dropzone:hover, .drag-active { border-color: var(--fb-primary); background: var(--fb-primary-light); }
   .drop-icon { font-size: 3rem; margin-bottom: 1rem; }
   .fb-dropzone h3 { font-size: 1.25rem; font-weight: 800; margin-bottom: 0.35rem; }
@@ -149,17 +149,14 @@ import AffiliateCard from '../../components/AffiliateCard.astro';
   .settings-box { background: var(--fb-surface); border: 1px solid var(--fb-border); border-radius: var(--fb-radius-lg); padding: 1.5rem; margin-bottom: 2rem; }
   .form-row { margin-bottom: 1.25rem; }
   .form-row label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; }
-  .fb-select { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--fb-border); border-radius: var(--fb-radius-md); font-size: 0.95rem; font-family: inherit; }
   .result-box { background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: var(--fb-radius-lg); padding: 1.5rem; margin-bottom: 2rem; }
   .result-header { display: flex; align-items: center; gap: 0.5rem; color: #166534; font-weight: 800; margin-bottom: 1rem; }
-  .stats-row { display: flex; gap: 2rem; margin-bottom: 1.5rem; font-size: 0.95rem; }
+  .stats-row { display: flex; flex-wrap: wrap; gap: 1.25rem; margin-bottom: 1.5rem; font-size: 0.95rem; }
   .text-success { color: var(--fb-success); }
   .text-primary { color: var(--fb-primary); }
   .next-tools-box { background: var(--fb-surface); border: 1px solid var(--fb-border); border-radius: var(--fb-radius-lg); padding: 1.5rem; }
   .next-tools-box h4 { font-size: 0.9rem; font-weight: 800; margin-bottom: 0.75rem; color: var(--fb-text-main); }
   .tool-links-row { display: flex; flex-wrap: wrap; gap: 1rem; }
   .tool-links-row a { text-decoration: none; color: var(--fb-primary); font-size: 0.85rem; font-weight: 700; }
-  @media (max-width: 900px) {
-    .tool-grid-layout { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 900px) { .tool-grid-layout { grid-template-columns: 1fr; } }
 </style>

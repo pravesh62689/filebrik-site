@@ -14,31 +14,23 @@ import AdSlot from '../../components/AdSlot.astro';
         <div class="tool-main-pane">
           <div class="privacy-pill">🛡️ 100% Client-Side Memory • Zero Cloud Storage</div>
           <h1 class="tool-header-title">JPG to PDF Converter</h1>
-          <p class="tool-header-sub">Merge your photos, scanned ID proofs, and certificates into a consolidated PDF in seconds.</p>
+          <p class="tool-header-sub">Merge your photos, scanned ID proofs, and certificates into a consolidated PDF in browser memory.</p>
 
           <div class="fb-dropzone" id="dropzone">
             <div class="drop-icon">🖼️</div>
-            <h3>Drop your files here</h3>
-            <p>or click to select from your device</p>
-            <input type="file" id="fileInput" style="display:none;" />
+            <h3>Drop JPG or PNG files here</h3>
+            <p>or click to select multiple images from your device</p>
+            <input type="file" id="fileInput" accept="image/*" multiple style="display:none;" />
           </div>
 
           <div class="settings-box">
-            <div class="form-row">
-              <label>Processing Option</label>
-              <select class="fb-select" id="toolOption">
-                <option value="default">Standard Optimization (Recommended)</option>
-                <option value="high">High Quality Retention</option>
-                <option value="max">Maximum Compression</option>
-              </select>
-            </div>
-            <button id="actionBtn" class="fb-btn fb-btn-primary" disabled>Process File</button>
+            <button id="actionBtn" class="fb-btn fb-btn-primary" disabled>Convert to PDF</button>
           </div>
 
           <div id="resultBox" class="result-box" style="display:none;">
-            <h4>✓ Processing Complete</h4>
-            <p id="resultText">File generated successfully in browser memory.</p>
-            <a id="downloadBtn" class="fb-btn fb-btn-success" href="#" download="processed-jpg-to-pdf">Download Result</a>
+            <h4>✓ PDF Created</h4>
+            <p id="resultText"></p>
+            <a id="downloadBtn" class="fb-btn fb-btn-success" href="#" download="images.pdf">Download PDF</a>
           </div>
         </div>
 
@@ -49,43 +41,63 @@ import AdSlot from '../../components/AdSlot.astro';
     </div>
   </main>
 
-  <script is:inline>
-    const dropzone = document.getElementById('dropzone');
-    const input = document.getElementById('fileInput');
-    const btn = document.getElementById('actionBtn');
-    const resultBox = document.getElementById('resultBox');
-    let loaded = null;
+  <script>
+    import { PDFDocument } from 'pdf-lib';
+
+    const dropzone = document.getElementById('dropzone')!;
+    const input = document.getElementById('fileInput') as HTMLInputElement;
+    const btn = document.getElementById('actionBtn') as HTMLButtonElement;
+    const resultBox = document.getElementById('resultBox')!;
+    const resultText = document.getElementById('resultText')!;
+    const downloadBtn = document.getElementById('downloadBtn') as HTMLAnchorElement;
+    let files: File[] = [];
 
     dropzone.addEventListener('click', () => input.click());
-    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag-active'); });
-    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-active'));
-    dropzone.addEventListener('drop', (e) => {
-      e.preventDefault();
-      dropzone.classList.remove('drag-active');
-      if (e.dataTransfer.files[0]) handle(e.dataTransfer.files[0]);
-    });
-    input.addEventListener('change', () => { if (input.files[0]) handle(input.files[0]); });
-
-    function handle(f) {
-      loaded = f;
-      dropzone.querySelector('h3').textContent = f.name;
-      dropzone.querySelector('p').textContent = (f.size / 1024).toFixed(1) + ' KB';
-      btn.disabled = false;
-    }
-
-    btn.addEventListener('click', () => {
-      if (!loaded) return;
-      btn.disabled = true;
-      btn.textContent = 'Processing in memory...';
-      setTimeout(() => {
-        const url = URL.createObjectURL(loaded);
-        const downloadBtn = document.getElementById('downloadBtn');
-        downloadBtn.href = url;
-        downloadBtn.download = 'processed-' + loaded.name;
-        resultBox.style.display = 'block';
-        btn.textContent = 'Completed';
+    input.addEventListener('change', () => {
+      if (input.files?.length) {
+        files = Array.from(input.files);
+        dropzone.querySelector('h3')!.textContent = `${files.length} image(s) selected`;
         btn.disabled = false;
-      }, 600);
+      }
+    });
+
+    btn.addEventListener('click', async () => {
+      if (!files.length) return;
+      btn.disabled = true;
+      btn.textContent = 'Building PDF...';
+
+      try {
+        const pdfDoc = await PDFDocument.create();
+        for (const f of files) {
+          const img = new Image();
+          const url = URL.createObjectURL(f);
+          img.src = url;
+          await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
+          URL.revokeObjectURL(url);
+
+          const canvas = document.createElement('canvas');
+          canvas.width = img.naturalWidth;
+          canvas.height = img.naturalHeight;
+          const ctx = canvas.getContext('2d')!;
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0);
+
+          const jpgBlob = await new Promise<Blob>((r) => canvas.toBlob((b) => r(b!), 'image/jpeg', 0.9));
+          const embedded = await pdfDoc.embedJpg(await jpgBlob.arrayBuffer());
+          const page = pdfDoc.addPage([embedded.width, embedded.height]);
+          page.drawImage(embedded, { x: 0, y: 0, width: embedded.width, height: embedded.height });
+        }
+
+        const pdfBytes = await pdfDoc.save();
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        downloadBtn.href = URL.createObjectURL(blob);
+        resultText.textContent = `Built ${files.length}-page PDF (${(blob.size / 1024).toFixed(1)} KB).`;
+        resultBox.style.display = 'block';
+      } finally {
+        btn.textContent = 'Convert to PDF';
+        btn.disabled = false;
+      }
     });
   </script>
 </Layout>
@@ -96,12 +108,9 @@ import AdSlot from '../../components/AdSlot.astro';
   .privacy-pill { display: inline-block; background: #ECFDF5; color: #047857; font-size: 0.8rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: var(--fb-radius-md); margin-bottom: 1rem; }
   .tool-header-title { font-size: 2.25rem; font-weight: 900; margin-bottom: 0.5rem; }
   .tool-header-sub { font-size: 1rem; color: var(--fb-text-muted); margin-bottom: 2rem; }
-  .fb-dropzone { border: 2px dashed var(--fb-border); border-radius: var(--fb-radius-xl); padding: 3.5rem 2rem; text-align: center; cursor: pointer; background: var(--fb-surface); transition: all 0.2s; margin-bottom: 2rem; }
+  .fb-dropzone { border: 2px dashed var(--fb-border); border-radius: var(--fb-radius-lg); padding: 3.5rem 2rem; text-align: center; cursor: pointer; background: var(--fb-surface); margin-bottom: 2rem; }
   .drop-icon { font-size: 3rem; margin-bottom: 1rem; }
   .settings-box { background: var(--fb-surface); border: 1px solid var(--fb-border); border-radius: var(--fb-radius-lg); padding: 1.5rem; margin-bottom: 2rem; }
-  .form-row { margin-bottom: 1.25rem; }
-  .form-row label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; }
-  .fb-select { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--fb-border); border-radius: var(--fb-radius-md); font-size: 0.95rem; font-family: inherit; }
   .result-box { background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: var(--fb-radius-lg); padding: 1.5rem; margin-bottom: 2rem; }
   @media (max-width: 900px) { .tool-grid-layout { grid-template-columns: 1fr; } }
 </style>

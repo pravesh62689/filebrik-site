@@ -8,17 +8,15 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "test": "node --test tests/site.test.mjs"
+    "test": "node --test tests/site.test.mjs",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "astro": "^5.0.0",
-    "browser-image-compression": "^2.0.2",
-    "jszip": "^3.10.1",
-    "pdf-lib": "^1.17.9",
-    "pdfjs-dist": "^4.0.379"
+    "pdf-lib": "^1.17.1"
   },
   "devDependencies": {
-    "@playwright/test": "^1.50.0",
+    "@playwright/test": "^1.55.0",
     "typescript": "^5.7.0"
   }
 }
