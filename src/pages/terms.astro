@@ -1,0 +1,38 @@
+---
+// src/pages/terms.astro
+import Layout from '../layouts/Layout.astro';
+---
+<Layout
+  title="Terms of Service"
+  description="FileBrik Terms of Service regarding browser-based client-side utility processing."
+>
+  <main class="legal-wrap">
+    <div class="fb-container fb-container-narrow">
+      <article class="fb-card legal-card">
+        <h1>Terms of Service</h1>
+        <div class="legal-date">Last Updated: November 2026</div>
+
+        <h2>1. Acceptance of Terms</h2>
+        <p>By accessing and utilizing FileBrik, you agree to comply with these Terms of Service. If you do not accept these terms, please discontinue use of the site immediately.</p>
+
+        <h2>2. Permitted Use</h2>
+        <p>FileBrik provides free client-side media and document tools for personal, educational, and commercial purposes. You may not reverse-engineer, exploit, or disrupt the site infrastructure.</p>
+
+        <h2>3. Disclaimer of Warranties</h2>
+        <p>The utilities are provided "as is" without warranties of any kind. You retain full responsibility for verifying that generated outputs meet specific exam portal or legal agency specifications prior to submission.</p>
+
+        <h2>4. Limitation of Liability</h2>
+        <p>Under no circumstances shall FileBrik or its operators be held liable for document corruption, exam form rejections, or data discrepancies occurring on user hardware.</p>
+      </article>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .legal-wrap { padding: 4rem 0; }
+  .legal-card { padding: 3rem; }
+  .legal-card h1 { font-size: 2.25rem; font-weight: 900; margin-bottom: 0.5rem; }
+  .legal-date { font-size: 0.85rem; color: var(--fb-text-muted); margin-bottom: 2rem; }
+  .legal-card h2 { font-size: 1.35rem; font-weight: 800; margin: 2rem 0 0.75rem; border-bottom: 1px solid var(--fb-border); padding-bottom: 0.5rem; }
+  .legal-card p { font-size: 0.95rem; line-height: 1.6; color: #334155; margin-bottom: 1rem; }
+</style>

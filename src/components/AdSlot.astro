@@ -1,0 +1,48 @@
+---
+// src/components/AdSlot.astro
+interface Props {
+  slotType: 'sidebar' | 'banner' | 'in-feed';
+  reservedHeight?: string;
+}
+
+const { slotType, reservedHeight = '280px' } = Astro.props;
+---
+<div class={`ad-container ad-slot-${slotType}`} style={`min-height: ${reservedHeight};`}>
+  <div class="ad-label">Advertisement</div>
+  <div class="ad-content-slot" id={`ad-slot-${slotType}`}>
+    <!-- Programmatic ad script mounts here when PUBLIC_ADS_ENABLED=true -->
+  </div>
+</div>
+
+<style>
+  .ad-container {
+    width: 100%;
+    background: var(--fb-surface);
+    border: 1px dashed var(--fb-border);
+    border-radius: var(--fb-radius-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    margin: 1.5rem 0;
+  }
+  .ad-label {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--fb-text-light);
+  }
+  .ad-slot-sidebar {
+    max-width: 300px;
+    margin: 0 auto;
+  }
+  .ad-slot-banner {
+    max-width: 728px;
+    margin: 2rem auto;
+  }
+</style>

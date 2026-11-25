@@ -1,0 +1,123 @@
+---
+// src/pages/tools/merge-pdf.astro
+import Layout from '../../layouts/Layout.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import AffiliateCard from '../../components/AffiliateCard.astro';
+---
+<Layout
+  title="Merge PDF Files - 100% Client-Side"
+  description="Combine multiple PDF documents into a single organized file in seconds. Zero cloud upload."
+  toolSlug="merge-pdf"
+>
+  <main class="tool-page-wrap">
+    <div class="fb-container">
+      <div class="tool-grid-layout">
+        <div class="tool-main-pane">
+          <div class="privacy-pill">🛡️ 100% Client-Side Memory • Zero Cloud Storage</div>
+          <h1 class="tool-header-title">Merge PDF Documents</h1>
+          <p class="tool-header-sub">Combine multiple PDF files into a single consolidated document directly in your browser.</p>
+
+          <div class="fb-dropzone" id="dropzone">
+            <div class="drop-icon">📑</div>
+            <h3>Drop multiple PDF files here</h3>
+            <p>or click to select multiple files</p>
+            <input type="file" id="pdfInput" accept="application/pdf" multiple style="display:none;" />
+          </div>
+
+          <div id="fileList" class="file-list-box" style="display:none;">
+            <h4>Files to Merge:</h4>
+            <ul id="itemsUl"></ul>
+            <button id="mergeBtn" class="fb-btn fb-btn-primary" style="margin-top:1rem;">Merge PDFs Now</button>
+          </div>
+
+          <div id="resultBox" class="result-box" style="display:none;">
+            <h4>✓ Merged Successfully!</h4>
+            <p id="resultMeta"></p>
+            <a id="downloadBtn" class="fb-btn fb-btn-success" href="#" download="merged.pdf">Download Merged PDF</a>
+          </div>
+        </div>
+
+        <aside class="tool-sidebar">
+          <AdSlot slotType="sidebar" reservedHeight="500px" />
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script is:inline>
+    const dropzone = document.getElementById('dropzone');
+    const input = document.getElementById('pdfInput');
+    const list = document.getElementById('fileList');
+    const ul = document.getElementById('itemsUl');
+    const mergeBtn = document.getElementById('mergeBtn');
+    const resultBox = document.getElementById('resultBox');
+    let files = [];
+
+    dropzone.addEventListener('click', () => input.click());
+    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag-active'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-active'));
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('drag-active');
+      handleFiles(e.dataTransfer.files);
+    });
+    input.addEventListener('change', () => handleFiles(input.files));
+
+    function handleFiles(newFiles) {
+      for (const f of newFiles) {
+        if (f.type === 'application/pdf') files.push(f);
+      }
+      renderList();
+    }
+
+    function renderList() {
+      if (files.length === 0) return;
+      list.style.display = 'block';
+      ul.innerHTML = files.map((f, i) => `<li>${i + 1}. <b>${f.name}</b> (${(f.size/1024).toFixed(1)} KB)</li>`).join('');
+    }
+
+    mergeBtn.addEventListener('click', async () => {
+      if (files.length < 2 || !window.PDFLib) return alert('Please select at least 2 PDF files to merge.');
+      mergeBtn.disabled = true;
+      mergeBtn.textContent = 'Merging in memory...';
+
+      try {
+        const mergedDoc = await window.PDFLib.PDFDocument.create();
+        for (const file of files) {
+          const bytes = await file.arrayBuffer();
+          const doc = await window.PDFLib.PDFDocument.load(bytes);
+          const copiedPages = await mergedDoc.copyPages(doc, doc.getPageIndices());
+          copiedPages.forEach((p) => mergedDoc.addPage(p));
+        }
+
+        const mergedBytes = await mergedDoc.save();
+        const blob = new Blob([mergedBytes], { type: 'application/pdf' });
+        const downloadBtn = document.getElementById('downloadBtn');
+        downloadBtn.href = URL.createObjectURL(blob);
+        document.getElementById('resultMeta').textContent = `Combined ${files.length} documents into ${(blob.size/1024).toFixed(1)} KB PDF.`;
+        resultBox.style.display = 'block';
+        mergeBtn.textContent = 'Merge Complete';
+      } catch (err) {
+        alert('Merge error: ' + err.message);
+        mergeBtn.disabled = false;
+        mergeBtn.textContent = 'Merge PDFs Now';
+      }
+    });
+  </script>
+</Layout>
+
+<style>
+  .tool-page-wrap { padding: 3rem 0; }
+  .tool-grid-layout { display: grid; grid-template-columns: 1fr 300px; gap: 2.5rem; }
+  .privacy-pill { display: inline-block; background: #ECFDF5; color: #047857; font-size: 0.8rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: var(--fb-radius-md); margin-bottom: 1rem; }
+  .tool-header-title { font-size: 2.25rem; font-weight: 900; margin-bottom: 0.5rem; }
+  .tool-header-sub { font-size: 1rem; color: var(--fb-text-muted); margin-bottom: 2rem; }
+  .fb-dropzone { border: 2px dashed var(--fb-border); border-radius: var(--fb-radius-xl); padding: 3.5rem 2rem; text-align: center; cursor: pointer; background: var(--fb-surface); transition: all 0.2s; margin-bottom: 2rem; }
+  .drop-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .file-list-box { background: var(--fb-surface); border: 1px solid var(--fb-border); border-radius: var(--fb-radius-lg); padding: 1.5rem; margin-bottom: 2rem; }
+  .file-list-box ul { padding-left: 1.25rem; margin-top: 0.5rem; }
+  .file-list-box li { margin-bottom: 0.35rem; font-size: 0.9rem; }
+  .result-box { background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: var(--fb-radius-lg); padding: 1.5rem; margin-bottom: 2rem; }
+  @media (max-width: 900px) { .tool-grid-layout { grid-template-columns: 1fr; } }
+</style>

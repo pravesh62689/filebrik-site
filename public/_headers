@@ -1,0 +1,6 @@
+# Security and Caching Headers for Cloudflare Pages
+# Note: Zero global COOP/COEP to allow third-party embedded tools, external iframes, and cross-origin CDNs
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin

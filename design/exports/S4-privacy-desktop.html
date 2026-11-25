@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Architecture & Policy - FileBrik</title>
+  <style>
+/* FileBrik Design System - Core CSS Tokens (no Tailwind CDN) */
+:root {
+  /* Color Palette */
+  --fb-primary: #4F46E5;
+  --fb-primary-hover: #4338CA;
+  --fb-primary-light: #EEF2FF;
+  --fb-secondary: #0D9488;
+  --fb-secondary-hover: #0F766E;
+  --fb-accent: #F59E0B;
+  --fb-danger: #EF4444;
+  --fb-success: #10B981;
+
+  /* Surfaces & Backgrounds */
+  --fb-bg: #F8FAFC;
+  --fb-surface: #FFFFFF;
+  --fb-surface-alt: #F1F5F9;
+  --fb-surface-hover: #F8FAFC;
+  --fb-border: #E2E8F0;
+  --fb-border-focus: #818CF8;
+
+  /* Typography */
+  --fb-font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --fb-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --fb-text-main: #0F172A;
+  --fb-text-muted: #64748B;
+  --fb-text-light: #94A3B8;
+
+  /* Spacing Scale */
+  --fb-space-1: 0.25rem;  /* 4px */
+  --fb-space-2: 0.5rem;   /* 8px */
+  --fb-space-3: 0.75rem;  /* 12px */
+  --fb-space-4: 1rem;     /* 16px */
+  --fb-space-5: 1.25rem;  /* 20px */
+  --fb-space-6: 1.5rem;   /* 24px */
+  --fb-space-8: 2rem;     /* 32px */
+  --fb-space-10: 2.5rem;  /* 40px */
+  --fb-space-12: 3rem;    /* 48px */
+
+  /* Borders & Radius */
+  --fb-radius-sm: 6px;
+  --fb-radius-md: 10px;
+  --fb-radius-lg: 16px;
+  --fb-radius-full: 9999px;
+
+  /* Shadows */
+  --fb-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --fb-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+  --fb-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+
+  /* Transitions */
+  --fb-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --fb-transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fb-bg: #0B0F19;
+    --fb-surface: #111827;
+    --fb-surface-alt: #1F2937;
+    --fb-surface-hover: #1E293B;
+    --fb-border: #2D3748;
+    --fb-border-focus: #6366F1;
+    --fb-text-main: #F9FAFB;
+    --fb-text-muted: #9CA3AF;
+    --fb-text-light: #6B7280;
+    --fb-primary-light: rgba(79, 70, 229, 0.15);
+  }
+}
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--fb-font-sans); background: var(--fb-bg); color: var(--fb-text-main); line-height: 1.6; }
+    .header { background: var(--fb-surface); border-bottom: 1px solid var(--fb-border); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 1.35rem; font-weight: 800; color: var(--fb-primary); text-decoration: none; }
+    .content-wrap { max-width: 820px; margin: 3rem auto; padding: 0 1.5rem; }
+    .privacy-card { background: var(--fb-surface); border: 1px solid var(--fb-border); border-radius: var(--fb-radius-xl); padding: 3rem; box-shadow: var(--fb-shadow-sm); }
+    h1 { font-size: 2.25rem; font-weight: 900; margin-bottom: 1rem; color: #0F172A; }
+    .last-updated { font-size: 0.85rem; color: var(--fb-text-muted); margin-bottom: 2rem; }
+    h2 { font-size: 1.4rem; font-weight: 800; margin: 2rem 0 0.75rem; color: var(--fb-text-main); border-bottom: 1px solid var(--fb-border); padding-bottom: 0.5rem; }
+    p { margin-bottom: 1rem; color: #334155; }
+    ul { margin-bottom: 1.5rem; padding-left: 1.5rem; color: #334155; }
+    li { margin-bottom: 0.5rem; }
+    .callout { background: #EEF2FF; border-left: 4px solid var(--fb-primary); padding: 1.25rem; border-radius: 0 var(--fb-radius-md) var(--fb-radius-md) 0; margin: 1.5rem 0; }
+    .callout b { color: var(--fb-primary); }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <a href="/" class="logo">⚡ FileBrik</a>
+  </header>
+
+  <main class="content-wrap">
+    <article class="privacy-card">
+      <h1>Privacy Policy & Architecture</h1>
+      <div class="last-updated">Effective Date: November 2026 • Version 1.0</div>
+
+      <div class="callout">
+        <b>Core Privacy Commitment:</b> FileBrik is built from the ground up on a strict client-side architecture. We do not possess, operate, or maintain any backend servers that accept or store your uploaded files.
+      </div>
+
+      <h2>1. Technical Architecture & File Processing</h2>
+      <p>When you use any utility on FileBrik (such as Compress PDF, Exam Resizer, or Audio Trimmer), your files are processed entirely inside your web browser's local sandbox memory using client-side WebAssembly and HTML5 Canvas APIs.</p>
+      <ul>
+        <li><b>Zero Upload:</b> Your files never transit across the internet to our systems or third-party servers.</li>
+        <li><b>Instant Deletion:</b> As soon as you close or reload the browser tab, all temporary memory allocations are destroyed by your device's operating system.</li>
+        <li><b>Confidential Records:</b> You can safely process bank statements, tax filings, legal agreements, and biometric photos with complete peace of mind.</li>
+      </ul>
+
+      <h2>2. Web Analytics & Aggregated Metrics</h2>
+      <p>We respect user anonymity. We do not deploy invasive third-party fingerprinting trackers. We collect minimal aggregate telemetry (such as page views, country of origin, and tool usage frequencies) to monitor platform health and optimize tool performance.</p>
+
+      <h2>3. Advertising Standards & Disclosures</h2>
+      <p>FileBrik is sustained via non-intrusive programmatic advertisements. All advertising containers adhere to Cumulative Layout Shift (CLS) safety standards and maintain reserved height boundaries to ensure a smooth reading experience. Legal, policy, and tool runner views maintain zero intrusive ad formats.</p>
+
+      <h2>4. GDPR & CCPA Compliance</h2>
+      <p>Because FileBrik does not ingest, transmit, or retain personal document files or personally identifiable information (PII) on backend infrastructure, we are GDPR and CCPA compliant by architectural design.</p>
+    </article>
+  </main>
+</body>
+</html>

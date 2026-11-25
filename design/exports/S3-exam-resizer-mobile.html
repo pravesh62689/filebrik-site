@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Exam Photo & Signature Resizer - FileBrik Mobile</title>
+  <style>
+/* FileBrik Design System - Core CSS Tokens (no Tailwind CDN) */
+:root {
+  /* Color Palette */
+  --fb-primary: #4F46E5;
+  --fb-primary-hover: #4338CA;
+  --fb-primary-light: #EEF2FF;
+  --fb-secondary: #0D9488;
+  --fb-secondary-hover: #0F766E;
+  --fb-accent: #F59E0B;
+  --fb-danger: #EF4444;
+  --fb-success: #10B981;
+
+  /* Surfaces & Backgrounds */
+  --fb-bg: #F8FAFC;
+  --fb-surface: #FFFFFF;
+  --fb-surface-alt: #F1F5F9;
+  --fb-surface-hover: #F8FAFC;
+  --fb-border: #E2E8F0;
+  --fb-border-focus: #818CF8;
+
+  /* Typography */
+  --fb-font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --fb-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --fb-text-main: #0F172A;
+  --fb-text-muted: #64748B;
+  --fb-text-light: #94A3B8;
+
+  /* Spacing Scale */
+  --fb-space-1: 0.25rem;  /* 4px */
+  --fb-space-2: 0.5rem;   /* 8px */
+  --fb-space-3: 0.75rem;  /* 12px */
+  --fb-space-4: 1rem;     /* 16px */
+  --fb-space-5: 1.25rem;  /* 20px */
+  --fb-space-6: 1.5rem;   /* 24px */
+  --fb-space-8: 2rem;     /* 32px */
+  --fb-space-10: 2.5rem;  /* 40px */
+  --fb-space-12: 3rem;    /* 48px */
+
+  /* Borders & Radius */
+  --fb-radius-sm: 6px;
+  --fb-radius-md: 10px;
+  --fb-radius-lg: 16px;
+  --fb-radius-full: 9999px;
+
+  /* Shadows */
+  --fb-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --fb-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+  --fb-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+
+  /* Transitions */
+  --fb-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --fb-transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fb-bg: #0B0F19;
+    --fb-surface: #111827;
+    --fb-surface-alt: #1F2937;
+    --fb-surface-hover: #1E293B;
+    --fb-border: #2D3748;
+    --fb-border-focus: #6366F1;
+    --fb-text-main: #F9FAFB;
+    --fb-text-muted: #9CA3AF;
+    --fb-text-light: #6B7280;
+    --fb-primary-light: rgba(79, 70, 229, 0.15);
+  }
+}
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--fb-font-sans); background: var(--fb-bg); color: var(--fb-text-main); line-height: 1.4; padding-bottom: 2rem; }
+    .mobile-header { background: var(--fb-surface); border-bottom: 1px solid var(--fb-border); padding: 0.85rem 1rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
+    .logo { font-size: 1.15rem; font-weight: 800; color: var(--fb-primary); text-decoration: none; }
+    .container { padding: 1rem; }
+    .badge { display: inline-block; background: #EEF2FF; color: var(--fb-primary); padding: 0.25rem 0.6rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.5rem; }
+    h1 { font-size: 1.45rem; font-weight: 800; margin-bottom: 0.35rem; }
+    p.sub { font-size: 0.85rem; color: var(--fb-text-muted); margin-bottom: 1.25rem; }
+    .card { background: var(--fb-surface); border: 1px solid var(--fb-border); border-radius: var(--fb-radius-lg); padding: 1.25rem; margin-bottom: 1rem; box-shadow: var(--fb-shadow-sm); }
+    .field-label { display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.35rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--fb-text-muted); }
+    .preset-select { width: 100%; padding: 0.75rem; border: 1px solid var(--fb-primary); border-radius: var(--fb-radius-md); font-size: 0.9rem; font-weight: 600; background: #FAF5FF; margin-bottom: 1rem; color: #4F46E5; }
+    .req-box { background: var(--fb-surface-alt); border-radius: var(--fb-radius-md); padding: 0.75rem; font-size: 0.8rem; margin-bottom: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .req-item b { display: block; color: var(--fb-text-main); font-size: 0.85rem; }
+    .dropzone-mobile { border: 2px dashed var(--fb-border); border-radius: var(--fb-radius-md); padding: 1.5rem 1rem; text-align: center; background: var(--fb-surface-alt); margin-bottom: 1rem; cursor: pointer; }
+    .btn-mobile { width: 100%; background: var(--fb-primary); color: white; padding: 0.85rem; border-radius: var(--fb-radius-md); font-size: 0.95rem; font-weight: 700; border: none; box-shadow: var(--fb-shadow-sm); }
+    .verified-pill { display: flex; align-items: center; gap: 0.25rem; color: #059669; font-size: 0.75rem; font-weight: 700; margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+  <div class="mobile-header">
+    <a href="/" class="logo">⚡ FileBrik</a>
+    <span style="font-size: 0.8rem; font-weight: 700; color: #0D9488;">Client-Side</span>
+  </div>
+
+  <div class="container">
+    <span class="badge">Official Exam Specs</span>
+    <h1>Exam Photo & Signature Resizer</h1>
+    <p class="sub">Auto-scale to exact dimension, KB limit, and 200/300 DPI for government exam forms.</p>
+
+    <div class="card">
+      <label class="field-label">Select Exam / Recruitment Portal</label>
+      <select class="preset-select">
+        <option>UPSC Civil Services (Photo: 20-300KB, Sig: 20-300KB)</option>
+        <option>SSC CGL / CHSL (Photo: 20-50KB, Sig: 10-20KB)</option>
+        <option>IBPS PO / Clerk (Photo: 20-50KB, Sig: 10-20KB)</option>
+        <option>NTA NEET UG (Postcard 4x6 & Passport, 10-200KB)</option>
+        <option>Passport Seva Kendra (4.5 x 3.5cm, Under 200KB)</option>
+        <option>PAN Card NSDL / UTI (Photo 200 DPI, 20-50KB)</option>
+      </select>
+
+      <div class="req-box">
+        <div class="req-item">Photo Specs:<b>3.5 x 4.5 cm (20-50 KB)</b></div>
+        <div class="req-item">Signature Specs:<b>4.0 x 2.0 cm (10-20 KB)</b></div>
+      </div>
+
+      <label class="field-label">1. Upload Candidate Photograph</label>
+      <div class="dropzone-mobile">
+        <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">📸</div>
+        <div style="font-size: 0.85rem; font-weight: 700;">Tap to select photo</div>
+        <div style="font-size: 0.75rem; color: #64748B;">Auto-injects 200 DPI metadata</div>
+      </div>
+
+      <label class="field-label">2. Upload Signature</label>
+      <div class="dropzone-mobile">
+        <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">✍️</div>
+        <div style="font-size: 0.85rem; font-weight: 700;">Tap to select signature</div>
+        <div style="font-size: 0.75rem; color: #64748B;">Auto-crops to crisp black & white</div>
+      </div>
+
+      <button class="btn-mobile">Download Portal-Ready Files (ZIP)</button>
+      <div class="verified-pill">✓ Verified against official 2026 examination notices</div>
+    </div>
+  </div>
+</body>
+</html>

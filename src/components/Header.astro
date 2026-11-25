@@ -1,0 +1,76 @@
+---
+// src/components/Header.astro
+---
+<header class="fb-header">
+  <div class="fb-container header-inner">
+    <a href="/" class="fb-logo">
+      <span class="logo-icon">⚡</span>
+      <span class="logo-text">FileBrik</span>
+      <span class="logo-pill">100% Private</span>
+    </a>
+    <nav class="fb-nav">
+      <a href="/tools/compress-pdf">Compress PDF</a>
+      <a href="/tools/merge-pdf">Merge PDF</a>
+      <a href="/tools/exam-photo-signature-resizer">Exam Resizer</a>
+      <a href="/tools/compress-image-kb">Compress Image</a>
+      <a href="/privacy">Privacy</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .fb-header {
+    background: var(--fb-surface);
+    border-bottom: 1px solid var(--fb-border);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    backdrop-filter: blur(8px);
+  }
+  .header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 4rem;
+  }
+  .fb-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--fb-text-main);
+  }
+  .logo-icon {
+    color: var(--fb-primary);
+  }
+  .logo-pill {
+    background: var(--fb-primary-light);
+    color: var(--fb-primary);
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--fb-radius-full);
+    font-weight: 700;
+  }
+  .fb-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .fb-nav a {
+    text-decoration: none;
+    color: var(--fb-text-muted);
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: color 0.15s;
+  }
+  .fb-nav a:hover {
+    color: var(--fb-primary);
+  }
+  @media (max-width: 768px) {
+    .fb-nav {
+      display: none;
+    }
+  }
+</style>

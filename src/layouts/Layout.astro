@@ -1,0 +1,49 @@
+---
+// src/layouts/Layout.astro
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  toolSlug?: string;
+}
+
+const { title, description, toolSlug } = Astro.props;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site || 'https://filebrik.com');
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title} | FileBrik</title>
+  <meta name="description" content={description}>
+  <link rel="canonical" href={canonicalUrl.href}>
+
+  <!-- Open Graph / Meta -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content={canonicalUrl.href}>
+  <meta property="og:title" content={`${title} | FileBrik`}>
+  <meta property="og:description" content={description}>
+  <meta property="og:site_name" content="FileBrik">
+
+  <!-- Core Tokens & Global CSS -->
+  <link rel="stylesheet" href="/styles/tokens.css">
+  <link rel="stylesheet" href="/styles/global.css">
+
+  <script is:inline>
+    // Initialize client push worker registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+  </script>
+</head>
+<body>
+  <Header />
+  <slot />
+  <Footer />
+</body>
+</html>

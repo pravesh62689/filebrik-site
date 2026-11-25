@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compress PDF Client-Side - FileBrik</title>
+  <style>
+/* FileBrik Design System - Core CSS Tokens (no Tailwind CDN) */
+:root {
+  /* Color Palette */
+  --fb-primary: #4F46E5;
+  --fb-primary-hover: #4338CA;
+  --fb-primary-light: #EEF2FF;
+  --fb-secondary: #0D9488;
+  --fb-secondary-hover: #0F766E;
+  --fb-accent: #F59E0B;
+  --fb-danger: #EF4444;
+  --fb-success: #10B981;
+
+  /* Surfaces & Backgrounds */
+  --fb-bg: #F8FAFC;
+  --fb-surface: #FFFFFF;
+  --fb-surface-alt: #F1F5F9;
+  --fb-surface-hover: #F8FAFC;
+  --fb-border: #E2E8F0;
+  --fb-border-focus: #818CF8;
+
+  /* Typography */
+  --fb-font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --fb-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --fb-text-main: #0F172A;
+  --fb-text-muted: #64748B;
+  --fb-text-light: #94A3B8;
+
+  /* Spacing Scale */
+  --fb-space-1: 0.25rem;  /* 4px */
+  --fb-space-2: 0.5rem;   /* 8px */
+  --fb-space-3: 0.75rem;  /* 12px */
+  --fb-space-4: 1rem;     /* 16px */
+  --fb-space-5: 1.25rem;  /* 20px */
+  --fb-space-6: 1.5rem;   /* 24px */
+  --fb-space-8: 2rem;     /* 32px */
+  --fb-space-10: 2.5rem;  /* 40px */
+  --fb-space-12: 3rem;    /* 48px */
+
+  /* Borders & Radius */
+  --fb-radius-sm: 6px;
+  --fb-radius-md: 10px;
+  --fb-radius-lg: 16px;
+  --fb-radius-full: 9999px;
+
+  /* Shadows */
+  --fb-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --fb-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+  --fb-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+
+  /* Transitions */
+  --fb-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --fb-transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fb-bg: #0B0F19;
+    --fb-surface: #111827;
+    --fb-surface-alt: #1F2937;
+    --fb-surface-hover: #1E293B;
+    --fb-border: #2D3748;
+    --fb-border-focus: #6366F1;
+    --fb-text-main: #F9FAFB;
+    --fb-text-muted: #9CA3AF;
+    --fb-text-light: #6B7280;
+    --fb-primary-light: rgba(79, 70, 229, 0.15);
+  }
+}
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--fb-font-sans); background: var(--fb-bg); color: var(--fb-text-main); line-height: 1.5; }
+    .header { background: var(--fb-surface); border-bottom: 1px solid var(--fb-border); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 1.35rem; font-weight: 800; color: var(--fb-primary); text-decoration: none; }
+    .tool-layout { max-width: 1200px; margin: 2.5rem auto; padding: 0 1.5rem; display: grid; grid-template-columns: 1fr 300px; gap: 2rem; }
+    .tool-container { background: var(--fb-surface); border: 1px solid var(--fb-border); border-radius: var(--fb-radius-xl); padding: 2.5rem; box-shadow: var(--fb-shadow-sm); }
+    .tool-title { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .tool-desc { color: var(--fb-text-muted); font-size: 1rem; margin-bottom: 2rem; }
+    .dropzone { border: 2px dashed var(--fb-border); border-radius: var(--fb-radius-lg); padding: 3.5rem 1.5rem; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--fb-surface-alt); margin-bottom: 2rem; }
+    .dropzone:hover { border-color: var(--fb-primary); background: var(--fb-primary-light); }
+    .dropzone-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .dropzone h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .dropzone p { color: var(--fb-text-muted); font-size: 0.9rem; }
+    .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--fb-text-main); }
+    .select, .range { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--fb-border); border-radius: var(--fb-radius-md); font-size: 0.95rem; font-family: inherit; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; background: var(--fb-primary); color: white; padding: 0.85rem 2rem; border-radius: var(--fb-radius-md); font-size: 1rem; font-weight: 700; border: none; cursor: pointer; transition: background 0.2s; width: 100%; box-shadow: var(--fb-shadow-sm); }
+    .btn:hover { background: var(--fb-primary-hover); }
+    .ad-placeholder { background: var(--fb-surface); border: 1px solid var(--fb-border); border-radius: var(--fb-radius-lg); height: 600px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1rem; color: var(--fb-text-light); font-size: 0.8rem; box-shadow: var(--fb-shadow-sm); }
+    .badge-privacy { display: inline-flex; align-items: center; gap: 0.4rem; background: #ECFDF5; color: #047857; padding: 0.4rem 0.8rem; border-radius: var(--fb-radius-md); font-size: 0.85rem; font-weight: 700; margin-bottom: 1.5rem; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <a href="/" class="logo">⚡ FileBrik</a>
+  </header>
+
+  <main class="tool-layout">
+    <div class="tool-container">
+      <div class="badge-privacy">🛡️ Processed 100% in your browser memory via pdf-lib</div>
+      <h1 class="tool-title">Compress PDF File</h1>
+      <p class="tool-desc">Drastically reduce file size without losing text sharpness or document formatting.</p>
+
+      <div class="dropzone">
+        <div class="dropzone-icon">📄</div>
+        <h3>Drop your PDF file here</h3>
+        <p>or click to browse from device (Up to 250MB)</p>
+      </div>
+
+      <div class="settings-grid">
+        <div class="form-group">
+          <label>Target Size Preset</label>
+          <select class="select">
+            <option>Balanced Compression (Recommended, ~50% reduction)</option>
+            <option>Fit under 100 KB (Strict exam & portal requirement)</option>
+            <option>Fit under 200 KB (Govt upload portals)</option>
+            <option>Fit under 500 KB (Email attachment safe)</option>
+            <option>Maximum Extreme Compression (Low DPI)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Image Quality Retention</label>
+          <select class="select">
+            <option>High Quality (150 DPI text & graphics)</option>
+            <option>Medium Quality (96 DPI screen readable)</option>
+            <option>Draft Quality (72 DPI minimum size)</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn">Compress PDF Now</button>
+    </div>
+
+    <aside>
+      <div class="ad-placeholder">
+        <p>Sponsored Slot (CLS-Safe 300x600)</p>
+        <span style="font-size: 0.7rem; margin-top: 0.5rem;">Reserved advertising container</span>
+      </div>
+    </aside>
+  </main>
+</body>
+</html>

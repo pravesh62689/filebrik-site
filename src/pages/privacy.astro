@@ -1,0 +1,50 @@
+---
+// src/pages/privacy.astro
+import Layout from '../layouts/Layout.astro';
+---
+<Layout
+  title="Privacy Architecture & Policy"
+  description="FileBrik runs 100% in your browser. We never upload, view, or store your documents, photos, or audio files on any servers."
+>
+  <main class="legal-wrap">
+    <div class="fb-container fb-container-narrow">
+      <article class="fb-card legal-card">
+        <h1>Privacy Architecture & Policy</h1>
+        <div class="legal-date">Last Updated: November 2026 • Version 1.0</div>
+
+        <div class="privacy-callout">
+          <b>Our Architectural Guarantee:</b> FileBrik operates without file-ingestion servers. Your files never cross the internet or touch cloud storage.
+        </div>
+
+        <h2>1. Client-Side Only Processing</h2>
+        <p>Every tool offered on FileBrik—including PDF compression, exam photo resizing, and image conversion—is executed locally on your device via client-side WebAssembly, JavaScript, and HTML5 Canvas.</p>
+        <ul>
+          <li><b>Zero Transmission:</b> Document bytes remain inside your browser sandbox.</li>
+          <li><b>Ephemeral RAM:</b> Temporary memory allocations are erased upon closing or refreshing the tab.</li>
+          <li><b>Sensitive Documents:</b> Tax forms, bank slips, medical charts, and government IDs remain confidential.</li>
+        </ul>
+
+        <h2>2. Data Collection & Analytics</h2>
+        <p>We respect privacy by design. We do not track individual identities across the web. We measure only basic aggregated site usage (page hits, country, device category) to ensure system stability.</p>
+
+        <h2>3. Advertisements & Monetization</h2>
+        <p>FileBrik is supported through ethical programmatic advertisements. Legal pages, policy documents, and tool processing windows remain free of intrusive pop-ups. All banner containers reserve CLS space.</p>
+
+        <h2>4. Contact Information</h2>
+        <p>If you have questions regarding our client-side architecture, contact us at privacy@filebrik.com.</p>
+      </article>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .legal-wrap { padding: 4rem 0; }
+  .legal-card { padding: 3rem; }
+  .legal-card h1 { font-size: 2.25rem; font-weight: 900; margin-bottom: 0.5rem; }
+  .legal-date { font-size: 0.85rem; color: var(--fb-text-muted); margin-bottom: 2rem; }
+  .privacy-callout { background: #EEF2FF; border-left: 4px solid var(--fb-primary); padding: 1.25rem; border-radius: 0 var(--fb-radius-md) var(--fb-radius-md) 0; margin-bottom: 2rem; font-size: 0.95rem; }
+  .legal-card h2 { font-size: 1.35rem; font-weight: 800; margin: 2rem 0 0.75rem; border-bottom: 1px solid var(--fb-border); padding-bottom: 0.5rem; }
+  .legal-card p { font-size: 0.95rem; line-height: 1.6; color: #334155; margin-bottom: 1rem; }
+  .legal-card ul { padding-left: 1.5rem; margin-bottom: 1.5rem; color: #334155; }
+  .legal-card li { margin-bottom: 0.5rem; font-size: 0.95rem; }
+</style>

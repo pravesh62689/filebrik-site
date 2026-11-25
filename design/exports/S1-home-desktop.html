@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FileBrik - 100% Private, Client-Side PDF & Media Tools</title>
+  <style>
+/* FileBrik Design System - Core CSS Tokens (no Tailwind CDN) */
+:root {
+  /* Color Palette */
+  --fb-primary: #4F46E5;
+  --fb-primary-hover: #4338CA;
+  --fb-primary-light: #EEF2FF;
+  --fb-secondary: #0D9488;
+  --fb-secondary-hover: #0F766E;
+  --fb-accent: #F59E0B;
+  --fb-danger: #EF4444;
+  --fb-success: #10B981;
+
+  /* Surfaces & Backgrounds */
+  --fb-bg: #F8FAFC;
+  --fb-surface: #FFFFFF;
+  --fb-surface-alt: #F1F5F9;
+  --fb-surface-hover: #F8FAFC;
+  --fb-border: #E2E8F0;
+  --fb-border-focus: #818CF8;
+
+  /* Typography */
+  --fb-font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --fb-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --fb-text-main: #0F172A;
+  --fb-text-muted: #64748B;
+  --fb-text-light: #94A3B8;
+
+  /* Spacing Scale */
+  --fb-space-1: 0.25rem;  /* 4px */
+  --fb-space-2: 0.5rem;   /* 8px */
+  --fb-space-3: 0.75rem;  /* 12px */
+  --fb-space-4: 1rem;     /* 16px */
+  --fb-space-5: 1.25rem;  /* 20px */
+  --fb-space-6: 1.5rem;   /* 24px */
+  --fb-space-8: 2rem;     /* 32px */
+  --fb-space-10: 2.5rem;  /* 40px */
+  --fb-space-12: 3rem;    /* 48px */
+
+  /* Borders & Radius */
+  --fb-radius-sm: 6px;
+  --fb-radius-md: 10px;
+  --fb-radius-lg: 16px;
+  --fb-radius-full: 9999px;
+
+  /* Shadows */
+  --fb-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --fb-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+  --fb-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+
+  /* Transitions */
+  --fb-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --fb-transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fb-bg: #0B0F19;
+    --fb-surface: #111827;
+    --fb-surface-alt: #1F2937;
+    --fb-surface-hover: #1E293B;
+    --fb-border: #2D3748;
+    --fb-border-focus: #6366F1;
+    --fb-text-main: #F9FAFB;
+    --fb-text-muted: #9CA3AF;
+    --fb-text-light: #6B7280;
+    --fb-primary-light: rgba(79, 70, 229, 0.15);
+  }
+}
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--fb-font-sans); background: var(--fb-bg); color: var(--fb-text-main); line-height: 1.5; }
+    .header { background: var(--fb-surface); border-bottom: 1px solid var(--fb-border); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
+    .logo { font-size: 1.35rem; font-weight: 800; color: var(--fb-primary); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+    .nav { display: flex; gap: 1.5rem; align-items: center; }
+    .nav a { color: var(--fb-text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 600; }
+    .nav a:hover { color: var(--fb-primary); }
+    .hero { max-width: 900px; margin: 3rem auto 2rem; text-align: center; padding: 0 1.5rem; }
+    .hero h1 { font-size: 2.75rem; font-weight: 900; line-height: 1.2; margin-bottom: 1rem; color: #0F172A; }
+    .hero h1 span { color: var(--fb-primary); }
+    .hero p { font-size: 1.15rem; color: var(--fb-text-muted); max-width: 680px; margin: 0 auto 2rem; }
+    .badge { display: inline-flex; align-items: center; gap: 0.35rem; background: var(--fb-primary-light); color: var(--fb-primary); padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 700; margin-bottom: 1.5rem; }
+    .tools-grid { max-width: 1200px; margin: 0 auto 4rem; padding: 0 1.5rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.25rem; }
+    .tool-card { background: var(--fb-surface); border: 1px solid var(--fb-border); border-radius: var(--fb-radius-lg); padding: 1.5rem; text-decoration: none; color: inherit; transition: all 0.2s; box-shadow: var(--fb-shadow-sm); display: flex; flex-direction: column; }
+    .tool-card:hover { transform: translateY(-3px); box-shadow: var(--fb-shadow-md); border-color: var(--fb-border-focus); }
+    .tool-icon { width: 44px; height: 44px; border-radius: var(--fb-radius-md); background: var(--fb-primary-light); color: var(--fb-primary); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1rem; }
+    .tool-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .tool-card p { font-size: 0.85rem; color: var(--fb-text-muted); line-height: 1.4; flex-grow: 1; }
+    .features { background: var(--fb-surface); border-top: 1px solid var(--fb-border); border-bottom: 1px solid var(--fb-border); padding: 4rem 1.5rem; }
+    .features-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; text-align: center; }
+    .feature h4 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .feature p { font-size: 0.9rem; color: var(--fb-text-muted); }
+    .footer { max-width: 1200px; margin: 0 auto; padding: 3rem 1.5rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: var(--fb-text-muted); }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { color: var(--fb-text-muted); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <a href="/" class="logo">⚡ FileBrik</a>
+    <nav class="nav">
+      <a href="/tools/compress-pdf">Compress PDF</a>
+      <a href="/tools/merge-pdf">Merge PDF</a>
+      <a href="/tools/exam-photo-signature-resizer">Exam Resizer</a>
+      <a href="/privacy">Privacy</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="badge">🔒 100% Client-Side Privacy — Files Never Leave Your Device</div>
+      <h1>Ultra-Fast PDF & Media Tools,<br><span>Zero Server Uploads</span></h1>
+      <p>Compress, merge, convert, and resize exam photos entirely in your browser using WebAssembly. Instant, secure, and private.</p>
+    </section>
+
+    <section class="tools-grid">
+      <a href="/tools/compress-pdf" class="tool-card">
+        <div class="tool-icon">🗜️</div>
+        <h3>Compress PDF</h3>
+        <p>Reduce PDF size to exact target KBs (100KB, 200KB, 500KB) while preserving high readability.</p>
+      </a>
+      <a href="/tools/merge-pdf" class="tool-card">
+        <div class="tool-icon">📑</div>
+        <h3>Merge PDF</h3>
+        <p>Combine multiple documents into one structured PDF file with drag-and-drop page reordering.</p>
+      </a>
+      <a href="/tools/split-pdf" class="tool-card">
+        <div class="tool-icon">✂️</div>
+        <h3>Split PDF</h3>
+        <p>Extract individual pages or custom ranges into standalone lightweight PDF files.</p>
+      </a>
+      <a href="/tools/jpg-to-pdf" class="tool-card">
+        <div class="tool-icon">🖼️</div>
+        <h3>JPG to PDF</h3>
+        <p>Convert multiple photos and scans into a single printable PDF with custom orientation.</p>
+      </a>
+      <a href="/tools/pdf-to-jpg" class="tool-card">
+        <div class="tool-icon">📸</div>
+        <h3>PDF to JPG</h3>
+        <p>Render PDF pages into crisp high-resolution WebP or JPEG images in seconds.</p>
+      </a>
+      <a href="/tools/exam-photo-signature-resizer" class="tool-card">
+        <div class="tool-icon">🎓</div>
+        <h3>Exam Photo & Signature</h3>
+        <p>Official 200/300 DPI, exact dimensions, and KB limits for UPSC, SSC, IBPS, NEET, and PAN.</p>
+      </a>
+      <a href="/tools/compress-image-kb" class="tool-card">
+        <div class="tool-icon">📉</div>
+        <h3>Compress Image to KB</h3>
+        <p>Smart binary search compression to fit strict portal requirements (under 20KB, 50KB, 100KB).</p>
+      </a>
+      <a href="/tools/image-converter" class="tool-card">
+        <div class="tool-icon">🔄</div>
+        <h3>Image Converter</h3>
+        <p>Convert seamlessly between WebP, PNG, JPEG, and AVIF formats right in your memory.</p>
+      </a>
+      <a href="/tools/passport-photo-maker" class="tool-card">
+        <div class="tool-icon">🛂</div>
+        <h3>Passport Photo Maker</h3>
+        <p>Create official 2x2 inch and 35x45mm printable passport photo sheets with cut borders.</p>
+      </a>
+      <a href="/tools/audio-trimmer" class="tool-card">
+        <div class="tool-icon">🎵</div>
+        <h3>Audio Trimmer</h3>
+        <p>Trim MP3, WAV, and AAC voice memos client-side with millisecond waveform precision.</p>
+      </a>
+    </section>
+
+    <section class="features">
+      <div class="features-inner">
+        <div class="feature">
+          <h4>🔒 Absolute Confidentiality</h4>
+          <p>Your bank statements, medical records, and ID proofs never touch external servers or cloud storage.</p>
+        </div>
+        <div class="feature">
+          <h4>⚡ Zero Latency Processing</h4>
+          <p>No uploading or downloading delays. Files process at local memory speed directly on your CPU/GPU.</p>
+        </div>
+        <div class="feature">
+          <h4>📶 Offline-First Architecture</h4>
+          <p>Powered by modern WebAssembly engines that run smoothly even without an active internet connection.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 FileBrik. All processing executed locally on device.</p>
+    <div class="footer-links">
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/terms">Terms of Service</a>
+      <a href="/contact">Contact</a>
+    </div>
+  </footer>
+</body>
+</html>

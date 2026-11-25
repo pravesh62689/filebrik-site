@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+dist/
+.astro/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+secrets/
+*.log
+
+# OS metadata
+.DS_Store
+Thumbs.db

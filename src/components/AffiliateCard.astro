@@ -1,0 +1,80 @@
+---
+// src/components/AffiliateCard.astro
+interface Props {
+  title: string;
+  desc: string;
+  buttonText: string;
+  linkUrl: string;
+  tag?: string;
+}
+
+const { title, desc, buttonText, linkUrl, tag = 'Recommended' } = Astro.props;
+---
+<div class="affiliate-card">
+  <div class="affiliate-header">
+    <span class="affiliate-badge">{tag}</span>
+    <span class="affiliate-disclosure">Sponsored Partner</span>
+  </div>
+  <h3 class="affiliate-title">{title}</h3>
+  <p class="affiliate-desc">{desc}</p>
+  <a href={linkUrl} target="_blank" rel="sponsored nofollow noopener" class="affiliate-btn">
+    {buttonText} →
+  </a>
+</div>
+
+<style>
+  .affiliate-card {
+    background: var(--fb-surface);
+    border: 1px solid var(--fb-border);
+    border-radius: var(--fb-radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--fb-shadow-sm);
+    margin: 2rem 0;
+  }
+  .affiliate-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+  .affiliate-badge {
+    background: #FEF3C7;
+    color: #92400E;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--fb-radius-full);
+  }
+  .affiliate-disclosure {
+    font-size: 0.7rem;
+    color: var(--fb-text-light);
+  }
+  .affiliate-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin-bottom: 0.4rem;
+  }
+  .affiliate-desc {
+    font-size: 0.85rem;
+    color: var(--fb-text-muted);
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
+  }
+  .affiliate-btn {
+    display: inline-block;
+    background: var(--fb-surface-alt);
+    color: var(--fb-text-main);
+    border: 1px solid var(--fb-border);
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    border-radius: var(--fb-radius-md);
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .affiliate-btn:hover {
+    background: var(--fb-primary);
+    color: white;
+    border-color: var(--fb-primary);
+  }
+</style>

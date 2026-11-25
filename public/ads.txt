@@ -1,0 +1,6 @@
+# FileBrik ads.txt placeholder
+# Official publisher verification records will be added upon ad network approval
+google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+monetag.com, XXXXXXXXXXXXXXXX, DIRECT
+adsterra.com, XXXXXXXXXXXXXXXX, DIRECT
+clickadu.com, XXXXXXXXXXXXXXXX, DIRECT

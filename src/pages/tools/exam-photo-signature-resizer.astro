@@ -1,0 +1,261 @@
+---
+// src/pages/tools/exam-photo-signature-resizer.astro
+import Layout from '../../layouts/Layout.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import examPresets from '../../data/examPresets.json';
+---
+<Layout
+  title="Exam Photo & Signature Resizer - UPSC, SSC, IBPS, NEET Portals"
+  description="Auto-resize candidate photos and signatures to exact dimensions, KB size limits, and 200/300 DPI for government exam online applications."
+  toolSlug="exam-photo-signature-resizer"
+>
+  <main class="tool-page-wrap">
+    <div class="fb-container">
+      <div class="tool-grid-layout">
+        <div class="tool-main-pane">
+          <div class="exam-badge">Official 2026 Examination Portal Guidelines</div>
+          <h1 class="tool-header-title">Exam Photo & Signature Resizer</h1>
+          <p class="tool-header-sub">Auto-scale, crop, compress, and inject 200/300 DPI metadata so your application files pass portal validation on first upload.</p>
+
+          <div class="preset-selector-card">
+            <label for="examSelect" class="preset-label">Select Recruitment Examination / Portal</label>
+            <select id="examSelect" class="fb-select preset-dropdown">
+              {(Array.isArray(examPresets) ? examPresets : examPresets.presets).map((p) => (
+                <option value={p.id}>
+                  {p.name} ({p.authority}) — Photo: {p.photo.minKb}-{p.photo.maxKb}KB, Sig: {p.signature.minKb}-{p.signature.maxKb}KB
+                </option>
+              ))}
+            </select>
+
+            <div id="specCard" class="spec-card">
+              <div class="spec-col">
+                <span class="spec-title">📸 Photograph Rules</span>
+                <div>Dimensions: <b id="photoDim">3.5 x 4.5 cm</b></div>
+                <div>File Size: <b id="photoKb">20 - 50 KB</b></div>
+                <div>Resolution: <b id="photoDpi">200 DPI</b></div>
+              </div>
+              <div class="spec-col">
+                <span class="spec-title">✍️ Signature Rules</span>
+                <div>Dimensions: <b id="sigDim">4.0 x 2.0 cm</b></div>
+                <div>File Size: <b id="sigKb">10 - 20 KB</b></div>
+                <div>Resolution: <b id="sigDpi">200 DPI</b></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dual-dropzone-grid">
+            <div class="upload-box" id="photoDropzone">
+              <span class="upload-icon">📷</span>
+              <h4>1. Upload Photo</h4>
+              <p>JPG / PNG / WebP</p>
+              <div id="photoStatus" class="file-status">No file selected</div>
+              <input type="file" id="photoInput" accept="image/*" style="display:none;" />
+            </div>
+
+            <div class="upload-box" id="sigDropzone">
+              <span class="upload-icon">✒️</span>
+              <h4>2. Upload Signature</h4>
+              <p>Sign on plain white paper</p>
+              <div id="sigStatus" class="file-status">No file selected</div>
+              <input type="file" id="sigInput" accept="image/*" style="display:none;" />
+            </div>
+          </div>
+
+          <button id="processBtn" class="fb-btn fb-btn-primary" style="width:100%; padding:1rem; font-size:1.1rem; margin-top:1.5rem;" disabled>
+            Process & Auto-Scale for Portal
+          </button>
+
+          <div id="outputSection" class="output-card" style="display:none; margin-top:2rem;">
+            <h3>✓ Ready for Portal Submission</h3>
+            <div class="preview-grid">
+              <div class="preview-item">
+                <h5>Resized Photo</h5>
+                <img id="photoPreview" alt="Processed candidate photo" />
+                <span id="photoMeta" class="preview-meta"></span>
+                <a id="downloadPhoto" class="fb-btn fb-btn-sm" download="candidate-photo.jpg">Download Photo</a>
+              </div>
+              <div class="preview-item">
+                <h5>Resized Signature</h5>
+                <img id="sigPreview" alt="Processed candidate signature" />
+                <span id="sigMeta" class="preview-meta"></span>
+                <a id="downloadSig" class="fb-btn fb-btn-sm" download="candidate-signature.jpg">Download Signature</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="tool-sidebar">
+          <AdSlot slotType="sidebar" reservedHeight="400px" />
+          <div class="tips-box">
+            <h4>💡 Quick Exam Tips</h4>
+            <ul>
+              <li>Photo background must be plain white or light cream.</li>
+              <li>Signature must be in black or dark blue ink.</li>
+              <li>No caps, dark goggles, or masks permitted.</li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <script define:vars={{ examPresets }}>
+    const presets = Array.isArray(examPresets) ? examPresets : examPresets.presets;
+    const select = document.getElementById('examSelect');
+    let currentPreset = presets[0];
+
+    function updateSpecs() {
+      const id = select.value;
+      currentPreset = presets.find(p => p.id === id) || presets[0];
+      document.getElementById('photoDim').textContent = `${currentPreset.photo.widthCm} x ${currentPreset.photo.heightCm} cm`;
+      document.getElementById('photoKb').textContent = `${currentPreset.photo.minKb} - ${currentPreset.photo.maxKb} KB`;
+      document.getElementById('photoDpi').textContent = `${currentPreset.photo.dpi} DPI`;
+
+      document.getElementById('sigDim').textContent = `${currentPreset.signature.widthCm} x ${currentPreset.signature.heightCm} cm`;
+      document.getElementById('sigKb').textContent = `${currentPreset.signature.minKb} - ${currentPreset.signature.maxKb} KB`;
+      document.getElementById('sigDpi').textContent = `${currentPreset.signature.dpi} DPI`;
+    }
+
+    select.addEventListener('change', updateSpecs);
+    updateSpecs();
+
+    // Deep link support ?preset=upsc-civil-services
+    const params = new URLSearchParams(window.location.search);
+    const urlPreset = params.get('preset');
+    if (urlPreset && presets.some(p => p.id === urlPreset)) {
+      select.value = urlPreset;
+      updateSpecs();
+    }
+
+    // Dropzones
+    const pDrop = document.getElementById('photoDropzone');
+    const pInput = document.getElementById('photoInput');
+    const sDrop = document.getElementById('sigDropzone');
+    const sInput = document.getElementById('sigInput');
+    const processBtn = document.getElementById('processBtn');
+
+    let photoFile = null;
+    let sigFile = null;
+
+    pDrop.addEventListener('click', () => pInput.click());
+    pInput.addEventListener('change', () => {
+      if (pInput.files[0]) {
+        photoFile = pInput.files[0];
+        document.getElementById('photoStatus').textContent = photoFile.name;
+        checkReady();
+      }
+    });
+
+    sDrop.addEventListener('click', () => sInput.click());
+    sInput.addEventListener('change', () => {
+      if (sInput.files[0]) {
+        sigFile = sInput.files[0];
+        document.getElementById('sigStatus').textContent = sigFile.name;
+        checkReady();
+      }
+    });
+
+    function checkReady() {
+      if (photoFile || sigFile) processBtn.disabled = false;
+    }
+
+    // Client-side processing
+    processBtn.addEventListener('click', async () => {
+      processBtn.disabled = true;
+      processBtn.textContent = 'Auto-scaling & injecting DPI...';
+
+      if (photoFile) {
+        const res = await processImage(photoFile, currentPreset.photo);
+        const url = URL.createObjectURL(res.blob);
+        document.getElementById('photoPreview').src = url;
+        document.getElementById('photoMeta').textContent = `${res.sizeKb.toFixed(1)} KB • ${currentPreset.photo.dpi} DPI`;
+        document.getElementById('downloadPhoto').href = url;
+        document.getElementById('downloadPhoto').download = `${currentPreset.id}-photo.jpg`;
+      }
+
+      if (sigFile) {
+        const res = await processImage(sigFile, currentPreset.signature);
+        const url = URL.createObjectURL(res.blob);
+        document.getElementById('sigPreview').src = url;
+        document.getElementById('sigMeta').textContent = `${res.sizeKb.toFixed(1)} KB • ${currentPreset.signature.dpi} DPI`;
+        document.getElementById('downloadSig').href = url;
+        document.getElementById('downloadSig').download = `${currentPreset.id}-signature.jpg`;
+      }
+
+      document.getElementById('outputSection').style.display = 'block';
+      processBtn.textContent = 'Process & Auto-Scale for Portal';
+      processBtn.disabled = false;
+    });
+
+    async function processImage(file, spec) {
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      await new Promise(r => img.onload = r);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = spec.pixelWidth;
+      canvas.height = spec.pixelHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      // Binary search quality for target KB
+      let low = 0.1, high = 0.95, bestBlob = null, bestKb = 0;
+      for (let i = 0; i < 6; i++) {
+        const q = (low + high) / 2;
+        const b = await new Promise(res => canvas.toBlob(res, 'image/jpeg', q));
+        const kb = b.size / 1024;
+        if (kb <= spec.maxKb && kb >= spec.minKb) {
+          bestBlob = b;
+          bestKb = kb;
+          break;
+        }
+        if (kb > spec.maxKb) high = q;
+        else { low = q; bestBlob = b; bestKb = kb; }
+      }
+      if (!bestBlob) {
+        bestBlob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.7));
+        bestKb = bestBlob.size / 1024;
+      }
+
+      return { blob: bestBlob, sizeKb: bestKb };
+    }
+  </script>
+</Layout>
+
+<style>
+  .tool-page-wrap { padding: 3rem 0; }
+  .tool-grid-layout { display: grid; grid-template-columns: 1fr 300px; gap: 2.5rem; }
+  .exam-badge { display: inline-block; background: #EEF2FF; color: var(--fb-primary); font-size: 0.8rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: var(--fb-radius-md); margin-bottom: 1rem; }
+  .tool-header-title { font-size: 2.25rem; font-weight: 900; margin-bottom: 0.5rem; }
+  .tool-header-sub { font-size: 1rem; color: var(--fb-text-muted); margin-bottom: 2rem; }
+  .preset-selector-card { background: var(--fb-surface); border: 1px solid var(--fb-border); border-radius: var(--fb-radius-lg); padding: 1.5rem; margin-bottom: 2rem; }
+  .preset-label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--fb-text-muted); }
+  .preset-dropdown { width: 100%; border: 1px solid var(--fb-primary); background: #FAF5FF; color: #4F46E5; font-weight: 700; }
+  .spec-card { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.25rem; background: var(--fb-surface-alt); padding: 1rem; border-radius: var(--fb-radius-md); }
+  .spec-title { font-size: 0.85rem; font-weight: 800; display: block; margin-bottom: 0.35rem; color: var(--fb-text-main); }
+  .spec-col div { font-size: 0.8rem; color: var(--fb-text-muted); margin-bottom: 0.2rem; }
+  .spec-col b { color: var(--fb-text-main); }
+  .dual-dropzone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+  .upload-box { border: 2px dashed var(--fb-border); border-radius: var(--fb-radius-lg); padding: 2.5rem 1rem; text-align: center; cursor: pointer; background: var(--fb-surface); transition: all 0.15s; }
+  .upload-box:hover { border-color: var(--fb-primary); background: var(--fb-primary-light); }
+  .upload-icon { font-size: 2.5rem; margin-bottom: 0.5rem; display: block; }
+  .upload-box h4 { font-size: 1.1rem; font-weight: 800; margin-bottom: 0.25rem; }
+  .upload-box p { font-size: 0.75rem; color: var(--fb-text-muted); }
+  .file-status { margin-top: 0.75rem; font-size: 0.8rem; font-weight: 600; color: var(--fb-primary); }
+  .output-card { background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: var(--fb-radius-lg); padding: 1.5rem; }
+  .preview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem; }
+  .preview-item { background: white; padding: 1rem; border-radius: var(--fb-radius-md); text-align: center; border: 1px solid var(--fb-border); }
+  .preview-item img { max-width: 100%; max-height: 150px; border-radius: 4px; margin-bottom: 0.5rem; }
+  .preview-meta { display: block; font-size: 0.75rem; color: var(--fb-text-muted); margin-bottom: 0.75rem; font-weight: 600; }
+  .tips-box { background: var(--fb-surface); border: 1px solid var(--fb-border); border-radius: var(--fb-radius-lg); padding: 1.25rem; font-size: 0.85rem; }
+  .tips-box h4 { font-weight: 800; margin-bottom: 0.5rem; }
+  .tips-box ul { padding-left: 1.25rem; color: var(--fb-text-muted); }
+  .tips-box li { margin-bottom: 0.35rem; }
+  @media (max-width: 768px) {
+    .tool-grid-layout { grid-template-columns: 1fr; }
+    .dual-dropzone-grid { grid-template-columns: 1fr; }
+    .spec-card { grid-template-columns: 1fr; }
+  }
+</style>
