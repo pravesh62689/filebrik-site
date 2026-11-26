@@ -23,6 +23,15 @@ test('Public static files: ads.txt and sw.js exist', () => {
   assert.ok(fs.existsSync(swPath), 'public/sw.js must exist');
   assert.ok(fs.existsSync(headersPath), 'public/_headers must exist');
 
+  const adsTxt = fs.readFileSync(adsPath, 'utf8');
+  assert.ok(!/pub-XXXX|XXXXXXXXXXXXXXXX|google\.com/i.test(adsTxt), 'public/ads.txt must not contain placeholder or AdSense lines');
+
+  const adZonesPath = path.join(rootDir, 'src/data/adZones.json');
+  assert.ok(fs.existsSync(adZonesPath), 'src/data/adZones.json must exist');
+  const adZones = JSON.parse(fs.readFileSync(adZonesPath, 'utf8'));
+  assert.strictEqual(typeof adZones.enabled, 'boolean');
+  assert.strictEqual(adZones.enabled, false, 'adZones.enabled must stay false until network approval');
+
   const headers = fs.readFileSync(headersPath, 'utf8');
   assert.ok(headers.includes('X-Content-Type-Options'), '_headers must include security policies');
 });

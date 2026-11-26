@@ -1,12 +1,14 @@
 ---
 // src/components/AdSlot.astro
+import { isAdsEnabled } from '../lib/adManager';
+
 interface Props {
   slotType: 'sidebar' | 'banner' | 'in-feed';
   reservedHeight?: string;
 }
 
 const { slotType, reservedHeight = '280px' } = Astro.props;
-const adsEnabled = import.meta.env.PUBLIC_ADS_ENABLED === 'true';
+const adsEnabled = isAdsEnabled(import.meta.env.PUBLIC_ADS_ENABLED);
 ---
 {adsEnabled ? (
   <div class={`ad-container ad-slot-${slotType}`} data-ad-slot={slotType} style={`min-height: ${reservedHeight};`}>

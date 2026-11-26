@@ -2,6 +2,7 @@
 // src/layouts/Layout.astro
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { isAdsEnabled } from '../lib/adManager';
 import '../styles/tokens.css';
 import '../styles/global.css';
 
@@ -15,7 +16,7 @@ const { title, description, toolSlug } = Astro.props;
 const siteOrigin = Astro.site?.origin || 'https://filebrik.pages.dev';
 const normalizedPath = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
 const canonicalUrl = new URL(normalizedPath, siteOrigin);
-const adsEnabled = import.meta.env.PUBLIC_ADS_ENABLED === 'true';
+const adsEnabled = isAdsEnabled(import.meta.env.PUBLIC_ADS_ENABLED);
 ---
 <!DOCTYPE html>
 <html lang="en">
