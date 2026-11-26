@@ -107,14 +107,39 @@ const ld = [
       <AdSlot slotType="in-result" reservedHeight="250px" />
 
       <section class="fb-card exam-details-card">
+        <h2>Step-by-Step {entry.examName} Resize Workflow</h2>
+        <ol>
+          <li>Open our pre-configured <a href={`/tools/exam-photo-signature-resizer/?preset=${preset.id}`}>{entry.examName} Resizer</a> so pixel bounds ({preset.minWidth}×{preset.minHeight} to {preset.maxWidth}×{preset.maxHeight} px), file weight ({preset.minKB} to {preset.maxKB} KB), and {preset.dpi} DPI JFIF header values load automatically.</li>
+          <li>Select your source JPEG or PNG photograph or signature scan from your phone or computer. No file leaves your browser tab; resizing runs inside local HTML5 Canvas memory.</li>
+          <li>Click Auto-Resize &amp; Inject DPI. The encoder runs binary search on JPEG quality and pads JFIF bytes if needed so the final download lands cleanly inside {preset.minKB} to {preset.maxKB} KB.</li>
+          <li>Inspect the rendered pixel dimensions and kilobyte badge in the preview panel, then download the ready-to-upload JPEG for {preset.authority}.</li>
+        </ol>
+
         <h2>Preparation Checklist for {entry.examName}</h2>
         <ul>
           {entry.tips.map((tip) => <li>{tip}</li>)}
         </ul>
 
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-list">
+          <div class="faq-item">
+            <h3>Why does {entry.examName} reject files outside {preset.minKB}–{preset.maxKB} KB?</h3>
+            <p>{preset.authority} portal validators enforce both lower and upper byte bounds ({preset.minKB} KB minimum to {preset.maxKB} KB maximum) alongside {preset.minWidth}×{preset.minHeight} px minimum resolution so admit card prints remain legible without overloading form storage.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Does this tool set {preset.dpi} DPI in the JPEG header?</h3>
+            <p>Yes. After encoding the JPEG to match {preset.minKB}–{preset.maxKB} KB, FileBrik writes a {preset.dpi} DPI JFIF APP0 density header directly into the binary buffer before download.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Are my {entry.examName} documents uploaded to any server?</h3>
+            <p>No. All image decoding, scaling, JPEG quality search, and DPI header updates execute locally inside your browser memory. Review our <a href="/privacy/">Privacy Architecture</a> for technical details.</p>
+          </div>
+        </div>
+
         <h3>More Tools &amp; Exam Guides</h3>
         <div class="related-links">
           <a href="/tools/exam-photo-signature-resizer/">Exam Photo &amp; Signature Resizer</a>
+          <a href="/tools/compress-image-kb/">Compress Image to KB</a>
           <a href="/tools/passport-photo-maker/">Passport Photo Maker</a>
           <a href="/tools/compress-pdf/">Compress PDF</a>
           {related.map((r) => (

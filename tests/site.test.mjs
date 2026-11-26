@@ -151,9 +151,14 @@ test('Design, copy, About/Changelog, and 30+10 exam landing pages', () => {
   assert.ok(fs.existsSync(path.join(rootDir, 'src/components/Icon.astro')));
 
   const landingSrc = fs.readFileSync(path.join(rootDir, 'src/data/examLandingPages.ts'), 'utf8');
-  const slugCount = (landingSrc.match(/slug:\s*'/g) || []).length;
+  const presets = JSON.parse(fs.readFileSync(path.join(rootDir, 'src/data/examPresets.json'), 'utf8'));
+  const verifiedIds = new Set(presets.filter((p) => p.verificationStatus === 'verified').map((p) => p.id));
+  const presetRefs = [...landingSrc.matchAll(/presetId:\s*'([^']+)'/g)].map((m) => m[1]);
+  assert.equal(presetRefs.length, 30, `Expected 30 exam landing pages, got ${presetRefs.length}`);
+  for (const id of presetRefs) {
+    assert.ok(verifiedIds.has(id), `Landing page references unverified preset: ${id}`);
+  }
   const hiCount = (landingSrc.match(/\bhi:\s*\{/g) || []).length;
-  assert.equal(slugCount, 30, `Expected 30 exam landing pages, got ${slugCount}`);
   assert.ok(hiCount >= 10, `Expected >=10 Hindi exam pages, got ${hiCount}`);
 
   const walk = (d) =>
@@ -161,7 +166,7 @@ test('Design, copy, About/Changelog, and 30+10 exam landing pages', () => {
       e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]
     );
   const files = walk(path.join(rootDir, 'src')).filter((f) => /\.(astro|ts|js)$/.test(f));
-  const bannedRe = /\b(ultra|seamless|seamlessly|crisp|100%|instantly)\b/i;
+  const bannedRe = /\b(ultra|seamless|seamlessly|crisp|100%|instantly|zero)\b/i;
   const emojiRe = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u;
   for (const f of files) {
     const content = fs.readFileSync(f, 'utf8');

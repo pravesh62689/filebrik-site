@@ -8,7 +8,7 @@ import ToolArticle from '../../components/ToolArticle.astro';
 import { TOOL_GUIDES, buildToolJsonLd } from '../../data/toolGuides';
 
 const title = 'Compress PDF - 100% Client-Side';
-const description = 'Compress PDF files to target sizes (100KB, 200KB, 500KB) entirely in your browser memory. Zero file uploads.';
+const description = 'Compress PDF files to target sizes (100KB, 200KB, 500KB) entirely in your browser memory. No file uploads.';
 const guide = TOOL_GUIDES['compress-pdf'];
 const ld = buildToolJsonLd('compress-pdf', title, description);
 ---
@@ -22,7 +22,7 @@ const ld = buildToolJsonLd('compress-pdf', title, description);
     <div class="fb-container">
       <div class="tool-grid-layout">
         <div class="tool-main-pane">
-          <div class="privacy-pill"><Icon name="shield" size={14} /> On-Device Browser Memory • Zero Cloud Storage</div>
+          <div class="privacy-pill"><Icon name="shield" size={14} /> On-Device Browser Memory • No Cloud Storage</div>
           <h1 class="tool-header-title">Compress PDF File</h1>
           <p class="tool-header-sub">Reduce document size to meet strict upload portal requirements without losing visual clarity.</p>
 

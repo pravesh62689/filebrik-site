@@ -24,7 +24,7 @@ export const TOOL_GUIDES: Record<string, ToolGuideData> = {
     limits: [
       { label: 'Recommended Input Size', value: 'Up to 200 MB depending on device RAM' },
       { label: 'Processing Library', value: 'Bundled pdf-lib with XRef Object Streams' },
-      { label: 'Network Uploads', value: 'Zero bytes transmitted outside browser memory' },
+      { label: 'Network Uploads', value: 'no bytes transmitted outside browser memory' },
       { label: 'Output Preservation', value: 'Retains vector text clarity and bookmarks' },
     ],
     overviewParagraphs: [
@@ -87,7 +87,7 @@ export const TOOL_GUIDES: Record<string, ToolGuideData> = {
       },
       {
         q: 'Does FileBrik impose a daily document limit?',
-        a: 'No. Because computation happens solely on your CPU, there are zero server quotas, hourly cooldowns, or registration walls.',
+        a: 'No. Because computation happens solely on your CPU, there are no server quotas, hourly cooldowns, or registration walls.',
       },
       {
         q: 'In what sequence are selected PDFs appended to the combined output?',
@@ -131,7 +131,7 @@ export const TOOL_GUIDES: Record<string, ToolGuideData> = {
       },
       {
         q: 'What happens if I type a page number larger than the PDF?',
-        a: 'Out-of-bounds numbers are ignored or clamped safely so extraction never fails silently; if zero valid pages match, page 1 is extracted as a safe fallback.',
+        a: 'Out-of-bounds numbers are ignored or clamped safely so extraction never fails silently; if no valid pages match, page 1 is extracted as a safe fallback.',
       },
       {
         q: 'Are bookmarks and selectable fonts preserved inside the extracted PDF?',
@@ -175,7 +175,7 @@ export const TOOL_GUIDES: Record<string, ToolGuideData> = {
       },
       {
         q: 'Do uploaded Aadhaar, PAN, or mark-sheet scans ever reach FileBrik servers?',
-        a: 'Never. FileBrik ships static HTML and client JavaScript only; zero file bytes ever traverse the network.',
+        a: 'Never. FileBrik ships static HTML and client JavaScript only; no file bytes ever traverse the network.',
       },
       {
         q: 'Can multiple smartphone photos be packed into a single multi-page PDF?',
@@ -328,7 +328,7 @@ export const TOOL_GUIDES: Record<string, ToolGuideData> = {
       { label: 'WebP Encoding', value: 'Verified RIFF/WEBP container via native Chromium/browser codec' },
       { label: 'PNG Encoding', value: 'Lossless 32-bit RGBA preserving sharp alpha transparency' },
       { label: 'JPEG Encoding', value: 'Flattened RGB with white backdrop for portals rejecting WebP' },
-      { label: 'Resolution', value: '1:1 pixel dimensions preserved — zero forced cropping' },
+      { label: 'Resolution', value: '1:1 pixel dimensions preserved — no forced cropping' },
     ],
     overviewParagraphs: [
       'Modern smartphone cameras and web downloads increasingly save images as HEIC or WebP, which older university admission portals and HR forms frequently reject. Conversely, web developers converting heavy PNG screenshots into modern WebP routinely shrink page payload weight by 40% to 75% without noticeable visual degradation.',
@@ -350,7 +350,7 @@ export const TOOL_GUIDES: Record<string, ToolGuideData> = {
       },
       {
         q: 'When should I pick PNG instead of JPEG or WebP?',
-        a: 'Pick PNG when editing logos, sharp monochrome line drawings, or overlays requiring lossless zero-artifact transparency without sacrificing sharp font or diagram strokes across presentation slides or print layouts.',
+        a: 'Pick PNG when editing logos, sharp monochrome line drawings, or overlays requiring lossless lossless transparency without sacrificing sharp font or diagram strokes across presentation slides or print layouts.',
       },
     ],
     relatedTools: [
@@ -420,12 +420,12 @@ export const TOOL_GUIDES: Record<string, ToolGuideData> = {
     ],
     overviewParagraphs: [
       'Extracting a concise ringtone, trimming awkward silence from the start of a voice memo, or cutting a clean quote from a recorded interview usually requires bloated desktop audio suites or uploading private recordings to cloud converters. Modern browsers natively expose Web Audio decoding APIs capable of reading decoded PCM Float32Array samples directly in JavaScript.',
-      'FileBrik decodes your source track purely in memory, calculates exact integer startFrame and endFrame sample indices from your timestamps, clamps safely inside track duration, interleaves stereo or mono samples into 16-bit signed integers, and prepends a valid 44-byte RIFF/WAVE header for instant lossless playback. This zero-upload workflow keeps podcast drafts, lecture snippets, and personal audio memos completely private on your device while delivering frame-accurate cuts in seconds.',
+      'FileBrik decodes your source track purely in memory, calculates exact integer startFrame and endFrame sample indices from your timestamps, clamps safely inside track duration, interleaves stereo or mono samples into 16-bit signed integers, and prepends a valid 44-byte RIFF/WAVE header for instant lossless playback. This local-only workflow keeps podcast drafts, lecture snippets, and personal audio memos completely private on your device while delivering frame-accurate cuts in seconds.',
     ],
     faqs: [
       {
         q: 'Why does the trimmed download export in WAV format instead of MP3?',
-        a: 'Every major browser supports zero-dependency lossless PCM WAV generation natively via Web Audio, whereas clean client-side MP3 encoders add heavy WASM payloads that slow mobile performance.',
+        a: 'Every major browser supports built-in lossless PCM WAV generation natively via Web Audio, whereas clean client-side MP3 encoders add heavy WASM payloads that slow mobile performance.',
       },
       {
         q: 'What happens if End Time exceeds the actual track duration?',

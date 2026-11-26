@@ -27,7 +27,6 @@ const compactTools = [
   { href: '/tools/jpg-to-pdf', icon: 'image' as const, name: 'JPG to PDF', desc: 'Assemble scanned certificates, photos, and IDs into one multi-page PDF.' },
   { href: '/tools/pdf-to-jpg', icon: 'camera' as const, name: 'PDF to JPG', desc: 'Render PDF pages into JPEG or WebP images locally via pdfjs-dist.' },
   { href: '/tools/image-converter', icon: 'refresh-cw' as const, name: 'Image Converter', desc: 'Convert between WebP, PNG, JPEG, and AVIF without server re-encoding.' },
-  { href: '/tools/passport-photo-maker', icon: 'badge-check' as const, name: 'Passport Photo Maker', desc: 'Build 2x2 inch, 35x45 mm, and 630x810 px biometric sheets at 300 DPI.' },
   { href: '/tools/audio-trimmer', icon: 'music' as const, name: 'Audio Trimmer', desc: 'Slice MP3, WAV, or M4A recordings into 16-bit PCM WAV clips offline.' },
 ];
 
@@ -42,14 +41,14 @@ const popularExams = [
 ---
 <Layout
   title="Private Client-Side PDF & Exam Photo Tools"
-  description="Resize UPSC, IBPS, NEET, and SSC exam photos to exact KB and DPI, compress PDFs to target sizes, and convert images locally with zero uploads."
+  description="Resize UPSC, IBPS, NEET, and SSC exam photos to exact KB and DPI, compress PDFs to target sizes, and convert images locally with no uploads."
   jsonLd={homeLd}
 >
   <main>
     <section class="hero-section">
       <div class="fb-container hero-split">
         <div class="hero-copy">
-          <div class="privacy-badge"><Icon name="lock" size={14} /> Zero Server Uploads • Runs in Browser Memory</div>
+          <div class="privacy-badge"><Icon name="lock" size={14} /> No Server Uploads • Runs in Browser Memory</div>
           <h1 class="hero-title">PDF &amp; Exam Photo Tools,<br><span class="highlight">Built for Strict Portal Limits</span></h1>
           <p class="hero-subtitle">Hit exact 20 KB, 50 KB, or 200 KB thresholds, inject 200 or 300 DPI JFIF headers, and compress PDFs locally using Canvas and WebAssembly.</p>
           <div class="hero-cta-row">
@@ -113,6 +112,14 @@ const popularExams = [
             </div>
             <h3>Compress Image to KB</h3>
             <p>Target exact 20 KB, 50 KB, or 100 KB ceilings using iterative JPEG quality and dimension scaling without guesswork.</p>
+          </a>
+          <a href="/tools/passport-photo-maker" class="fb-card popular-card">
+            <div class="popular-top">
+              <span class="tool-icon"><Icon name="badge-check" size={22} /></span>
+              <span class="popular-tag">2x2 in / 35x45 mm / 300 DPI</span>
+            </div>
+            <h3>Passport Photo Maker</h3>
+            <p>Build printable 4x6 sheets and 630x810 px biometric portraits at 300 DPI inside local browser memory.</p>
           </a>
         </div>
       </div>
