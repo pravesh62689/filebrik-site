@@ -8,6 +8,12 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
 
+function presetGroup(id) {
+  const groups = ['upsc','ssc','ibps','rrb','nta','passport','pan','uppsc','bpsc','mpsc','tnpsc','rpsc'];
+  for (const g of groups) if (id.startsWith(g)) return g;
+  return id;
+}
+
 test('Public static files: ads.txt and sw.js exist', () => {
   const adsPath = path.join(rootDir, 'public/ads.txt');
   const swPath = path.join(rootDir, 'public/sw.js');
@@ -36,11 +42,17 @@ test('Exam presets data integrity: 20 official presets loaded', () => {
     assert.ok(p.maxKB >= p.minKB, `${p.id} maxKB >= minKB`);
     assert.ok(p.dpi >= 100, `${p.id} must have valid dpi`);
     assert.ok(p.officialUrl && !/sarkari|testbook|collegedunia|jagran|adda247/i.test(p.officialUrl), `${p.id} must not use aggregator URLs`);
+    assert.ok(p.pdfUrl && !/sarkari|testbook|collegedunia|jagran|adda247/i.test(p.pdfUrl), `${p.id} must have official pdfUrl`);
+    assert.ok(p.pdfPage >= 1, `${p.id} must declare pdfPage`);
+    assert.ok(p.pdfDate, `${p.id} must declare pdfDate`);
     assert.ok(p.officialQuote, `${p.id} must have quote`);
     assert.ok(p.verifiedDate, `${p.id} must have verifiedDate`);
     assert.ok(p.verificationStatus === 'verified' || p.verificationStatus === 'check official notice', `${p.id} must declare verificationStatus`);
     if (p.verificationStatus === 'verified') {
-      assert.ok(p.snapshot && fs.existsSync(path.join(rootDir, p.snapshot)), `${p.id} verified preset must have local snapshot`);
+      assert.ok(p.pdfExtract && fs.existsSync(path.join(rootDir, p.pdfExtract)), `${p.id} verified preset must have committed pdfExtract`);
+      const extractText = fs.readFileSync(path.join(rootDir, p.pdfExtract), 'utf8').replace(/\s+/g, ' ');
+      const quoteNorm = p.officialQuote.replace(/\s+/g, ' ').trim();
+      assert.ok(extractText.includes(quoteNorm), `${p.id} officialQuote must match verbatim inside ${p.pdfExtract}`);
     }
   }
 });

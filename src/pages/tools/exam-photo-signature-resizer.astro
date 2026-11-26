@@ -32,16 +32,25 @@ const presets = Array.isArray(examPresets) ? examPresets : (examPresets as any).
             <div id="specCard" class="spec-card">
               <div class="spec-col">
                 <span class="spec-title">📐 Dimensions & Size Rule</span>
-                <div>File Type: <b id="specType">{presets[0]?.type}</b></div>
+                <div>File Type: <b id="specType">{presets[0]?.type} ({presets[0]?.format || 'image/jpeg'})</b></div>
                 <div>Pixel Size: <b id="specDim">{presets[0]?.minWidth}×{presets[0]?.minHeight} px</b></div>
                 <div>File Size: <b id="specKb">{presets[0]?.minKB} – {presets[0]?.maxKB} KB</b></div>
                 <div>Resolution: <b id="specDpi">{presets[0]?.dpi} DPI</b></div>
+                <div id="specDimNote" class="spec-dim-note">{presets[0]?.dimensionNote || ''}</div>
               </div>
               <div class="spec-col">
                 <span class="spec-title">📜 Official Notice Verification</span>
-                <div id="verifyBadge" class="verify-status">{presets[0]?.verificationStatus === 'verified' ? '✓ Official Snapshot Verified' : '⚠ Check Official Notice'}</div>
+                <div id="verifyBadge" class={`verify-status ${presets[0]?.verificationStatus === 'verified' ? 'verify-ok' : 'verify-warn'}`}>
+                  {presets[0]?.verificationStatus === 'verified' ? '✓ Official PDF Verified' : '⚠ Check Official Notice'}
+                </div>
                 <div class="quote-box" id="specQuote">"{presets[0]?.officialQuote}"</div>
-                <div class="source-meta">Source: <a id="specUrl" href={presets[0]?.officialUrl} target="_blank" rel="noopener">{presets[0]?.officialUrl}</a> (<span id="specDate">{presets[0]?.verifiedDate}</span>)</div>
+                <div class="source-meta">
+                  PDF Source: <a id="specPdfUrl" href={presets[0]?.pdfUrl || presets[0]?.officialUrl} target="_blank" rel="noopener">{presets[0]?.pdfUrl || presets[0]?.officialUrl}</a>
+                  (Page <span id="specPdfPage">{presets[0]?.pdfPage || 1}</span>, <span id="specPdfDate">{presets[0]?.pdfDate || presets[0]?.verifiedDate}</span>)
+                </div>
+                <div class="source-meta">
+                  Portal: <a id="specUrl" href={presets[0]?.officialUrl} target="_blank" rel="noopener">{presets[0]?.officialUrl}</a> (<span id="specDate">{presets[0]?.verifiedDate}</span>)
+                </div>
               </div>
             </div>
           </div>
@@ -83,7 +92,7 @@ const presets = Array.isArray(examPresets) ? examPresets : (examPresets as any).
 
   <script>
     import examPresetsData from '../../data/examPresets.json';
-    import { injectJfifDpi } from '../../lib/dpiInject';
+    import { injectJfifDpi, padJpegToMinBytes } from '../../lib/dpiInject';
 
     const presets = Array.isArray(examPresetsData) ? examPresetsData : (examPresetsData as any).presets;
     const select = document.getElementById('examSelect') as HTMLSelectElement;
@@ -92,11 +101,22 @@ const presets = Array.isArray(examPresets) ? examPresets : (examPresets as any).
     function updateSpecs() {
       const id = select.value;
       currentPreset = presets.find((p: any) => p.id === id) || presets[0];
-      document.getElementById('specType')!.textContent = currentPreset.type;
-      document.getElementById('specDim')!.textContent = `${currentPreset.minWidth}×${currentPreset.minHeight} to ${currentPreset.maxWidth}×${currentPreset.maxHeight} px`;
+      document.getElementById('specType')!.textContent = `${currentPreset.type} (${currentPreset.format || 'image/jpeg'})`;
+      const dimText = currentPreset.minWidth === currentPreset.maxWidth && currentPreset.minHeight === currentPreset.maxHeight
+        ? `${currentPreset.minWidth}×${currentPreset.minHeight} px`
+        : `${currentPreset.minWidth}×${currentPreset.minHeight} to ${currentPreset.maxWidth}×${currentPreset.maxHeight} px`;
+      document.getElementById('specDim')!.textContent = dimText;
       document.getElementById('specKb')!.textContent = `${currentPreset.minKB} – ${currentPreset.maxKB} KB`;
       document.getElementById('specDpi')!.textContent = `${currentPreset.dpi} DPI`;
+      document.getElementById('specDimNote')!.textContent = currentPreset.dimensionNote || '';
       document.getElementById('specQuote')!.textContent = `"${currentPreset.officialQuote}"`;
+
+      const pdfLink = document.getElementById('specPdfUrl') as HTMLAnchorElement;
+      pdfLink.href = currentPreset.pdfUrl || currentPreset.officialUrl;
+      pdfLink.textContent = currentPreset.pdfUrl || currentPreset.officialUrl;
+      document.getElementById('specPdfPage')!.textContent = String(currentPreset.pdfPage || 1);
+      document.getElementById('specPdfDate')!.textContent = currentPreset.pdfDate || currentPreset.verifiedDate;
+
       const link = document.getElementById('specUrl') as HTMLAnchorElement;
       link.href = currentPreset.officialUrl;
       link.textContent = currentPreset.officialUrl;
@@ -104,10 +124,10 @@ const presets = Array.isArray(examPresets) ? examPresets : (examPresets as any).
 
       const badge = document.getElementById('verifyBadge')!;
       if (currentPreset.verificationStatus === 'verified') {
-        badge.textContent = `✓ Official Snapshot Verified (${currentPreset.snapshot})`;
+        badge.textContent = `✓ Official PDF Verified (${currentPreset.pdfExtract || 'PDF'}, p.${currentPreset.pdfPage || 1})`;
         badge.className = 'verify-status verify-ok';
       } else {
-        badge.textContent = `⚠ Check Official Notice${currentPreset.verifiedNote ? ' — ' + currentPreset.verifiedNote : ''}`;
+        badge.textContent = `⚠ Check Official Notice${currentPreset.verifiedNote ? ' — ' + currentPreset.verifiedNote.replace(/^⚠\s*check official notice\s*[—-]\s*/i, '') : ''}`;
         badge.className = 'verify-status verify-warn';
       }
     }
@@ -144,6 +164,8 @@ const presets = Array.isArray(examPresets) ? examPresets : (examPresets as any).
       if (!chosenFile) return;
       processBtn.disabled = true;
       processBtn.textContent = 'Formatting & injecting DPI...';
+      const dlBtn = document.getElementById('downloadOutput') as HTMLAnchorElement;
+      dlBtn.removeAttribute('data-preset');
 
       try {
         const img = new Image();
@@ -152,32 +174,66 @@ const presets = Array.isArray(examPresets) ? examPresets : (examPresets as any).
         await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
         URL.revokeObjectURL(url);
 
-        const targetW = Math.round((currentPreset.minWidth + currentPreset.maxWidth) / 2);
-        const targetH = Math.round((currentPreset.minHeight + currentPreset.maxHeight) / 2);
+        const midW = Math.round((currentPreset.minWidth + currentPreset.maxWidth) / 2);
+        const midH = Math.round((currentPreset.minHeight + currentPreset.maxHeight) / 2);
+        const renderAttempts = [
+          { w: midW, h: midH, filter: 'none' },
+          { w: currentPreset.maxWidth, h: currentPreset.maxHeight, filter: 'none' },
+          { w: currentPreset.minWidth, h: currentPreset.minHeight, filter: 'none' },
+          { w: currentPreset.minWidth, h: currentPreset.minHeight, filter: 'blur(1px)' },
+          { w: currentPreset.minWidth, h: currentPreset.minHeight, filter: 'blur(2.5px)' },
+        ];
 
-        const canvas = document.createElement('canvas');
-        canvas.width = targetW;
-        canvas.height = targetH;
-        const ctx = canvas.getContext('2d')!;
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fillRect(0, 0, targetW, targetH);
-        ctx.drawImage(img, 0, 0, targetW, targetH);
+        let targetW = midW;
+        let targetH = midH;
+        let bestBlob: Blob | null = null;
 
-        let low = 0.05, high = 0.98;
-        let bestBlob = await canvasToJpeg(canvas, 0.75);
-        for (let i = 0; i < 10; i++) {
-          const q = (low + high) / 2;
-          const b = await canvasToJpeg(canvas, q);
-          const kb = b.size / 1024;
-          if (kb >= currentPreset.minKB && kb <= currentPreset.maxKB) {
-            bestBlob = b;
-            break;
+        for (const attempt of renderAttempts) {
+          targetW = attempt.w;
+          targetH = attempt.h;
+          const canvas = document.createElement('canvas');
+          canvas.width = targetW;
+          canvas.height = targetH;
+          const ctx = canvas.getContext('2d')!;
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, targetW, targetH);
+          ctx.filter = attempt.filter;
+          ctx.drawImage(img, 0, 0, targetW, targetH);
+          ctx.filter = 'none';
+
+          let low = 0.01, high = 0.99;
+          let candidate = await canvasToJpeg(canvas, 0.75);
+          for (let i = 0; i < 12; i++) {
+            const q = (low + high) / 2;
+            const b = await canvasToJpeg(canvas, q);
+            const kb = b.size / 1024;
+            if (kb >= currentPreset.minKB && kb <= currentPreset.maxKB) {
+              candidate = b;
+              break;
+            }
+            if (kb > currentPreset.maxKB) {
+              high = q;
+              candidate = b;
+            } else {
+              low = q;
+              candidate = b;
+            }
           }
-          if (kb > currentPreset.maxKB) high = q;
-          else { low = q; bestBlob = b; }
+          bestBlob = candidate;
+          const kbNow = bestBlob.size / 1024;
+          if (kbNow >= currentPreset.minKB && kbNow <= currentPreset.maxKB) break;
+          // If on max dimensions and still <= maxKB (just below minKB), byte-padding below will bring it cleanly inside [minKB, maxKB]
+          if (kbNow < currentPreset.minKB && targetW === currentPreset.maxWidth && targetH === currentPreset.maxHeight) break;
         }
 
-        const buf = injectJfifDpi(await bestBlob.arrayBuffer(), currentPreset.dpi || 200);
+        let buf = injectJfifDpi(await bestBlob!.arrayBuffer(), currentPreset.dpi || 200);
+        const minBytes = Math.ceil(currentPreset.minKB * 1024);
+        const maxBytes = Math.floor(currentPreset.maxKB * 1024);
+        const targetMinBytes = Math.min(maxBytes, Math.ceil((currentPreset.minKB + Math.min(1, (currentPreset.maxKB - currentPreset.minKB) * 0.25)) * 1024));
+        if (buf.byteLength < minBytes) {
+          buf = padJpegToMinBytes(buf, targetMinBytes);
+        }
+
         const finalBlob = new Blob([buf], { type: 'image/jpeg' });
         const outUrl = URL.createObjectURL(finalBlob);
 
@@ -186,6 +242,7 @@ const presets = Array.isArray(examPresets) ? examPresets : (examPresets as any).
         const dl = document.getElementById('downloadOutput') as HTMLAnchorElement;
         dl.href = outUrl;
         dl.download = `${currentPreset.id}.jpg`;
+        dl.setAttribute('data-preset', currentPreset.id);
         document.getElementById('outputSection')!.style.display = 'block';
       } finally {
         processBtn.textContent = 'Auto-Resize & Inject DPI';
@@ -211,8 +268,9 @@ const presets = Array.isArray(examPresets) ? examPresets : (examPresets as any).
   .verify-status { font-weight: 700; padding: 0.25rem 0.5rem; border-radius: 6px; display: inline-block; margin-bottom: 0.4rem; }
   .verify-ok { background: #ECFDF5; color: #047857; }
   .verify-warn { background: #FEF3C7; color: #92400E; }
-  .quote-box { font-style: italic; font-size: 0.78rem; color: var(--fb-text-main); }
-  .source-meta { font-size: 0.72rem; word-break: break-all; }
+  .quote-box { font-style: italic; font-size: 0.78rem; color: var(--fb-text-main); margin-bottom: 0.35rem; }
+  .spec-dim-note { font-size: 0.75rem; color: var(--fb-text-muted); margin-top: 0.25rem; }
+  .source-meta { font-size: 0.72rem; word-break: break-all; margin-top: 0.2rem; }
   .fb-dropzone { border: 2px dashed var(--fb-border); border-radius: var(--fb-radius-lg); padding: 2.5rem 1rem; text-align: center; cursor: pointer; background: var(--fb-surface); }
   .upload-icon { font-size: 2.5rem; margin-bottom: 0.5rem; display: block; }
   .file-status { margin-top: 0.75rem; font-size: 0.85rem; font-weight: 600; color: var(--fb-primary); }

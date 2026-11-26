@@ -1,6 +1,12 @@
 // FileBrik Playwright Browser QA e2e suite
 import { test, expect } from '@playwright/test';
 import { PDFDocument } from 'pdf-lib';
+import fs from 'node:fs';
+import path from 'node:path';
+
+const examPresets = JSON.parse(
+  fs.readFileSync(path.resolve(process.cwd(), 'src/data/examPresets.json'), 'utf8')
+);
 
 const ALL_ROUTES = [
   '/',
@@ -226,4 +232,85 @@ test('Tool e2e: passport-photo-maker generates 630x810 image', async ({ page }) 
 
   expect(dims.width).toBe(630);
   expect(dims.height).toBe(810);
+});
+
+// 8. Exam Presets E2E: Every verified PDF preset lands strictly inside its KB & dimension bounds
+test('Tool e2e: exam-photo-signature-resizer verified presets land inside KB & pixel ranges', async ({ page }) => {
+  test.setTimeout(90000);
+  await page.goto('/tools/exam-photo-signature-resizer/', { waitUntil: 'networkidle' });
+
+  // Synthesize a realistic 1000x1000 candidate portrait/document PNG inside Chromium
+  const samplePng = await page.evaluate(async () => {
+    const c = document.createElement('canvas');
+    c.width = 1000;
+    c.height = 1000;
+    const ctx = c.getContext('2d');
+    const grad = ctx.createLinearGradient(0, 0, 1000, 1000);
+    grad.addColorStop(0, '#f8fafc');
+    grad.addColorStop(1, '#cbd5e1');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 1000, 1000);
+    ctx.fillStyle = '#1e293b';
+    ctx.beginPath();
+    ctx.arc(500, 380, 180, 0, Math.PI * 2);
+    ctx.fill();
+    for (let k = 0; k < 250; k++) {
+      ctx.fillStyle = `rgb(${(k * 23) % 255}, ${(k * 47) % 255}, ${(k * 71) % 255})`;
+      ctx.fillRect((k * 37) % 900, (k * 61) % 900, 80, 18);
+    }
+    const blob = await new Promise((r) => c.toBlob(r, 'image/png'));
+    return Array.from(new Uint8Array(await blob.arrayBuffer()));
+  });
+
+  const verifiedPresets = examPresets.filter((p) => p.verificationStatus === 'verified');
+  expect(verifiedPresets.length).toBeGreaterThanOrEqual(10);
+
+  await page.setInputFiles('#fileInput', {
+    name: 'candidate-sample.png',
+    mimeType: 'image/png',
+    buffer: Buffer.from(samplePng),
+  });
+
+  for (const preset of verifiedPresets) {
+    await page.selectOption('#examSelect', preset.id);
+    await expect(page.locator('#verifyBadge')).toContainText('Verified');
+    const pdfHref = await page.locator('#specPdfUrl').getAttribute('href');
+    expect(pdfHref).toBe(preset.pdfUrl);
+
+    await page.click('#processBtn');
+    await expect(page.locator('#downloadOutput')).toHaveAttribute('data-preset', preset.id, { timeout: 15000 });
+
+    const out = await page.evaluate(async () => {
+      const href = document.getElementById('downloadOutput').getAttribute('href');
+      const resp = await fetch(href);
+      const ab = await resp.arrayBuffer();
+      const bytes = new Uint8Array(ab);
+      const img = new Image();
+      img.src = href;
+      await new Promise((r) => (img.onload = r));
+      return {
+        byteLen: ab.byteLength,
+        soi0: bytes[0],
+        soi1: bytes[1],
+        width: img.naturalWidth,
+        height: img.naturalHeight,
+      };
+    });
+
+    const outKb = out.byteLen / 1024;
+    expect(out.soi0, `${preset.id} must output JPEG SOI 0xFF`).toBe(0xff);
+    expect(out.soi1, `${preset.id} must output JPEG SOI 0xD8`).toBe(0xd8);
+    expect(outKb, `${preset.id} ${outKb.toFixed(2)}KB < ${preset.minKB}KB`).toBeGreaterThanOrEqual(preset.minKB);
+    expect(outKb, `${preset.id} ${outKb.toFixed(2)}KB > ${preset.maxKB}KB`).toBeLessThanOrEqual(preset.maxKB);
+    expect(out.width, `${preset.id} width ${out.width}`).toBeGreaterThanOrEqual(preset.minWidth);
+    expect(out.width, `${preset.id} width ${out.width}`).toBeLessThanOrEqual(preset.maxWidth);
+    expect(out.height, `${preset.id} height ${out.height}`).toBeGreaterThanOrEqual(preset.minHeight);
+    expect(out.height, `${preset.id} height ${out.height}`).toBeLessThanOrEqual(preset.maxHeight);
+  }
+
+  // Also check unverified preset retains "Check Official Notice" and source PDF link
+  await page.selectOption('#examSelect', 'ssc-photo');
+  await expect(page.locator('#verifyBadge')).toContainText('Check Official Notice');
+  const sscPdfHref = await page.locator('#specPdfUrl').getAttribute('href');
+  expect(sscPdfHref).toContain('.pdf');
 });

@@ -1,0 +1,24 @@
+PDF URL: https://uppsc.up.nic.in/CMS/OTR_DOC/OTR_PHOTO_INSTRUCTION.pdf
+
+Saved PDF: data/raw/pdfs/uppsc-1.pdf (gitignored)
+
+Captured: 2026-11-26T05:30:17.090Z
+
+Pages: 1
+
+CreationDate: D:20221018130155+05'30' | ModDate: D:20221018130155+05'30'
+
+
+
+=== SPEC HITS ===
+
+[p.1] GuideLines for Scanning Photograph with Signature हस्ताक्षर एवम फोटोग्राफ स्कैन करने के लिए लिशा लनिेश PHOTO SIGNATURE SIZE Less then 50 kb Less then 30 kb DIMENSION 5 cm width 6 cm height 6 cm width 3 cm height DPI SETTING 200 DPI 200 DPI TRUE COLOUR YES YES 1. Paste the Photo
+
+[p.1] ललकित आयामों/आकार का उपयोग करके इमेज को क्रॉप करें। 4. Ensure that the size of the scanned photo image is not more than 50KB and sign image is not more than 30KB. सुकनकित करें कक स्कैन की गई फोटो इमेज का आकार 50KB से अकिक नहीं है और साइन इमेज 30KB से अकिक नहीं है। 6. The applicant ha
+
+
+
+=== FULL EXTRACTED TEXT ===
+
+--- Page 1 ---
+GuideLines for Scanning Photograph with Signature हस्ताक्षर एवम फोटोग्राफ स्कैन करने के लिए लिशा लनिेश PHOTO SIGNATURE SIZE Less then 50 kb Less then 30 kb DIMENSION 5 cm width 6 cm height 6 cm width 3 cm height DPI SETTING 200 DPI 200 DPI TRUE COLOUR YES YES 1. Paste the Photo on any white paper as per the above required dimensions and sign in the provided signature space. उपरोक्त आवश्यक आयामों के अनुसार ककसी भी सफ़ेद कागज पर फोटो किपकाएं और कदए गए कसग्नेिर स्पेस में साइन करें। 2. Scan the photo and sign image and save in the local machine. फोटो और साइन इमेज को स्कैन करें और लोकल मशीन में सेव करें। 3. Crop the image using above mentioned size/ dimensions. ऊपर उकललकित आयामों/आकार का उपयोग करके इमेज को क्रॉप करें। 4. Ensure that the size of the scanned photo image is not more than 50KB and sign image is not more than 30KB. सुकनकित करें कक स्कैन की गई फोटो इमेज का आकार 50KB से अकिक नहीं है और साइन इमेज 30KB से अकिक नहीं है। 6. The applicant has to sign in full in the box provided. Since the signature is proof of identity, it must be genuine and in full; initials are not sufficient. Signature in CAPITAL LETTERS is not permitted. आवेदक को कदए गए बॉक्स में पूर्ण हस्ताक्षर करना होगा। िूंकक हस्ताक्षर पहिान का प्रमार् है , इसकलए यह वास्तकवक और पूर्ण होना िाकहए ; संकक्षप्त हस्ताक्षर नहीं हों. बडे अक्षरों में हस्ताक्षर की अनुमकत नहीं है। 7. The signature must be signed only by the applicant and not by any other person . हस्ताक्षर केवल आवेदक द्वारा हस्ताक्षररत होना िाकहए न कक ककसी अन्य व्यकक्त द्वारा। 8. The signature will be used to put on the Hall Ticket and wherever necessary. If the Applicant’s signature on the answer script does not match the signature on the Hall Ticket at the time of the examination, the applicant will be disqualified. हस्ताक्षर का हॉल कटकट पर और जहां भी आवश्यक हो उपयोग ककया जाएगा। यकद उत्तर पुकस्तका पर आवेदक के हस्ताक्षर परीक्षा के समय हॉल कटकट पर हस्ताक्षर से मेल नहीं िाते हैं , तो आवेदक को अयोग्य घोकित कर कदया जाएगा।

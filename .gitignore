@@ -10,6 +10,9 @@ dist/
 secrets/
 *.log
 
+# Raw PDFs (large binary; extracts committed instead)
+data/raw/pdfs/
+
 # OS metadata
 .DS_Store
 Thumbs.db

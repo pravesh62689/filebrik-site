@@ -1,0 +1,44 @@
+PDF URL: https://upsconline.nic.in/caf/assets/PDF/instruction-photo-signature-upload-upsc.pdf
+
+Saved PDF: data/raw/pdfs/upsc-1.pdf (gitignored)
+
+Captured: 2026-11-26T05:27:58.391Z
+
+Pages: 7
+
+CreationDate: D:20260204101452+05'30' | ModDate: D:20260204101452+05'30'
+
+
+
+=== SPEC HITS ===
+
+[p.2] ication Form. 1. Upload of Latest Passport Size Photograph a. Upload a photo named photo in jpg format with a file size between 20KB and 200KB. b. Ensure the photo is clear, recent, and shows your full face. NOTE: To u
+
+[p.4] UNION PUBLIC SERVICE COMMISSION 4 DOs and DON’Ts concerning Photograph to be uploaded on portal Dos Don’ts • Use a colour photo in jpg format between 20KB and 200KB, saved with the filename ‘photo’. • Make sure your face covers 75
+
+[p.5] ions: i. File size: 20 KB – 100 KB ii. Image dimensions: 350 - 500 pixels h. Applications with signature files that do not meet the prescribed specifications will be rejected. Candidates are advised to strictly adhere to these instructions. Sample Signature - Acce
+
+
+
+=== FULL EXTRACTED TEXT ===
+
+--- Page 1 ---
+UNION PUBLIC SERVICE COMMISSION 1 UNION PUBLIC SERVICE COMMISSION संघ लोक सेवा आयोग INSTRUCTIONS FOR UPLOADING THE PHOTO & SIGNATURE
+
+--- Page 2 ---
+UNION PUBLIC SERVICE COMMISSION 2 INSTRUCTIONS FOR UPLOADING PHOTO AND SIGNATURE Candidates are advised to carefully read and follow the instructions given below while uploading their Photograph , Live Photograph , and Signature in the Application Form. 1. Upload of Latest Passport Size Photograph a. Upload a photo named photo in jpg format with a file size between 20KB and 200KB. b. Ensure the photo is clear, recent, and shows your full face. NOTE: To upload photo, you must ensure that the photo has 3/4th face coverage. This means that the face must cover at least 75% of the area in the photo. Below are some sample photos — some with proper 3/4th face coverage and some without. You must crop or take your photo in the same manner to ensure it meets the required face coverage before uploading. You must also ensure that the photo is of good quality and that they are looking directly at the camera, keeping the alignment of the face proper, straight with both ear lobes visible . Sample photos with acceptance status Sample Photo Accepted / Rejected Status Reason for Rejection (if status is rejected) Rejected Rejected because face coverage is less than 3/4th of the photo Rejected Rejected because face coverage is less than 3/4th of the photo
+
+--- Page 3 ---
+UNION PUBLIC SERVICE COMMISSION 3 Accepted Rejected Rejected due to incorrect face alignment; the face should be looking directly at the camera Rejected Rejected because face coverage is less than 3/4th of the photo and photo is blurred Rejected Rejected because the face is misaligned Rejected Rejected because face coverage is less than 3/4th of the photo (photo is too small) Rejected Rejected because face is too close to the camera, out of frame and ear lobes not visible
+
+--- Page 4 ---
+UNION PUBLIC SERVICE COMMISSION 4 DOs and DON’Ts concerning Photograph to be uploaded on portal Dos Don’ts • Use a colour photo in jpg format between 20KB and 200KB, saved with the filename ‘photo’. • Make sure your face covers 75% i.e. 3/4 th area of the photo. • Photo background shall be plain white. • Frontal view of the full face should be visible, head in the centre and both ears should be visible. • Eyes must be open & edges of face must be clearly visible. • Expression of the face should be natural (no grinning, frowning, or raised eyebrows). • Photograph with dark background or in uniform, or with eyes hidden under coloured or dark glasses will not be accepted. • Shadows on the face or on the background should not be there. • Eyes must not be covered by hair. Glares on eyeglasses should be avoided. • Photograph is NOT to be signed. 2. Capture of Live Photograph a. Capture of live photograph shall be mandatory for submission of the application for any examination. b. Candidates are required to capture a live photograph using one of the following options: i. Capture from device: Use the web camera of the current device . ii. Capture from mobile: Scan the QR code displayed on the screen and capture the photograph using a mobile device. c. The live photograph should be captured in good lighting conditions and must clearly show the candidate’s face . d. Where a live photograph has already been captured and uploaded, the candidate may use the “ View Photo” option to verify the uploaded image. e. The live photograph captured during the application process shall be matched with the passport-size photograph uploaded by the applicant. If a mismatch is Accepted
+
+--- Page 5 ---
+UNION PUBLIC SERVICE COMMISSION 5 detected between the two photographs, the applicant shall not be allowed to proceed further with the examination application process. 3. Upload of Signature (Triple Signature) Instructions a. Candidate should sign their own signature three times vertically (one below the other) on a plain white paper using a black ink . b. Ensure there is adequate gap/space between each signature. c. Scan all three signatures in a single image . d. Image quality requirements – The scanned signature image must be: i. Clear, sharp, and well-lit (not blurred or dark) ii. Contain exactly three signatures iii. Signatures arranged vertically (one below the other) iv. Properly oriented (not rotated or upside down) v. On plain white paper (no lines or colours) e. Save the signature file in jpg format with the file name signature . f. Upload the scanned file containing all three signatures. g. Ensure the file meets the following specifications: i. File size: 20 KB – 100 KB ii. Image dimensions: 350 - 500 pixels h. Applications with signature files that do not meet the prescribed specifications will be rejected. Candidates are advised to strictly adhere to these instructions. Sample Signature - Accept/Reject Examples
+
+--- Page 6 ---
+UNION PUBLIC SERVICE COMMISSION 6
+
+--- Page 7 ---
+UNION PUBLIC SERVICE COMMISSION 7

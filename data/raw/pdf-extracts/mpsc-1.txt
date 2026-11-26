@@ -1,0 +1,30 @@
+PDF URL: https://mpsconline.gov.in/downloads/Instructions-for-Filling-the-Application-Form.pdf
+
+Saved PDF: data/raw/pdfs/mpsc-1.pdf (gitignored)
+
+Captured: 2026-11-26T05:30:48.762Z
+
+Pages: 3
+
+CreationDate: D:20210521130814+05'30' | ModDate: D:20210521130816+05'30'
+
+
+
+=== SPEC HITS ===
+
+[p.1] colour picture. • Photograph must be a taken in full face view directly facing the camera. • Photograph should have no shadows and red eyes. • Photograph size (breadth 3.5 cm* height 4.5 cm) • Maximum size 50KB. • Photo format should be .jpg or .jpeg only. • File
+
+[p.1] ly by the applicant and not by any other person • Photograph size (breadth 3.5 cm* height 1.5 cm) • Maximum size 50kb. • Photo format should be .jpg or .jpeg only. • File name should be of 10 character maximum e. Keep the below details ready • Aadhar card. • Domicile certifica
+
+
+
+=== FULL EXTRACTED TEXT ===
+
+--- Page 1 ---
+Instructions for Filling the Application Form (Read the instructions/ Pre-requisites carefully before filling the application form) (A) Before proceeding to apply, please ensure that you have the following:- a. You must have an valid and working email ID. b. You must give a valid and working mobile number in profile creation. c. Scanned copy of applicant's recent photograph with following specification. • Photograph should be in formals with Solid color (preferably Blue, Green, Red) background. • Photograph must be a passport size colour picture. • Photograph must be a taken in full face view directly facing the camera. • Photograph should have no shadows and red eyes. • Photograph size (breadth 3.5 cm* height 4.5 cm) • Maximum size 50KB. • Photo format should be .jpg or .jpeg only. • File name should be of 10 character maximum • Scanned Photograph should not have any other content, such as watermark, Stamp, name of mobile app used for scanning etc. d. Scanned copy of applicant's signature with following specifications. • Applicant should sign with black ink on a blank white plane paper and get the signature scanned. • Scanned signature should not have any other content, such as watermark, name of mobile app used for scanning etc. • The signature must be scribed only by the applicant and not by any other person • Photograph size (breadth 3.5 cm* height 1.5 cm) • Maximum size 50kb. • Photo format should be .jpg or .jpeg only. • File name should be of 10 character maximum e. Keep the below details ready • Aadhar card. • Domicile certificate (if applicable) • Non creamy-layer certificate (if applicable) • Cast /EWS certificate (if applicable). • Other Certificates such as Sports Verification certificate, Ex-Serviceman Discharge Certificate, Disability Certificate, Orphan Certificate, etc.(if applicable)
+
+--- Page 2 ---
+Process of Application Submission There are five stages for application submission. 1. Creating / updating profile. 2. Submit and Lock Profile 3. Check Profile Eligibility in Online Application As per Advisement 4. Submit Application for particular Advisement 5. Fees payment ( Online Application section OR My Account section) STEPS. • Login to account with registered Email ID /mobile number, OTP received and password. Creating / Updating Profile • After successful log in into account, click on profile creation. • Profile creation is divided into six steps.  Personal information,  Address information  Other information,  Qualification information,  Experience information,  Upload photo/ signature. • As you fill the details at each step, click on SAVE which enable the Red representation move to Green. • On completion of all the details, you need to check box the terms and condition and on submission your profile will be locked. • The information needs to be updated before submitting or else through My Application section you can do the same through Unlock / Update tab. • The changes will reflect once it saved and on submission you lock your profile. Online Application. • This section the advertisement will be visible of the obtainable examinations. This section will display the advertisements which are available for application submission. • At the view tab at each advertisement enables you to know the details of respective advertisement in terms of required qualification, application start and end date, fees etc. with all relevant details. • Under each advertisement you can view the eligibility criteria and accordingly you can set preference against the required post. if each post is having different examinations/recruitment process. • Selection of District centre of your choice for the Examination.
+
+--- Page 3 ---
+• Agree to the declaration, enter the location from where application is being filed, do the necessary payment and submit. • You can view the submitted details in My account section. My Account • This section gives the complete summary of the profile, wherein one can update / unlock, Change password. • List of applied position. • One can view the respective application through the view button. • Can download the fee receipt through the fee receipt tab. • One can cancel the application through the cancel button and upon confirmation.
