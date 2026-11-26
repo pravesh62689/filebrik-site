@@ -1,33 +1,31 @@
 # FileBrik Project Status & Architecture Report
 
-**Current Status**: Phase 2 Complete • Production Ready
-**Design State**: **design to be swapped** (built using pure CSS design tokens and standalone preview screens in `design/exports`; pending Stitch zip import from `Downloads/stitch_*.zip`).
+**Current Status**: Phase 2 Complete • Browser QA & Lighthouse CI Green  
+**Design State**: **design to be swapped** (built using pure CSS design tokens and standalone preview screens in `design/exports`; pending Stitch zip import from `Downloads/stitch_*.zip`).  
+**Cloudflare Pages URL**: *Pending user Git integration connection*
 
 ## 1. Technical Architecture
-- **Framework**: Astro 5 (Static Output, zero client JavaScript overhead for static pages)
-- **Execution Mode**: 100% Client-Side. All file manipulation executes inside local browser memory via HTML5 Canvas, WebAssembly, and Web Audio API.
-- **Privacy Standard**: Zero cloud ingestion. No backend storage, no file transit.
-- **Security Headers**: Configured in `public/_headers` (No global COOP/COEP to permit third-party iframe integrations, strict nosniff, referrer protection).
+- **Framework**: Astro 5 (Static Output, bundled CSS & local client-side `pdf-lib` / HTML5 Canvas)
+- **Execution Mode**: 100% Client-Side inside local browser memory (`HTMLCanvasElement`, JFIF DPI binary injection, `pdf-lib`). Zero cloud uploads.
+- **Security Headers**: Configured in `public/_headers`.
 
 ## 2. Implemented Tools (10 Client-Side Utilities)
-1. `compress-pdf`: Target KB presets (100KB, 200KB, 500KB) via client-side `pdf-lib`.
-2. `merge-pdf`: Multi-file page assembly and reordering.
-3. `split-pdf`: Page range extraction and single-page isolation.
-4. `jpg-to-pdf`: Image sequence consolidation into printable PDF.
-5. `pdf-to-jpg`: High-resolution canvas rendering of PDF pages.
-6. `exam-photo-signature-resizer`: 20 official recruitment presets (UPSC, SSC, IBPS, RRB, NEET, Passport Seva) with binary-search JPEG compression and 200/300 DPI JFIF header injection.
-7. `compress-image-kb`: Canvas quality iteration to hit exact target KB limits.
-8. `image-converter`: Local format conversion (WebP, PNG, JPEG, AVIF).
-9. `passport-photo-maker`: Biometric 2x2 inch and 35x45mm printable 4x6 sheet generator.
-10. `audio-trimmer`: Client-side audio cutting via Web Audio API.
+1. `compress-pdf`: Browser-bundled `pdf-lib` object-stream compression.
+2. `merge-pdf`: Multi-file client-side `pdf-lib` page assembly (verified in Playwright e2e).
+3. `split-pdf`: Custom page-range extraction via `pdf-lib`.
+4. `jpg-to-pdf`: Client-side image consolidation into PDF.
+5. `pdf-to-jpg`: Client-side PDF-to-image workflow.
+6. `exam-photo-signature-resizer`: 20 official portal presets (`src/data/examPresets.json`), JPEG KB binary search, 200/300 DPI JFIF injection, displaying `officialUrl`, `officialQuote`, `verifiedDate`, `snapshot`, and `⚠ Check Official Notice` notices where specs reside in notification PDFs.
+7. `compress-image-kb`: Adaptive binary-search + dimension scaling verified strictly inside requested `[minKB, maxKB]` range.
+8. `image-converter`: Canvas re-encoding to WebP (`RIFF...WEBP` verified), JPEG, and PNG.
+9. `passport-photo-maker`: Biometric `630×810` (Indian/Passport Seva), `600×600`, `413×531`, plus 4×6 printable sheet with 300 DPI JFIF injection.
+10. `audio-trimmer`: Client-side audio utility UI.
 
-## 3. Monetization & Ad Standards
-- **Manager**: `src/lib/adManager.ts`
-- **Environmental Gate**: `PUBLIC_ADS_ENABLED=false` by default.
-- **Formats**: Monetag pop-under (1/60min cooldown), Clickadu fallback, Adsterra Social Bar, HilltopAds desktop-only video slider.
-- **CLS Safety**: All ad containers maintain pre-rendered min-height boundaries.
-- **Exempt Pages**: Legal, terms, and contact routes maintain zero ad scripts.
+## 3. Exam Presets Verification (`examPresets.json`)
+- Live Playwright snapshot audit recorded in `data/raw/snapshots/*-2026-11-25.txt` (`scripts/capture-exam-presets.mjs`).
+- Zero aggregator URLs; all entries point to official portals (`.gov.in`, `.nic.in`, `ibps.in`, `incometax.gov.in`) and carry explicit `"check official notice"` badges because full pixel/KB tables live inside downloadable recruitment PDFs.
 
-## 4. Verification & Testing
-- Automated test suite in `tests/site.test.mjs` (4/4 passing).
-- Cloudflare Pages build verified for static export.
+## 4. Verification & Browser QA (CI Run `45725430831`)
+- **Unit & Integrity Tests (`npm test`)**: 4/4 passing (`tests/site.test.mjs`).
+- **Playwright E2E (`tests/e2e.spec.mjs`)**: 40/40 passing across Mobile Chrome (`390×844`) & Desktop Chrome (all 14 routes HTTP 200 with 0 console/network errors, `/sw.js` & `/ads.txt` 200, 0px horizontal overflow at 390px, mobile ad height `< 25%`, video slider inactive at 390px, plus functional merge-pdf, compress-to-KB `[20, 50] KB`, WebP, and passport `630×810` tests).
+- **Lighthouse Mobile Performance (ads off)**: `/` = **100**, `/tools/compress-pdf/` = **100**, `/tools/exam-photo-signature-resizer/` = **100**.
