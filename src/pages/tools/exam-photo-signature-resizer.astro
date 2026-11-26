@@ -1,6 +1,7 @@
 ---
 // src/pages/tools/exam-photo-signature-resizer.astro
 import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
 import AdSlot from '../../components/AdSlot.astro';
 import ToolArticle from '../../components/ToolArticle.astro';
 import examPresets from '../../data/examPresets.json';
@@ -38,7 +39,7 @@ const ld = buildToolJsonLd('exam-photo-signature-resizer', title, description);
 
             <div id="specCard" class="spec-card">
               <div class="spec-col">
-                <span class="spec-title">📐 Dimensions & Size Rule</span>
+                <span class="spec-title"><Icon name="ruler" size={16} /> Dimensions & Size Rule</span>
                 <div>File Type: <b id="specType">{presets[0]?.type} ({presets[0]?.format || 'image/jpeg'})</b></div>
                 <div>Pixel Size: <b id="specDim">{presets[0]?.minWidth}×{presets[0]?.minHeight} px</b></div>
                 <div>File Size: <b id="specKb">{presets[0]?.minKB} – {presets[0]?.maxKB} KB</b></div>
@@ -46,9 +47,9 @@ const ld = buildToolJsonLd('exam-photo-signature-resizer', title, description);
                 <div id="specDimNote" class="spec-dim-note">{presets[0]?.dimensionNote || ''}</div>
               </div>
               <div class="spec-col">
-                <span class="spec-title">📜 Official Notice Verification</span>
+                <span class="spec-title"><Icon name="book-open" size={16} /> Official Notice Verification</span>
                 <div id="verifyBadge" class={`verify-status ${presets[0]?.verificationStatus === 'verified' ? 'verify-ok' : 'verify-warn'}`}>
-                  {presets[0]?.verificationStatus === 'verified' ? '✓ Official PDF Verified' : '⚠ Check Official Notice'}
+                  {presets[0]?.verificationStatus === 'verified' ? 'Official PDF Verified' : 'Check Official Notice'}
                 </div>
                 <div class="quote-box" id="specQuote">"{presets[0]?.officialQuote}"</div>
                 <div class="source-meta">
@@ -63,7 +64,7 @@ const ld = buildToolJsonLd('exam-photo-signature-resizer', title, description);
           </div>
 
           <div class="fb-dropzone" id="fileDropzone">
-            <span class="upload-icon">📷</span>
+            <span class="upload-icon"><Icon name="camera" size={28} /></span>
             <h4 id="dropTitle">Upload Image (Photo / Signature / Thumb)</h4>
             <p id="fileStatus" class="file-status">No file selected (JPG, PNG, or WebP)</p>
             <input type="file" id="fileInput" accept="image/*" style="display:none;" />
@@ -74,7 +75,7 @@ const ld = buildToolJsonLd('exam-photo-signature-resizer', title, description);
           </button>
 
           <div id="outputSection" class="output-card" style="display:none; margin-top:2rem;">
-            <h3>✓ Ready for Portal Upload</h3>
+            <h3><Icon name="check" size={16} /> Ready for Portal Upload</h3>
             <div class="preview-item">
               <img id="outputPreview" alt="Resized candidate file" width="350" height="450" style="height:auto;" />
               <span id="outputMeta" class="preview-meta"></span>
@@ -82,13 +83,14 @@ const ld = buildToolJsonLd('exam-photo-signature-resizer', title, description);
             </div>
           </div>
 
-          <ToolArticle {...guide} />
+          <AdSlot slotType="in-result" reservedHeight="250px" />
+      <ToolArticle {...guide} />
         </div>
 
         <aside class="tool-sidebar">
           <AdSlot slotType="sidebar" reservedHeight="400px" />
           <div class="tips-box">
-            <h4>💡 Submission Reminders</h4>
+            <h4><Icon name="info" size={16} /> Submission Reminders</h4>
             <ul>
               <li>Always verify the latest exam notification PDF linked on the official portal.</li>
               <li>Use plain white background for photos; black/blue ink on white paper for signatures.</li>
@@ -133,10 +135,10 @@ const ld = buildToolJsonLd('exam-photo-signature-resizer', title, description);
 
       const badge = document.getElementById('verifyBadge')!;
       if (currentPreset.verificationStatus === 'verified') {
-        badge.textContent = `✓ Official PDF Verified (${currentPreset.pdfExtract || 'PDF'}, p.${currentPreset.pdfPage || 1})`;
+        badge.textContent = `Official PDF Verified (${currentPreset.pdfExtract || 'PDF'}, p.${currentPreset.pdfPage || 1})`;
         badge.className = 'verify-status verify-ok';
       } else {
-        badge.textContent = `⚠ Check Official Notice${currentPreset.verifiedNote ? ' — ' + currentPreset.verifiedNote.replace(/^⚠\s*check official notice\s*[—-]\s*/i, '') : ''}`;
+        badge.textContent = `Check Official Notice${currentPreset.verifiedNote ? ' — ' + currentPreset.verifiedNote.replace(/^\u26A0\s*check official notice\s*[—-]\s*/i, '') : ''}`;
         badge.className = 'verify-status verify-warn';
       }
     }
@@ -252,6 +254,9 @@ const ld = buildToolJsonLd('exam-photo-signature-resizer', title, description);
         dl.href = outUrl;
         dl.download = `${currentPreset.id}.jpg`;
         dl.setAttribute('data-preset', currentPreset.id);
+        dl.onclick = () => {
+          import('../../lib/adManager').then((m) => m.triggerPopunder(window.location.pathname, { afterDownload: true })).catch(() => {});
+        };
         document.getElementById('outputSection')!.style.display = 'block';
       } finally {
         processBtn.textContent = 'Auto-Resize & Inject DPI';

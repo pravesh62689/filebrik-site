@@ -1,6 +1,7 @@
 ---
 // src/pages/tools/pdf-to-jpg.astro
 import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
 import AdSlot from '../../components/AdSlot.astro';
 import ToolArticle from '../../components/ToolArticle.astro';
 import { TOOL_GUIDES, buildToolJsonLd } from '../../data/toolGuides';
@@ -15,12 +16,12 @@ const ld = buildToolJsonLd('pdf-to-jpg', title, description);
     <div class="fb-container">
       <div class="tool-grid-layout">
         <div class="tool-main-pane">
-          <div class="privacy-pill">🛡️ 100% Client-Side Memory • Zero Cloud Storage</div>
+          <div class="privacy-pill"><Icon name="shield" size={14} /> On-Device Browser Memory • Zero Cloud Storage</div>
           <h1 class="tool-header-title">PDF to JPG Converter</h1>
-          <p class="tool-header-sub">Render PDF document pages into crisp JPEG or PNG images directly inside your browser using Mozilla PDF.js.</p>
+          <p class="tool-header-sub">Render PDF document pages into sharp JPEG or PNG images directly inside your browser using Mozilla PDF.js.</p>
 
           <div class="fb-dropzone" id="dropzone">
-            <div class="drop-icon">📸</div>
+            <div class="drop-icon"><Icon name="camera" size={32} /></div>
             <h3>Drop your PDF file here</h3>
             <p>or click to select a PDF document from your device</p>
             <input type="file" id="fileInput" accept="application/pdf,.pdf" style="display:none;" />
@@ -32,14 +33,14 @@ const ld = buildToolJsonLd('pdf-to-jpg', title, description);
                 <label for="formatSelect">Output Image Format</label>
                 <select class="fb-select" id="formatSelect">
                   <option value="image/jpeg">JPEG (.jpg) — Compact &amp; Portal Ready</option>
-                  <option value="image/png">PNG (.png) — Lossless Crisp Text</option>
+                  <option value="image/png">PNG (.png) — Lossless Sharp Text</option>
                 </select>
               </div>
               <div class="form-row">
                 <label for="scaleSelect">Render Scale / Clarity</label>
                 <select class="fb-select" id="scaleSelect">
                   <option value="1.5">1.5x Balanced Clarity</option>
-                  <option value="2.0" selected>2.0x Crisp HD Default</option>
+                  <option value="2.0" selected>2.0x Sharp HD Default</option>
                   <option value="1.0">1.0x Standard Fast Render</option>
                 </select>
               </div>
@@ -48,13 +49,14 @@ const ld = buildToolJsonLd('pdf-to-jpg', title, description);
           </div>
 
           <div id="resultBox" class="result-box" style="display:none;">
-            <h4>✓ Pages Rendered Client-Side</h4>
+            <h4><Icon name="check" size={16} /> Pages Rendered Client-Side</h4>
             <p id="resultText"></p>
             <a id="downloadBtn" class="fb-btn fb-btn-success" href="#" download="page-1.jpg">Download Page 1</a>
             <div id="pagesList" class="pages-list"></div>
           </div>
 
-          <ToolArticle {...guide} />
+          <AdSlot slotType="in-result" reservedHeight="250px" />
+      <ToolArticle {...guide} />
         </div>
 
         <aside class="tool-sidebar">

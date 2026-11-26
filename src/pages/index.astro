@@ -1,184 +1,222 @@
 ---
 // src/pages/index.astro
 import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+import examPresets from '../data/examPresets.json';
+
 const homeLd = [
   {
     '@type': 'WebSite',
     name: 'FileBrik',
     url: 'https://filebrik.pages.dev/',
-    description: '100% client-side PDF, image, and exam photo utilities.',
+    description: 'Client-side PDF, image, and exam photo utilities executed in local browser memory.',
   },
   {
     '@type': 'BreadcrumbList',
     itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: 'https://filebrik.pages.dev/' }],
   },
 ];
+
+const demoPresets = examPresets.filter((p) =>
+  ['upsc-photo', 'ibps-photo', 'nta-neet-photo', 'ssc-signature', 'uppsc-photo', 'passport-seva-photo'].includes(p.id)
+);
+
+const compactTools = [
+  { href: '/tools/merge-pdf', icon: 'layers' as const, name: 'Merge PDF', desc: 'Combine multiple PDF documents in order inside local browser memory.' },
+  { href: '/tools/split-pdf', icon: 'scissors' as const, name: 'Split PDF', desc: 'Extract specific page ranges into standalone PDF files.' },
+  { href: '/tools/jpg-to-pdf', icon: 'image' as const, name: 'JPG to PDF', desc: 'Assemble scanned certificates, photos, and IDs into one multi-page PDF.' },
+  { href: '/tools/pdf-to-jpg', icon: 'camera' as const, name: 'PDF to JPG', desc: 'Render PDF pages into JPEG or WebP images locally via pdfjs-dist.' },
+  { href: '/tools/image-converter', icon: 'refresh-cw' as const, name: 'Image Converter', desc: 'Convert between WebP, PNG, JPEG, and AVIF without server re-encoding.' },
+  { href: '/tools/passport-photo-maker', icon: 'badge-check' as const, name: 'Passport Photo Maker', desc: 'Build 2x2 inch, 35x45 mm, and 630x810 px biometric sheets at 300 DPI.' },
+  { href: '/tools/audio-trimmer', icon: 'music' as const, name: 'Audio Trimmer', desc: 'Slice MP3, WAV, or M4A recordings into 16-bit PCM WAV clips offline.' },
+];
+
+const popularExams = [
+  { href: '/exams/upsc-cse-photo-20-200kb/', label: 'UPSC Photo (20–200 KB)' },
+  { href: '/exams/ibps-po-photo-20-50kb/', label: 'IBPS PO Photo (20–50 KB)' },
+  { href: '/exams/neet-ug-passport-photo-10-200kb/', label: 'NEET UG Photo (10–200 KB)' },
+  { href: '/exams/ssc-cgl-signature-10-20kb/', label: 'SSC Signature (10–20 KB)' },
+  { href: '/exams/uppsc-otr-photo-10-50kb/', label: 'UPPSC OTR Photo (10–50 KB)' },
+  { href: '/hi/exams/upsc-cse-photo-20-200kb/', label: 'UPSC फोटो (हिंदी)' },
+];
 ---
 <Layout
-  title="100% Private, Client-Side PDF & Media Tools"
-  description="Free, secure, client-side PDF compression, merging, image resizing to KB, exam photo adjustments, and audio trimming with zero cloud uploads."
+  title="Private Client-Side PDF & Exam Photo Tools"
+  description="Resize UPSC, IBPS, NEET, and SSC exam photos to exact KB and DPI, compress PDFs to target sizes, and convert images locally with zero uploads."
   jsonLd={homeLd}
 >
   <main>
     <section class="hero-section">
-      <div class="fb-container text-center">
-        <div class="privacy-badge">🔒 100% Client-Side Privacy — Files Never Leave Your Device</div>
-        <h1 class="hero-title">Ultra-Fast PDF & Media Utilities,<br><span class="highlight">Zero Server Uploads</span></h1>
-        <p class="hero-subtitle">Compress PDFs, merge documents, resize exam photos to exact KB and DPI, and convert images directly inside your browser memory. Instant, private, and offline-ready.</p>
+      <div class="fb-container hero-split">
+        <div class="hero-copy">
+          <div class="privacy-badge"><Icon name="lock" size={14} /> Zero Server Uploads • Runs in Browser Memory</div>
+          <h1 class="hero-title">PDF &amp; Exam Photo Tools,<br><span class="highlight">Built for Strict Portal Limits</span></h1>
+          <p class="hero-subtitle">Hit exact 20 KB, 50 KB, or 200 KB thresholds, inject 200 or 300 DPI JFIF headers, and compress PDFs locally using Canvas and WebAssembly.</p>
+          <div class="hero-cta-row">
+            <a href="/tools/exam-photo-signature-resizer" class="fb-btn fb-btn-primary">Open Exam Resizer <Icon name="arrow-right" size={16} /></a>
+            <a href="/about" class="fb-btn fb-btn-secondary">How Local Processing Works</a>
+          </div>
+        </div>
+
+        <div class="fb-card hero-demo" id="hero-demo-card">
+          <div class="demo-header">
+            <span class="demo-icon"><Icon name="graduation-cap" size={20} /></span>
+            <div>
+              <div class="demo-kicker">Featured Tool • Live Preset Preview</div>
+              <div class="demo-title">Exam Photo &amp; Signature Resizer</div>
+            </div>
+          </div>
+          <label for="hero-preset-select" class="demo-label">Choose an official exam portal:</label>
+          <select id="hero-preset-select" class="fb-input demo-select">
+            {demoPresets.map((p) => (
+              <option
+                value={p.id}
+                data-kb={`${p.minKB}–${p.maxKB} KB`}
+                data-px={`${p.minWidth}×${p.maxHeight} px`}
+                data-dpi={`${p.dpi} DPI`}
+                data-status={p.verificationStatus}
+                data-pdf={p.pdfUrl}
+              >
+                {p.name} ({p.minKB}–{p.maxKB} KB)
+              </option>
+            ))}
+          </select>
+          <div class="demo-specs" id="hero-demo-specs">
+            <div><span>Target Size</span><strong id="demo-kb">20–200 KB</strong></div>
+            <div><span>Dimensions</span><strong id="demo-px">350×1000 px</strong></div>
+            <div><span>Resolution</span><strong id="demo-dpi">300 DPI</strong></div>
+          </div>
+          <div class="demo-actions">
+            <a id="demo-launch-btn" href="/tools/exam-photo-signature-resizer/?preset=upsc-photo" class="fb-btn fb-btn-primary demo-launch">Resize with This Preset</a>
+            <a id="demo-pdf-link" href={demoPresets[0].pdfUrl} target="_blank" rel="noopener" class="demo-pdf">Official PDF</a>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section class="tools-section">
+    <section class="popular-section">
       <div class="fb-container">
-        <div class="tools-grid">
-          <a href="/tools/compress-pdf" class="fb-card tool-item">
-            <div class="tool-icon">🗜️</div>
-            <h2>Compress PDF</h2>
-            <p>Reduce PDF file size to target KBs (100KB, 200KB, 500KB) while preserving high document readability.</p>
+        <h2 class="section-heading">Most Used File Utilities</h2>
+        <div class="popular-grid">
+          <a href="/tools/compress-pdf" class="fb-card popular-card">
+            <div class="popular-top">
+              <span class="tool-icon"><Icon name="file-text" size={22} /></span>
+              <span class="popular-tag">100 KB / 200 KB / 500 KB</span>
+            </div>
+            <h3>Compress PDF</h3>
+            <p>Reduce PDF file weight via pdf-lib object-stream optimization and canvas downscaling for scholarship and job portals.</p>
           </a>
-          <a href="/tools/merge-pdf" class="fb-card tool-item">
-            <div class="tool-icon">📑</div>
-            <h2>Merge PDF</h2>
-            <p>Combine multiple PDF files into one clean document with visual drag-and-drop reordering.</p>
-          </a>
-          <a href="/tools/split-pdf" class="fb-card tool-item">
-            <div class="tool-icon">✂️</div>
-            <h2>Split PDF</h2>
-            <p>Extract specific pages or page ranges into standalone lightweight PDF files instantly.</p>
-          </a>
-          <a href="/tools/jpg-to-pdf" class="fb-card tool-item">
-            <div class="tool-icon">🖼️</div>
-            <h2>JPG to PDF</h2>
-            <p>Convert photos, passport copies, and receipts into a structured multi-page PDF.</p>
-          </a>
-          <a href="/tools/pdf-to-jpg" class="fb-card tool-item">
-            <div class="tool-icon">📸</div>
-            <h2>PDF to JPG</h2>
-            <p>Render PDF pages into crisp high-resolution WebP or JPEG images in your browser.</p>
-          </a>
-          <a href="/tools/exam-photo-signature-resizer" class="fb-card tool-item featured-tool">
-            <div class="featured-badge">Govt Portals</div>
-            <div class="tool-icon">🎓</div>
-            <h2>Exam Photo & Signature</h2>
-            <p>Auto-scale to exact dimension, KB limit, and 200/300 DPI for UPSC, SSC, IBPS, NEET, and PAN.</p>
-          </a>
-          <a href="/tools/compress-image-kb" class="fb-card tool-item">
-            <div class="tool-icon">📉</div>
-            <h2>Compress Image to KB</h2>
-            <p>Binary-search quality optimization to hit strict portal thresholds (under 20KB, 50KB, 100KB).</p>
-          </a>
-          <a href="/tools/image-converter" class="fb-card tool-item">
-            <div class="tool-icon">🔄</div>
-            <h2>Image Converter</h2>
-            <p>Convert seamlessly between WebP, PNG, JPEG, and AVIF formats without server re-encoding.</p>
-          </a>
-          <a href="/tools/passport-photo-maker" class="fb-card tool-item">
-            <div class="tool-icon">🛂</div>
-            <h2>Passport Photo Maker</h2>
-            <p>Generate printable 2x2 inch and 35x45mm passport photo sheets with standard cut lines.</p>
-          </a>
-          <a href="/tools/audio-trimmer" class="fb-card tool-item">
-            <div class="tool-icon">🎵</div>
-            <h2>Audio Trimmer</h2>
-            <p>Cut and trim voice memos, podcasts, and ringtones client-side with millisecond waveform precision.</p>
+          <a href="/tools/compress-image-kb" class="fb-card popular-card">
+            <div class="popular-top">
+              <span class="tool-icon"><Icon name="minimize-2" size={22} /></span>
+              <span class="popular-tag">Exact KB Binary Search</span>
+            </div>
+            <h3>Compress Image to KB</h3>
+            <p>Target exact 20 KB, 50 KB, or 100 KB ceilings using iterative JPEG quality and dimension scaling without guesswork.</p>
           </a>
         </div>
       </div>
     </section>
+
+    <section class="compact-section">
+      <div class="fb-container">
+        <h2 class="section-heading">More Browser Utilities</h2>
+        <div class="compact-list">
+          {compactTools.map((t) => (
+            <a href={t.href} class="fb-card compact-row">
+              <span class="compact-icon"><Icon name={t.icon} size={20} /></span>
+              <div class="compact-body">
+                <h3>{t.name}</h3>
+                <p>{t.desc}</p>
+              </div>
+              <span class="compact-arrow"><Icon name="arrow-right" size={18} /></span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="exam-links-section">
+      <div class="fb-container">
+        <h2 class="section-heading">Verified Exam Specification Guides</h2>
+        <div class="exam-pills">
+          {popularExams.map((ex) => (
+            <a href={ex.href} class="exam-pill">{ex.label}</a>
+          ))}
+        </div>
+      </div>
+    </section>
   </main>
+
+  <script>
+    const sel = document.getElementById('hero-preset-select') as HTMLSelectElement | null;
+    const kbEl = document.getElementById('demo-kb');
+    const pxEl = document.getElementById('demo-px');
+    const dpiEl = document.getElementById('demo-dpi');
+    const launchBtn = document.getElementById('demo-launch-btn') as HTMLAnchorElement | null;
+    const pdfLink = document.getElementById('demo-pdf-link') as HTMLAnchorElement | null;
+
+    sel?.addEventListener('change', () => {
+      const opt = sel.selectedOptions[0];
+      if (!opt) return;
+      if (kbEl) kbEl.textContent = opt.dataset.kb || '';
+      if (pxEl) pxEl.textContent = opt.dataset.px || '';
+      if (dpiEl) dpiEl.textContent = opt.dataset.dpi || '';
+      if (launchBtn) launchBtn.href = `/tools/exam-photo-signature-resizer/?preset=${encodeURIComponent(opt.value)}`;
+      if (pdfLink && opt.dataset.pdf) pdfLink.href = opt.dataset.pdf;
+    });
+  </script>
 </Layout>
 
 <style>
-  .hero-section {
-    padding: 4rem 0 2rem;
-  }
-  .privacy-badge {
-    display: inline-flex;
-    align-items: center;
-    background: var(--fb-primary-light);
-    color: var(--fb-primary);
-    font-size: 0.8rem;
-    font-weight: 700;
-    padding: 0.35rem 0.85rem;
-    border-radius: var(--fb-radius-full);
-    margin-bottom: 1.5rem;
-  }
-  .hero-title {
-    font-size: 2.75rem;
-    font-weight: 900;
-    line-height: 1.2;
-    margin-bottom: 1rem;
-    color: var(--fb-text-main);
-  }
-  .highlight {
-    color: var(--fb-primary);
-  }
-  .hero-subtitle {
-    font-size: 1.15rem;
-    color: var(--fb-text-muted);
-    max-width: 680px;
-    margin: 0 auto;
-    line-height: 1.6;
-  }
-  .tools-section {
-    padding: 3rem 0;
-  }
-  .tools-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-    gap: 1.5rem;
-  }
-  .tool-item {
-    text-decoration: none;
-    color: inherit;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-  }
-  .tool-icon {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    width: 48px;
-    height: 48px;
-    background: var(--fb-primary-light);
-    border-radius: var(--fb-radius-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .tool-item h2 {
-    font-size: 1.15rem;
-    font-weight: 800;
-    margin-bottom: 0.5rem;
-  }
-  .tool-item p {
-    font-size: 0.85rem;
-    color: var(--fb-text-muted);
-    line-height: 1.5;
-    flex-grow: 1;
-  }
-  .featured-tool {
-    border-color: var(--fb-primary);
-    background: linear-gradient(to bottom, #FFFFFF, #FAF5FF);
-  }
-  .featured-badge {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: var(--fb-primary);
-    color: white;
-    font-size: 0.65rem;
-    font-weight: 800;
-    padding: 0.2rem 0.5rem;
-    border-radius: var(--fb-radius-full);
-    text-transform: uppercase;
-  }
-  @media (max-width: 640px) {
-    .hero-title {
-      font-size: 2rem;
-    }
-    .hero-subtitle {
-      font-size: 1rem;
-    }
+  .hero-section { padding: 3.5rem 0 2.5rem; }
+  .hero-split { display: grid; grid-template-columns: 1.25fr 1fr; gap: 2.5rem; align-items: center; }
+  .privacy-badge { display: inline-flex; align-items: center; gap: 0.45rem; background: var(--fb-primary-light); color: var(--fb-primary); font-size: 0.8rem; font-weight: 700; padding: 0.35rem 0.85rem; border-radius: var(--fb-radius-full); margin-bottom: 1.25rem; }
+  .hero-title { font-size: 2.5rem; font-weight: 900; line-height: 1.18; margin-bottom: 1rem; color: var(--fb-text-main); }
+  .highlight { color: var(--fb-primary); }
+  .hero-subtitle { font-size: 1.05rem; color: var(--fb-text-muted); line-height: 1.6; margin-bottom: 1.5rem; max-width: 560px; }
+  .hero-cta-row { display: flex; flex-wrap: wrap; gap: 0.85rem; }
+  .hero-demo { padding: 1.5rem; border: 2px solid var(--fb-primary); }
+  .demo-header { display: flex; gap: 0.85rem; align-items: center; margin-bottom: 1rem; }
+  .demo-icon { width: 42px; height: 42px; border-radius: var(--fb-radius-md); background: var(--fb-primary-light); color: var(--fb-primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .demo-kicker { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--fb-primary); }
+  .demo-title { font-size: 1.05rem; font-weight: 800; color: var(--fb-text-main); }
+  .demo-label { display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--fb-text-muted); }
+  .demo-select { width: 100%; margin-bottom: 1rem; font-weight: 600; }
+  .demo-specs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; background: var(--fb-surface-alt); padding: 0.85rem; border-radius: var(--fb-radius-md); margin-bottom: 1.1rem; }
+  .demo-specs span { display: block; font-size: 0.72rem; color: var(--fb-text-muted); }
+  .demo-specs strong { font-size: 0.88rem; color: var(--fb-text-main); font-family: var(--fb-font-mono); }
+  .demo-actions { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+  .demo-launch { flex: 1; text-align: center; }
+  .demo-pdf { font-size: 0.82rem; font-weight: 700; color: var(--fb-primary); text-decoration: none; white-space: nowrap; }
+
+  .section-heading { font-size: 1.35rem; font-weight: 800; margin-bottom: 1.1rem; color: var(--fb-text-main); }
+  .popular-section { padding: 1.5rem 0 2rem; }
+  .popular-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+  .popular-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; padding: 1.75rem; }
+  .popular-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+  .tool-icon { width: 44px; height: 44px; background: var(--fb-primary-light); color: var(--fb-primary); border-radius: var(--fb-radius-md); display: flex; align-items: center; justify-content: center; }
+  .popular-tag { font-size: 0.75rem; font-weight: 700; background: var(--fb-surface-alt); color: var(--fb-text-muted); padding: 0.25rem 0.65rem; border-radius: var(--fb-radius-full); }
+  .popular-card h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 0.45rem; }
+  .popular-card p { font-size: 0.9rem; color: var(--fb-text-muted); line-height: 1.55; }
+
+  .compact-section { padding: 1rem 0 2rem; }
+  .compact-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 0.85rem; }
+  .compact-row { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem; text-decoration: none; color: inherit; }
+  .compact-icon { width: 38px; height: 38px; border-radius: var(--fb-radius-sm); background: var(--fb-primary-light); color: var(--fb-primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .compact-body { flex: 1; }
+  .compact-body h3 { font-size: 1rem; font-weight: 800; margin-bottom: 0.15rem; }
+  .compact-body p { font-size: 0.82rem; color: var(--fb-text-muted); line-height: 1.4; }
+  .compact-arrow { color: var(--fb-text-muted); flex-shrink: 0; }
+
+  .exam-links-section { padding: 1rem 0 2.5rem; }
+  .exam-pills { display: flex; flex-wrap: wrap; gap: 0.65rem; }
+  .exam-pill { display: inline-block; padding: 0.45rem 0.9rem; border-radius: var(--fb-radius-full); background: var(--fb-surface); border: 1px solid var(--fb-border); font-size: 0.82rem; font-weight: 700; color: var(--fb-text-main); text-decoration: none; }
+  .exam-pill:hover { border-color: var(--fb-primary); color: var(--fb-primary); }
+
+  @media (max-width: 900px) {
+    .hero-split { grid-template-columns: 1fr; }
+    .popular-grid { grid-template-columns: 1fr; }
+    .hero-title { font-size: 2rem; }
   }
 </style>

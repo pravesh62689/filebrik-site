@@ -1,6 +1,7 @@
 ---
 // src/pages/tools/passport-photo-maker.astro
 import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
 import AdSlot from '../../components/AdSlot.astro';
 import ToolArticle from '../../components/ToolArticle.astro';
 import { TOOL_GUIDES, buildToolJsonLd } from '../../data/toolGuides';
@@ -20,12 +21,12 @@ const ld = buildToolJsonLd('passport-photo-maker', title, description);
     <div class="fb-container">
       <div class="tool-grid-layout">
         <div class="tool-main-pane">
-          <div class="privacy-pill">🛡️ 100% Client-Side Memory • Zero Cloud Storage</div>
+          <div class="privacy-pill"><Icon name="shield" size={14} /> On-Device Browser Memory • Zero Cloud Storage</div>
           <h1 class="tool-header-title">Passport Photo Maker</h1>
           <p class="tool-header-sub">Auto-crop to exact 630×810 px (35×45 mm) and 2×2 inch passport dimensions, with printable 4×6 sheet output.</p>
 
           <div class="fb-dropzone" id="dropzone">
-            <div class="drop-icon">🛂</div>
+            <div class="drop-icon"><Icon name="badge-check" size={32} /></div>
             <h3>Drop your portrait photo here</h3>
             <p>or click to select JPG/PNG from your device</p>
             <input type="file" id="fileInput" accept="image/*" style="display:none;" />
@@ -44,7 +45,7 @@ const ld = buildToolJsonLd('passport-photo-maker', title, description);
           </div>
 
           <div id="resultBox" class="result-box" style="display:none;">
-            <h4>✓ Passport Photo Ready (<span id="dimLabel">630×810 px</span>)</h4>
+            <h4><Icon name="check" size={16} /> Passport Photo Ready (<span id="dimLabel">630×810 px</span>)</h4>
             <p id="resultText"></p>
             <div class="preview-wrap">
               <img id="previewImg" alt="Passport photo output" width="300" height="385" style="width:auto;max-height:240px;border:1px solid #cbd5e1;" />
@@ -55,7 +56,8 @@ const ld = buildToolJsonLd('passport-photo-maker', title, description);
             </div>
           </div>
 
-          <ToolArticle {...guide} />
+          <AdSlot slotType="in-result" reservedHeight="250px" />
+      <ToolArticle {...guide} />
         </div>
 
         <aside class="tool-sidebar">

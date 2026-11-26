@@ -1,0 +1,156 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import examPresets from '../../data/examPresets.json';
+import { EXAM_LANDING_PAGES, type ExamLandingEntry } from '../../data/examLandingPages';
+
+export function getStaticPaths() {
+  return EXAM_LANDING_PAGES.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: ExamLandingEntry;
+}
+
+const { entry } = Astro.props;
+const preset = examPresets.find((p) => p.id === entry.presetId) || examPresets[0];
+const isVerified = preset.verificationStatus === 'verified';
+const siteOrigin = 'https://filebrik.pages.dev';
+const alternates = entry.hi
+  ? [
+      { lang: 'en', href: `${siteOrigin}/exams/${entry.slug}/` },
+      { lang: 'hi', href: `${siteOrigin}/hi/exams/${entry.slug}/` },
+      { lang: 'x-default', href: `${siteOrigin}/exams/${entry.slug}/` },
+    ]
+  : [];
+
+const related = EXAM_LANDING_PAGES.filter((x) => x.slug !== entry.slug).slice(0, 4);
+
+const ld = [
+  {
+    '@type': 'WebApplication',
+    name: entry.title,
+    url: `${siteOrigin}/exams/${entry.slug}/`,
+    description: entry.description,
+    applicationCategory: 'UtilitiesApplication',
+    operatingSystem: 'Any (Web Browser)',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  },
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteOrigin}/` },
+      { '@type': 'ListItem', position: 2, name: 'Exam Resizer', item: `${siteOrigin}/tools/exam-photo-signature-resizer/` },
+      { '@type': 'ListItem', position: 3, name: entry.examName, item: `${siteOrigin}/exams/${entry.slug}/` },
+    ],
+  },
+];
+---
+<Layout
+  title={entry.title}
+  description={entry.description}
+  alternates={alternates}
+  jsonLd={ld}
+>
+  <main class="exam-page">
+    <div class="fb-container fb-container-narrow">
+      <div class="exam-crumbs">
+        <a href="/">Home</a> / <a href="/tools/exam-photo-signature-resizer/">Exam Photo Resizer</a> / <span>{entry.examName}</span>
+        {entry.hi && <a href={`/hi/exams/${entry.slug}/`} class="lang-switch">हिंदी में देखें</a>}
+      </div>
+
+      <article class="fb-card exam-hero-card">
+        <div class={`verify-pill ${isVerified ? 'ok' : 'warn'}`}>
+          <Icon name={isVerified ? 'check' : 'alert-triangle'} size={15} />
+          {isVerified
+            ? `Official PDF Verified (${preset.pdfExtract || 'PDF'}, p.${preset.pdfPage || 1})`
+            : 'Check Official Notice'}
+        </div>
+
+        <h1>{entry.h1}</h1>
+        <p class="exam-summary">{entry.summary}</p>
+
+        {!isVerified && preset.verifiedNote && (
+          <div class="notice-banner">
+            <Icon name="alert-triangle" size={16} />
+            <span>{preset.verifiedNote.replace(/^\u26A0\s*/i, '')}</span>
+          </div>
+        )}
+
+        <div class="spec-grid">
+          <div class="spec-box"><span>File Size</span><strong>{preset.minKB}–{preset.maxKB} KB</strong></div>
+          <div class="spec-box"><span>Dimensions</span><strong>{preset.minWidth}×{preset.minHeight} to {preset.maxWidth}×{preset.maxHeight} px</strong></div>
+          <div class="spec-box"><span>Resolution</span><strong>{preset.dpi} DPI (JFIF)</strong></div>
+          <div class="spec-box"><span>Format</span><strong>{preset.format || 'image/jpeg'}</strong></div>
+        </div>
+
+        <blockquote class="official-quote">
+          <p>"{preset.officialQuote}"</p>
+          <footer>
+            Source: <a href={preset.pdfUrl || preset.officialUrl} target="_blank" rel="noopener">{preset.authority} Official PDF</a> (Page {preset.pdfPage || 1}, {preset.pdfDate || preset.verifiedDate})
+          </footer>
+        </blockquote>
+
+        <div class="cta-row">
+          <a href={`/tools/exam-photo-signature-resizer/?preset=${preset.id}`} class="fb-btn fb-btn-primary">
+            Open Pre-Set {entry.examName} Resizer <Icon name="arrow-right" size={16} />
+          </a>
+          <a href="/tools/compress-image-kb/" class="fb-btn fb-btn-secondary">Compress Image to KB</a>
+        </div>
+      </article>
+
+      <AdSlot slotType="in-result" reservedHeight="250px" />
+
+      <section class="fb-card exam-details-card">
+        <h2>Preparation Checklist for {entry.examName}</h2>
+        <ul>
+          {entry.tips.map((tip) => <li>{tip}</li>)}
+        </ul>
+
+        <h3>More Tools &amp; Exam Guides</h3>
+        <div class="related-links">
+          <a href="/tools/exam-photo-signature-resizer/">Exam Photo &amp; Signature Resizer</a>
+          <a href="/tools/passport-photo-maker/">Passport Photo Maker</a>
+          <a href="/tools/compress-pdf/">Compress PDF</a>
+          {related.map((r) => (
+            <a href={`/exams/${r.slug}/`}>{r.examName}</a>
+          ))}
+        </div>
+      </section>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .exam-page { padding: 2.5rem 0 4rem; }
+  .exam-crumbs { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; font-size: 0.85rem; color: var(--fb-text-muted); margin-bottom: 1.25rem; }
+  .exam-crumbs a { color: var(--fb-primary); font-weight: 600; text-decoration: none; }
+  .lang-switch { margin-left: auto; background: var(--fb-primary-light); padding: 0.2rem 0.65rem; border-radius: var(--fb-radius-full); }
+  .exam-hero-card, .exam-details-card { padding: 2rem; margin-bottom: 1.5rem; }
+  .verify-pill { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.75rem; border-radius: var(--fb-radius-full); font-size: 0.78rem; font-weight: 700; margin-bottom: 1rem; }
+  .verify-pill.ok { background: #ECFDF5; color: #065F46; }
+  .verify-pill.warn { background: #FFFBEB; color: #92400E; }
+  .exam-hero-card h1 { font-size: 1.9rem; font-weight: 900; margin-bottom: 0.75rem; }
+  .exam-summary { color: var(--fb-text-muted); line-height: 1.6; margin-bottom: 1.25rem; }
+  .notice-banner { display: flex; gap: 0.6rem; align-items: flex-start; background: #FFFBEB; border: 1px solid #F59E0B; color: #92400E; padding: 0.85rem 1rem; border-radius: var(--fb-radius-md); font-size: 0.88rem; margin-bottom: 1.25rem; }
+  .spec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.85rem; margin-bottom: 1.25rem; }
+  .spec-box { background: var(--fb-surface-alt); padding: 0.85rem; border-radius: var(--fb-radius-md); }
+  .spec-box span { display: block; font-size: 0.75rem; color: var(--fb-text-muted); }
+  .spec-box strong { font-size: 0.92rem; color: var(--fb-text-main); font-family: var(--fb-font-mono); }
+  .official-quote { background: var(--fb-surface-alt); border-left: 4px solid var(--fb-primary); padding: 1rem 1.25rem; border-radius: 0 var(--fb-radius-md) var(--fb-radius-md) 0; margin-bottom: 1.5rem; }
+  .official-quote p { font-style: italic; color: var(--fb-text-main); margin-bottom: 0.4rem; }
+  .official-quote footer { font-size: 0.82rem; color: var(--fb-text-muted); }
+  .official-quote a { color: var(--fb-primary); font-weight: 700; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 0.85rem; }
+  .exam-details-card h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: 0.85rem; }
+  .exam-details-card h3 { font-size: 1.05rem; font-weight: 800; margin: 1.5rem 0 0.75rem; }
+  .exam-details-card ul { padding-left: 1.25rem; color: var(--fb-text-muted); line-height: 1.65; }
+  .exam-details-card li { margin-bottom: 0.45rem; }
+  .related-links { display: flex; flex-wrap: wrap; gap: 0.65rem; }
+  .related-links a { font-size: 0.85rem; font-weight: 700; color: var(--fb-primary); text-decoration: none; background: var(--fb-primary-light); padding: 0.35rem 0.75rem; border-radius: var(--fb-radius-full); }
+</style>

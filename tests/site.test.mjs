@@ -143,3 +143,29 @@ test('Audit fixes: IndexNow key, 404 page, OG image, fb-build meta, and unique t
     assert.ok(guidesSrc.includes(`'${s}':`), `TOOL_GUIDES must define ${s}`);
   }
 });
+
+test('Design, copy, About/Changelog, and 30+10 exam landing pages', () => {
+  assert.ok(fs.existsSync(path.join(rootDir, 'src/pages/about.astro')));
+  assert.ok(fs.existsSync(path.join(rootDir, 'src/pages/changelog.astro')));
+  assert.ok(fs.existsSync(path.join(rootDir, 'src/components/Icon.astro')));
+
+  const landingSrc = fs.readFileSync(path.join(rootDir, 'src/data/examLandingPages.ts'), 'utf8');
+  const slugCount = (landingSrc.match(/slug:\s*'/g) || []).length;
+  const hiCount = (landingSrc.match(/\bhi:\s*\{/g) || []).length;
+  assert.equal(slugCount, 30, `Expected 30 exam landing pages, got ${slugCount}`);
+  assert.ok(hiCount >= 10, `Expected >=10 Hindi exam pages, got ${hiCount}`);
+
+  const walk = (d) =>
+    fs.readdirSync(d, { withFileTypes: true }).flatMap((e) =>
+      e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]
+    );
+  const files = walk(path.join(rootDir, 'src')).filter((f) => /\.(astro|ts|js)$/.test(f));
+  const bannedRe = /\b(ultra|seamless|seamlessly|crisp|100%|instantly)\b/i;
+  const emojiRe = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u;
+  for (const f of files) {
+    const content = fs.readFileSync(f, 'utf8');
+    assert.ok(!bannedRe.test(content), `Banned marketing word in ${path.relative(rootDir, f)}`);
+    assert.ok(!emojiRe.test(content), `Emoji found in ${path.relative(rootDir, f)}`);
+    assert.ok(!/<h[1-6][^>]*>[^<]*—[^<]*<\/h[1-6]>/i.test(content), `Em-dash in heading in ${path.relative(rootDir, f)}`);
+  }
+});

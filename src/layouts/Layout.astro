@@ -3,6 +3,7 @@
 import { execSync } from 'node:child_process';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import AdSlot from '../components/AdSlot.astro';
 import { isAdsEnabled } from '../lib/adManager';
 import '../styles/tokens.css';
 import '../styles/global.css';
@@ -12,10 +13,12 @@ interface Props {
   description: string;
   toolSlug?: string;
   noindex?: boolean;
+  lang?: string;
+  alternates?: { lang: string; href: string }[];
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
-const { title, description, toolSlug, noindex = false, jsonLd } = Astro.props;
+const { title, description, toolSlug, noindex = false, lang = 'en', alternates = [], jsonLd } = Astro.props;
 const siteOrigin = Astro.site?.origin || 'https://filebrik.pages.dev';
 const normalizedPath = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
 const canonicalUrl = new URL(normalizedPath, siteOrigin);
@@ -50,7 +53,7 @@ const defaultBreadcrumb =
 const fullLd = defaultBreadcrumb ? [defaultBreadcrumb] : ldGraph;
 ---
 <!DOCTYPE html>
-<html lang="en">
+<html lang={lang}>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -60,6 +63,9 @@ const fullLd = defaultBreadcrumb ? [defaultBreadcrumb] : ldGraph;
   <meta name="google-site-verification" content="EuP7tR_9jMW5UuGvMcL4iTqmbOJUfRJT3FeuZgJbvj0" />
   {noindex && <meta name="robots" content="noindex,follow" />}
   <link rel="canonical" href={canonicalUrl.href}>
+  {alternates.map((alt) => (
+    <link rel="alternate" hreflang={alt.lang} href={alt.href} />
+  ))}
   <link rel="sitemap" href="/sitemap-index.xml">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
@@ -91,7 +97,11 @@ const fullLd = defaultBreadcrumb ? [defaultBreadcrumb] : ldGraph;
 <body data-tool-slug={toolSlug || ''}>
   <Header />
   <slot />
+  <div class="fb-container">
+    <AdSlot slotType="native-footer" reservedHeight="120px" />
+  </div>
   <div id="fb-desktop-slider" aria-hidden="true" hidden></div>
+  <AdSlot slotType="sticky-mobile" reservedHeight="50px" />
   <Footer />
 </body>
 </html>

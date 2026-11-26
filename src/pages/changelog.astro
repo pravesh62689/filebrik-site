@@ -1,0 +1,76 @@
+---
+// src/pages/changelog.astro
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+
+const entries = [
+  {
+    date: '2026-11-27',
+    title: 'Design refresh, Lucide SVG icons, and 40 exam landing pages',
+    items: [
+      'Replaced all emoji icons with consistent MIT-licensed Lucide SVG icons across navigation, tool cards, and alerts.',
+      'Redesigned the home page with a featured Exam Resizer hero demo, a 2-column popular PDF/Image block, and a compact tool directory.',
+      'Added 30 long-tail exam photo/signature landing pages and 10 Hindi exam pages with reciprocal hreflang tags.',
+      'Published the About page and dated Changelog.',
+    ],
+  },
+  {
+    date: '2026-11-26',
+    title: 'Real PDF-to-JPG & Audio Trimmer engines, IndexNow, and SEO gates',
+    items: [
+      'Implemented client-side PDF page rendering with pdfjs-dist in PDF to JPG and 16-bit PCM WAV slicing via Web Audio API in Audio Trimmer.',
+      'Added custom 404 page, IndexNow submission workflow, Open Graph image, and unique 400+ word guides with JSON-LD on all 10 tools.',
+      'Verified 14 of 20 official exam presets directly against downloaded commission PDFs (UPSC, SSC Signature, IBPS, RRB Signature, NTA NEET, UPPSC, BPSC, MPSC, TNPSC).',
+    ],
+  },
+  {
+    date: '2026-11-25',
+    title: 'Cloudflare Pages production launch and Search Console verification',
+    items: [
+      'Deployed FileBrik to https://filebrik.pages.dev via Cloudflare Pages Git integration.',
+      'Verified Google Search Console ownership and submitted sitemap-index.xml to Google and Bing Webmaster Tools.',
+    ],
+  },
+];
+---
+<Layout
+  title="Changelog: FileBrik Releases & Preset Updates"
+  description="Dated release notes for FileBrik client-side PDF tools, official exam preset verifications, and site performance updates."
+>
+  <main class="legal-wrap">
+    <div class="fb-container fb-container-narrow">
+      <article class="fb-card legal-card">
+        <div class="cl-kicker"><Icon name="book-open" size={16} /> Release History</div>
+        <h1>FileBrik Changelog</h1>
+        <p class="cl-intro">Every tool update, official exam PDF verification, and accessibility improvement shipped to <a href="/">FileBrik</a>.</p>
+
+        {entries.map((e) => (
+          <section class="cl-entry">
+            <div class="cl-date">{e.date}</div>
+            <h2>{e.title}</h2>
+            <ul>
+              {e.items.map((item) => <li>{item}</li>)}
+            </ul>
+          </section>
+        ))}
+
+        <p class="cl-foot">See also: <a href="/about/">About FileBrik</a> · <a href="/tools/exam-photo-signature-resizer/">Exam Photo &amp; Signature Resizer</a> · <a href="/privacy/">Privacy Architecture</a></p>
+      </article>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .legal-wrap { padding: 4rem 0; }
+  .legal-card { padding: 3rem; }
+  .cl-kicker { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; font-weight: 700; color: var(--fb-primary); margin-bottom: 0.75rem; }
+  .legal-card h1 { font-size: 2.25rem; font-weight: 900; margin-bottom: 0.75rem; }
+  .cl-intro { color: var(--fb-text-muted); margin-bottom: 2rem; }
+  .cl-entry { border-top: 1px solid var(--fb-border); padding: 1.5rem 0; }
+  .cl-date { font-family: var(--fb-font-mono); font-size: 0.85rem; font-weight: 700; color: var(--fb-primary); margin-bottom: 0.35rem; }
+  .cl-entry h2 { font-size: 1.2rem; font-weight: 800; margin-bottom: 0.75rem; }
+  .cl-entry ul { padding-left: 1.25rem; color: var(--fb-text-muted); line-height: 1.65; }
+  .cl-entry li { margin-bottom: 0.45rem; }
+  .cl-foot { margin-top: 1.5rem; font-size: 0.9rem; color: var(--fb-text-muted); }
+  .legal-card a { color: var(--fb-primary); font-weight: 700; }
+</style>

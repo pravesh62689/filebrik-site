@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import fs from 'node:fs';
 import path from 'node:path';
+import { EXAM_LANDING_PAGES } from '../data/examLandingPages';
 
 export const GET: APIRoute = ({ site }) => {
   const origin = (site?.origin || 'https://filebrik.pages.dev').replace(/\/$/, '');
@@ -19,6 +20,10 @@ export const GET: APIRoute = ({ site }) => {
         routes.push(`/tools/${entry.replace(/\.astro$/, '')}/`);
       }
     }
+  }
+  for (const ex of EXAM_LANDING_PAGES) {
+    routes.push(`/exams/${ex.slug}/`);
+    if (ex.hi) routes.push(`/hi/exams/${ex.slug}/`);
   }
 
   const urls = routes

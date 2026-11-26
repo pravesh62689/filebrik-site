@@ -1,18 +1,19 @@
 ---
 // src/components/Header.astro
+import Icon from './Icon.astro';
 ---
 <header class="fb-header">
   <div class="fb-container header-inner">
     <a href="/" class="fb-logo">
-      <span class="logo-icon">⚡</span>
+      <span class="logo-icon"><Icon name="zap" size={20} /></span>
       <span class="logo-text">FileBrik</span>
-      <span class="logo-pill">100% Private</span>
+      <span class="logo-pill">On-Device</span>
     </a>
     <nav class="fb-nav">
-      <a href="/tools/compress-pdf">Compress PDF</a>
-      <a href="/tools/merge-pdf">Merge PDF</a>
       <a href="/tools/exam-photo-signature-resizer">Exam Resizer</a>
+      <a href="/tools/compress-pdf">Compress PDF</a>
       <a href="/tools/compress-image-kb">Compress Image</a>
+      <a href="/about">About</a>
       <a href="/privacy">Privacy</a>
     </nav>
   </div>

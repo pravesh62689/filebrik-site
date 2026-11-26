@@ -1,6 +1,7 @@
 ---
 // src/pages/tools/compress-pdf.astro
 import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
 import AdSlot from '../../components/AdSlot.astro';
 import AffiliateCard from '../../components/AffiliateCard.astro';
 import ToolArticle from '../../components/ToolArticle.astro';
@@ -21,12 +22,12 @@ const ld = buildToolJsonLd('compress-pdf', title, description);
     <div class="fb-container">
       <div class="tool-grid-layout">
         <div class="tool-main-pane">
-          <div class="privacy-pill">🛡️ 100% Client-Side Memory • Zero Cloud Storage</div>
+          <div class="privacy-pill"><Icon name="shield" size={14} /> On-Device Browser Memory • Zero Cloud Storage</div>
           <h1 class="tool-header-title">Compress PDF File</h1>
           <p class="tool-header-sub">Reduce document size to meet strict upload portal requirements without losing visual clarity.</p>
 
           <div class="fb-dropzone" id="dropzone">
-            <div class="drop-icon">📄</div>
+            <div class="drop-icon"><Icon name="file-text" size={32} /></div>
             <h3>Drop your PDF file here</h3>
             <p>or click to select from your device (Up to 200MB)</p>
             <input type="file" id="pdfInput" accept="application/pdf" style="display:none;" />
@@ -48,7 +49,7 @@ const ld = buildToolJsonLd('compress-pdf', title, description);
 
           <div id="resultBox" class="result-box" style="display:none;">
             <div class="result-header">
-              <span class="status-icon">✓</span>
+              <span class="status-icon"><Icon name="check" size={16} /></span>
               <h4>Compression Complete</h4>
             </div>
             <div class="stats-row">
@@ -68,7 +69,8 @@ const ld = buildToolJsonLd('compress-pdf', title, description);
             </div>
           </div>
 
-          <ToolArticle {...guide} />
+          <AdSlot slotType="in-result" reservedHeight="250px" />
+      <ToolArticle {...guide} />
         </div>
 
         <aside class="tool-sidebar">

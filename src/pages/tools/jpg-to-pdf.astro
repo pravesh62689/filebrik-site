@@ -1,6 +1,7 @@
 ---
 // src/pages/tools/jpg-to-pdf.astro
 import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
 import AdSlot from '../../components/AdSlot.astro';
 import ToolArticle from '../../components/ToolArticle.astro';
 import { TOOL_GUIDES, buildToolJsonLd } from '../../data/toolGuides';
@@ -20,12 +21,12 @@ const ld = buildToolJsonLd('jpg-to-pdf', title, description);
     <div class="fb-container">
       <div class="tool-grid-layout">
         <div class="tool-main-pane">
-          <div class="privacy-pill">🛡️ 100% Client-Side Memory • Zero Cloud Storage</div>
+          <div class="privacy-pill"><Icon name="shield" size={14} /> On-Device Browser Memory • Zero Cloud Storage</div>
           <h1 class="tool-header-title">JPG to PDF Converter</h1>
           <p class="tool-header-sub">Merge your photos, scanned ID proofs, and certificates into a consolidated PDF in browser memory.</p>
 
           <div class="fb-dropzone" id="dropzone">
-            <div class="drop-icon">🖼️</div>
+            <div class="drop-icon"><Icon name="image" size={32} /></div>
             <h3>Drop JPG or PNG files here</h3>
             <p>or click to select multiple images from your device</p>
             <input type="file" id="fileInput" accept="image/*" multiple style="display:none;" />
@@ -36,12 +37,13 @@ const ld = buildToolJsonLd('jpg-to-pdf', title, description);
           </div>
 
           <div id="resultBox" class="result-box" style="display:none;">
-            <h4>✓ PDF Created</h4>
+            <h4><Icon name="check" size={16} /> PDF Created</h4>
             <p id="resultText"></p>
             <a id="downloadBtn" class="fb-btn fb-btn-success" href="#" download="images.pdf">Download PDF</a>
           </div>
 
-          <ToolArticle {...guide} />
+          <AdSlot slotType="in-result" reservedHeight="250px" />
+      <ToolArticle {...guide} />
         </div>
 
         <aside class="tool-sidebar">

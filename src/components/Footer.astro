@@ -1,12 +1,13 @@
 ---
 // src/components/Footer.astro
+import Icon from './Icon.astro';
 ---
 <footer class="fb-footer">
   <div class="fb-container footer-inner">
     <div class="footer-brand">
-      <div class="footer-logo">⚡ FileBrik</div>
-      <p class="footer-tagline">100% Client-Side PDF, Image & Audio Utilities. Your sensitive files never leave your device.</p>
-      <div class="footer-badge">🛡️ Zero Cloud Uploads • Client-Side WASM & Canvas</div>
+      <div class="footer-logo"><Icon name="zap" size={18} /> FileBrik</div>
+      <p class="footer-tagline">Client-side PDF, image, and exam photo utilities. Files stay in local browser memory.</p>
+      <div class="footer-badge"><Icon name="shield" size={14} /> Zero Cloud Uploads • Local Canvas &amp; PDF-Lib</div>
     </div>
     <div class="footer-links-grid">
       <div class="link-col">
@@ -26,10 +27,12 @@
         <a href="/tools/audio-trimmer">Audio Trimmer</a>
       </div>
       <div class="link-col">
-        <p class="link-col-title">Trust & Legal</p>
+        <p class="link-col-title">Trust &amp; Legal</p>
+        <a href="/about">About FileBrik</a>
+        <a href="/changelog">Changelog</a>
         <a href="/privacy">Privacy Architecture</a>
         <a href="/terms">Terms of Service</a>
-        <a href="/contact">Support & Contact</a>
+        <a href="/contact">Support &amp; Contact</a>
       </div>
     </div>
   </div>

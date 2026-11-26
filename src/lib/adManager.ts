@@ -34,6 +34,7 @@ export const ADS_ENABLED = isBrowser
 
 const POPUNDER_COOLDOWN_MS = 60 * 60 * 1000; // 1 per 60 minutes
 const POPUNDER_STORAGE_KEY = 'fb_popunder_last';
+const POPUNDER_SESSION_KEY = 'fb_popunder_session';
 
 /**
  * Checks if current page is an exempt legal/policy route
@@ -46,15 +47,19 @@ export function isExemptRoute(pathname: string): boolean {
     clean === '/terms' ||
     clean === '/terms/' ||
     clean === '/contact' ||
-    clean === '/contact/'
+    clean === '/contact/' ||
+    clean === '/about' ||
+    clean === '/about/'
   );
 }
 
 /**
- * Triggers Pop-Under (Monetag primary, Clickadu fallback) with strict 60-min session rate limiting
+ * Triggers Pop-Under (Monetag primary, Clickadu fallback) ONLY after a file download completes,
+ * capped at 1 per session and 60-min cooldown.
  */
-export function triggerPopunder(currentPath: string): void {
-  if (!ADS_ENABLED || !isBrowser || isExemptRoute(currentPath)) return;
+export function triggerPopunder(currentPath: string, opts: { afterDownload?: boolean } = {}): void {
+  if (!ADS_ENABLED || !isBrowser || isExemptRoute(currentPath) || !opts.afterDownload) return;
+  if (sessionStorage.getItem(POPUNDER_SESSION_KEY) === '1') return;
 
   const now = Date.now();
   const last = parseInt(localStorage.getItem(POPUNDER_STORAGE_KEY) || '0', 10);
@@ -63,6 +68,7 @@ export function triggerPopunder(currentPath: string): void {
   }
 
   try {
+    sessionStorage.setItem(POPUNDER_SESSION_KEY, '1');
     localStorage.setItem(POPUNDER_STORAGE_KEY, String(now));
     if ((window as any).monetag) {
       (window as any).monetag.trigger();

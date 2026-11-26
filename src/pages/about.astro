@@ -1,0 +1,41 @@
+---
+// src/pages/about.astro
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+---
+<Layout
+  title="About FileBrik: Client-Side Exam & PDF Tools"
+  description="Built by Pravesh Rathore so Indian exam applicants and everyday users can resize photos, signatures, and PDFs locally without server uploads."
+>
+  <main class="legal-wrap">
+    <div class="fb-container fb-container-narrow">
+      <article class="fb-card legal-card">
+        <div class="about-kicker"><Icon name="info" size={16} /> About the Project</div>
+        <h1>Why FileBrik Exists</h1>
+        <p>FileBrik is built and maintained by Pravesh Rathore. It started after watching Indian competitive-exam applicants repeatedly struggle with portal upload rejections on UPSC, IBPS, SSC, NTA NEET, and state PSC forms.</p>
+        <p>Most online resizers ask you to upload your passport photo, signature, or Aadhaar-linked PDF to a remote server just to drop 40 KB off a JPEG or change DPI metadata to 300 DPI. For personal documents and exam admit cards, uploading files to unknown servers is an unnecessary privacy risk.</p>
+
+        <h2>How FileBrik Works Locally</h2>
+        <ul>
+          <li><strong>JPEG KB &amp; DPI Targeting:</strong> Binary-search quality scaling on an HTML5 Canvas plus direct JFIF APP0 DPI header injection (200 or 300 DPI) runs inside your browser tab.</li>
+          <li><strong>PDF Assembly &amp; Splitting:</strong> Powered by <code>pdf-lib</code> and <code>pdfjs-dist</code> compiled in your browser, so multi-page PDFs never touch an external backend.</li>
+          <li><strong>Official Notice Verification:</strong> Exam presets in our <a href="/tools/exam-photo-signature-resizer/">Exam Photo &amp; Signature Resizer</a> are cross-checked against official commission PDFs and marked with a verification badge or a notice check warning when portals use live webcam capture.</li>
+        </ul>
+
+        <h2>Explore Tools &amp; Policies</h2>
+        <p>Start with the <a href="/tools/exam-photo-signature-resizer/">Exam Photo &amp; Signature Resizer</a>, <a href="/tools/compress-pdf/">Compress PDF</a>, or <a href="/tools/compress-image-kb/">Compress Image to KB</a>. Review our <a href="/changelog/">Changelog</a>, <a href="/privacy/">Privacy Architecture</a>, or reach out via <a href="/contact/">Contact &amp; Support</a>.</p>
+      </article>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .legal-wrap { padding: 4rem 0; }
+  .legal-card { padding: 3rem; }
+  .about-kicker { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; font-weight: 700; color: var(--fb-primary); margin-bottom: 0.75rem; }
+  .legal-card h1 { font-size: 2.25rem; font-weight: 900; margin-bottom: 1rem; }
+  .legal-card h2 { font-size: 1.35rem; font-weight: 800; margin: 2rem 0 0.75rem; border-bottom: 1px solid var(--fb-border); padding-bottom: 0.5rem; }
+  .legal-card p, .legal-card li { color: var(--fb-text-muted); line-height: 1.7; margin-bottom: 0.9rem; }
+  .legal-card ul { padding-left: 1.25rem; }
+  .legal-card a { color: var(--fb-primary); font-weight: 700; }
+</style>

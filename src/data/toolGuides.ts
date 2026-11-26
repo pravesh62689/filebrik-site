@@ -35,7 +35,7 @@ export const TOOL_GUIDES: Record<string, ToolGuideData> = {
     faqs: [
       {
         q: 'Does PDF compression blur selectable text or signatures?',
-        a: 'No. Because FileBrik uses pdf-lib structural object-stream packing rather than lossy screenshot re-encoding, vector fonts, vector lines, and digital text layers remain crisp at every zoom level.',
+        a: 'No. Because FileBrik uses pdf-lib structural object-stream packing rather than lossy screenshot re-encoding, vector fonts, vector lines, and digital text layers remain sharp at every zoom level.',
       },
       {
         q: 'Why can scanned PDFs stay larger than text PDFs after structural optimization?',
@@ -192,7 +192,7 @@ export const TOOL_GUIDES: Record<string, ToolGuideData> = {
     howToTitle: 'How to Render PDF Pages as High-Resolution Images',
     steps: [
       'Pick or drop any single-page or multi-page PDF document into the browser staging zone.',
-      'Choose target render scale (1x Standard, 2x Crisp HD, or 3x Print Sharpness) and output format (JPEG or PNG).',
+      'Choose target render scale (1x Standard, 2x Sharp HD, or 3x Print Sharpness) and output format (JPEG or PNG).',
       'Click Convert PDF Pages to trigger lazy in-memory PDF.js rasterization across every page onto an isolated Canvas.',
       'Download any individual page thumbnail or grab page 1 directly at full raster resolution.',
     ],
@@ -211,7 +211,7 @@ export const TOOL_GUIDES: Record<string, ToolGuideData> = {
     faqs: [
       {
         q: 'Which resolution scale should I pick for exam documents or mark sheets?',
-        a: 'Use 2.0x (Crisp HD Default) for readable small print, or 1.0x when feeding results straight into strict kilobyte upload forms.',
+        a: 'Use 2.0x (2.0x Sharp HD Default) for readable small print, or 1.0x when feeding results straight into strict kilobyte upload forms.',
       },
       {
         q: 'Does PDF to JPG support multi-page documents?',
@@ -326,14 +326,14 @@ export const TOOL_GUIDES: Record<string, ToolGuideData> = {
     limitsTitle: 'Codec & Format Conversion Matrix',
     limits: [
       { label: 'WebP Encoding', value: 'Verified RIFF/WEBP container via native Chromium/browser codec' },
-      { label: 'PNG Encoding', value: 'Lossless 32-bit RGBA preserving crisp alpha transparency' },
+      { label: 'PNG Encoding', value: 'Lossless 32-bit RGBA preserving sharp alpha transparency' },
       { label: 'JPEG Encoding', value: 'Flattened RGB with white backdrop for portals rejecting WebP' },
       { label: 'Resolution', value: '1:1 pixel dimensions preserved — zero forced cropping' },
     ],
     overviewParagraphs: [
       'Modern smartphone cameras and web downloads increasingly save images as HEIC or WebP, which older university admission portals and HR forms frequently reject. Conversely, web developers converting heavy PNG screenshots into modern WebP routinely shrink page payload weight by 40% to 75% without noticeable visual degradation.',
       'FileBrik renders decoded pixels cleanly at original dimensions onto an offscreen canvas and invokes browser-native hardware-accelerated encoders, keeping every converted frame strictly private inside client RAM.',
-      'Using the manual quality slider between 75% and 90% balances near-lossless edge crispness with rapid Core Web Vitals loading performance when converting hero assets, diagrams, or product snapshots into WebP. Unlike legacy server converters that inject compression watermarks or queue your photos behind timed wait screens, FileBrik encodes pure browser-memory buffers immediately on every click.',
+      'Using the manual quality slider between 75% and 90% balances near-lossless edge sharpness with rapid Core Web Vitals loading performance when converting hero assets, diagrams, or product snapshots into WebP. Unlike legacy server converters that inject compression watermarks or queue your photos behind timed wait screens, FileBrik encodes pure browser-memory buffers immediately on every click.',
     ],
     faqs: [
       {
@@ -350,7 +350,7 @@ export const TOOL_GUIDES: Record<string, ToolGuideData> = {
       },
       {
         q: 'When should I pick PNG instead of JPEG or WebP?',
-        a: 'Pick PNG when editing logos, crisp monochrome line drawings, or overlays requiring lossless zero-artifact transparency without sacrificing sharp font or diagram strokes across presentation slides or print layouts.',
+        a: 'Pick PNG when editing logos, sharp monochrome line drawings, or overlays requiring lossless zero-artifact transparency without sacrificing sharp font or diagram strokes across presentation slides or print layouts.',
       },
     ],
     relatedTools: [

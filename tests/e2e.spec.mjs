@@ -471,3 +471,22 @@ test('Tools e2e: compress-pdf, split-pdf, jpg-to-pdf, pdf-to-jpg, audio-trimmer 
   expect(trimmed.len).toBeLessThan(wavBuf.length);
   expect(uploadRequests).toHaveLength(0);
 });
+
+test('About, Changelog, Exam Landing Pages, and Hindi hreflang', async ({ page }) => {
+  for (const route of ['/about/', '/changelog/']) {
+    const res = await page.goto(route, { waitUntil: 'networkidle' });
+    expect(res?.status()).toBe(200);
+    await expect(page.locator('h1')).toHaveCount(1);
+  }
+
+  const enRes = await page.goto('/exams/upsc-cse-photo-20-200kb/', { waitUntil: 'networkidle' });
+  expect(enRes?.status()).toBe(200);
+  await expect(page.locator('link[rel="alternate"][hreflang="hi"]')).toHaveCount(1);
+  await expect(page.locator('a[href*="?preset=upsc-photo"]')).toHaveCount(1);
+  await expect(page.locator('a[href*=".pdf"]')).toHaveCount(1);
+
+  const hiRes = await page.goto('/hi/exams/upsc-cse-photo-20-200kb/', { waitUntil: 'networkidle' });
+  expect(hiRes?.status()).toBe(200);
+  expect(await page.locator('html').getAttribute('lang')).toBe('hi');
+  await expect(page.locator('link[rel="alternate"][hreflang="en"]')).toHaveCount(1);
+});
