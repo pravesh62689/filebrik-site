@@ -16,7 +16,6 @@ const siteOrigin = Astro.site?.origin || 'https://filebrik.pages.dev';
 const normalizedPath = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
 const canonicalUrl = new URL(normalizedPath, siteOrigin);
 const adsEnabled = import.meta.env.PUBLIC_ADS_ENABLED === 'true';
-const gscVerification = import.meta.env.PUBLIC_GSC_VERIFICATION || '';
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -25,7 +24,7 @@ const gscVerification = import.meta.env.PUBLIC_GSC_VERIFICATION || '';
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{title} | FileBrik</title>
   <meta name="description" content={description}>
-  {gscVerification && <meta name="google-site-verification" content={gscVerification} />}
+  <meta name="google-site-verification" content="EuP7tR_9jMW5UuGvMcL4iTqmbOJUfRJT3FeuZgJbvj0" />
   <link rel="canonical" href={canonicalUrl.href}>
   <link rel="sitemap" href="/sitemap-index.xml">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">

@@ -97,6 +97,7 @@ test('Zero-budget permanent pages.dev SEO & docs configuration', () => {
 
   const layout = fs.readFileSync(path.join(rootDir, 'src/layouts/Layout.astro'), 'utf8');
   assert.match(layout, /https:\/\/filebrik\.pages\.dev/);
+  assert.match(layout, /<meta name="google-site-verification" content="EuP7tR_9jMW5UuGvMcL4iTqmbOJUfRJT3FeuZgJbvj0" \/>/);
   assert.ok(!/filebrik\.com/.test(layout), 'Layout.astro must not contain unowned filebrik.com');
 
   const launchDoc = fs.readFileSync(path.join(rootDir, 'docs/launch-steps.md'), 'utf8');

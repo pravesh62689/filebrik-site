@@ -1,0 +1,52 @@
+name: FileBrik Live QA
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: 'Live production URL to test'
+        required: true
+        default: 'https://filebrik.pages.dev'
+
+jobs:
+  live-e2e-and-lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium --with-deps
+      - name: Run Playwright e2e suite against live site
+        env:
+          BASE_URL: ${{ inputs.base_url }}
+        run: npx playwright test --project="Mobile Chrome" --project="Desktop Chrome"
+      - name: Install Lighthouse CLI
+        run: npm install -g lighthouse
+      - name: Run Lighthouse audit against live URLs
+        env:
+          BASE_URL: ${{ inputs.base_url }}
+        run: |
+          for route in "/" "/tools/compress-pdf/" "/tools/exam-photo-signature-resizer/"; do
+            echo "Auditing live mobile performance for ${BASE_URL}${route}..."
+            lighthouse "${BASE_URL}${route}" \
+              --output=json \
+              --output-path=./lh-live.json \
+              --chrome-flags="--headless=new --no-sandbox --disable-dev-shm-usage" \
+              --only-categories=performance
+            SCORE=$(node -e "const r=require('./lh-live.json'); console.log(Math.round((r.categories.performance.score || 0)*100));")
+            echo "Live Mobile Performance score for ${route}: ${SCORE}"
+            if [ "$SCORE" -lt 90 ]; then
+              echo "::error::Live mobile performance for ${route} is ${SCORE} (< 90)"
+              exit 1
+            fi
+          done
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-playwright-report
+          path: test-results/
