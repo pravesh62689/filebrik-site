@@ -7,6 +7,8 @@ export interface NetworkZonesConfig {
   socialBarScriptUrl?: string;
   videoSliderScriptUrl?: string;
   popunderScriptUrl?: string;
+  nativeBannerScriptUrl?: string;
+  nativeContainerId?: string;
   [key: string]: unknown;
 }
 
@@ -81,18 +83,82 @@ export function triggerPopunder(currentPath: string, opts: { afterDownload?: boo
 }
 
 /**
- * Mounts Adsterra Social Bar non-intrusively when configured in src/data/adZones.json
+ * Mounts Adsterra Social Bar once per page, after first user interaction or 5 seconds.
  */
 export function initSocialBar(currentPath: string): void {
   if (!ADS_ENABLED || !isBrowser || isExemptRoute(currentPath)) return;
   const scriptUrl = zonesConfig.networks?.adsterra?.socialBarScriptUrl;
   if (!scriptUrl || typeof scriptUrl !== 'string') return;
+  if ((window as any).__fbSocialBarLoaded) return;
 
-  const script = document.createElement('script');
-  script.async = true;
-  script.dataset.cfasync = 'false';
-  script.src = scriptUrl;
-  document.body.appendChild(script);
+  const mount = () => {
+    if ((window as any).__fbSocialBarLoaded) return;
+    (window as any).__fbSocialBarLoaded = true;
+    const script = document.createElement('script');
+    script.async = true;
+    script.dataset.cfasync = 'false';
+    script.src = scriptUrl;
+    document.body.appendChild(script);
+  };
+
+  const timer = window.setTimeout(mount, 5000);
+  const onInteract = () => {
+    window.clearTimeout(timer);
+    mount();
+    window.removeEventListener('pointerdown', onInteract);
+    window.removeEventListener('keydown', onInteract);
+    window.removeEventListener('scroll', onInteract);
+  };
+  window.addEventListener('pointerdown', onInteract, { once: true, passive: true });
+  window.addEventListener('keydown', onInteract, { once: true, passive: true });
+  window.addEventListener('scroll', onInteract, { once: true, passive: true });
+}
+
+/**
+ * Mounts Popunder once per session on first page click outside tool controls and download buttons.
+ */
+export function initSafeClickPopunder(currentPath: string): void {
+  if (!ADS_ENABLED || !isBrowser || isExemptRoute(currentPath)) return;
+  const scriptUrl = zonesConfig.networks?.adsterra?.popunderScriptUrl;
+  if (!scriptUrl || typeof scriptUrl !== 'string') return;
+  if (sessionStorage.getItem(POPUNDER_SESSION_KEY) === '1') return;
+
+  const onClick = (ev: MouseEvent) => {
+    const target = ev.target as HTMLElement | null;
+    if (!target) return;
+    if (target.closest('.tool-workspace, .fb-dropzone, button, input, select, textarea, #downloadOutput, #downloadBtn, [data-tool-control]')) {
+      return;
+    }
+    if (sessionStorage.getItem(POPUNDER_SESSION_KEY) === '1') return;
+    sessionStorage.setItem(POPUNDER_SESSION_KEY, '1');
+    localStorage.setItem(POPUNDER_STORAGE_KEY, String(Date.now()));
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = scriptUrl;
+    document.body.appendChild(script);
+    document.removeEventListener('click', onClick, true);
+  };
+  document.addEventListener('click', onClick, true);
+}
+
+/**
+ * Mounts Native Banner scripts into reserved in-result and native-footer containers.
+ */
+export function initNativeBanners(currentPath: string): void {
+  if (!ADS_ENABLED || !isBrowser || isExemptRoute(currentPath)) return;
+  const scriptUrl = zonesConfig.networks?.adsterra?.nativeBannerScriptUrl;
+  if (!scriptUrl || typeof scriptUrl !== 'string') return;
+
+  const slots = document.querySelectorAll('[data-ad-slot="in-result"], [data-ad-slot="native-footer"]');
+  slots.forEach((slot) => {
+    if (slot.getAttribute('data-mounted') === '1') return;
+    slot.setAttribute('data-mounted', '1');
+    const script = document.createElement('script');
+    script.async = true;
+    script.dataset.cfasync = 'false';
+    script.src = scriptUrl;
+    slot.appendChild(script);
+  });
 }
 
 /**

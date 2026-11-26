@@ -4,7 +4,7 @@ import Layout from '../layouts/Layout.astro';
 ---
 <Layout
   title="Privacy Architecture & Policy"
-  description="FileBrik runs 100% in your browser. We never upload, view, or store your documents, photos, or audio files on any servers."
+  description="FileBrik runs locally in your browser. We never upload, view, or store your documents, photos, or audio files on any servers."
 >
   <main class="legal-wrap">
     <div class="fb-container fb-container-narrow">
@@ -28,7 +28,7 @@ import Layout from '../layouts/Layout.astro';
         <p>We respect privacy by design. We do not track individual identities across the web. We measure only basic aggregated site usage (page hits, country, device category) to ensure system stability.</p>
 
         <h2>3. Advertisements &amp; Monetization</h2>
-        <p>Advertising zones remain disabled by default (<code>enabled: false</code>) until partner approval. Once approved, FileBrik serves programmatic ads from disclosed networks listed in <code>/ads.txt</code> (planned queue: Monetag, Adsterra, HilltopAds, Clickadu) with strict frequency caps (maximum one pop-under per hour), zero ads on tool action/download buttons, reserved slot heights for zero layout shift, and zero intrusive scripts on <code>/privacy/</code>, <code>/terms/</code>, and <code>/contact/</code>. Any active web-push or cookie partners will be itemized on this page alongside opt-out guidance.</p>
+        <p>FileBrik works with third-party advertising partners, including <strong>Adsterra</strong> and <strong>Clickadu</strong> (plus planned queue partners Monetag and HilltopAds), disclosed in <code>/ads.txt</code> when active. Depending on active zones, these networks may use browser cookies, web-push notifications (via <code>/sw.js</code> when enabled), native/banner placements, social bars, and session-capped pop-unders (maximum one per session, never triggered on tool action or download buttons). Reserved container heights prevent layout shift, and ad scripts are suppressed on <code>/privacy/</code>, <code>/terms/</code>, <code>/contact/</code>, and <code>/about/</code>.</p>
 
         <h2>4. Contact &amp; Utility Links</h2>
         <p>If you have questions regarding our client-side architecture, open an issue at <a href="https://github.com/pravesh62689/filebrik-site/issues" target="_blank" rel="noopener">github.com/pravesh62689/filebrik-site</a> or visit <a href="/contact/">Support &amp; Contact</a>, <a href="/terms/">Terms of Service</a>, and <a href="/tools/compress-pdf/">Compress PDF</a>.</p>

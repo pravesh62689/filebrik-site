@@ -61,6 +61,7 @@ const fullLd = defaultBreadcrumb ? [defaultBreadcrumb] : ldGraph;
   <meta name="description" content={description}>
   <meta name="fb-build" content={buildSha}>
   <meta name="google-site-verification" content="EuP7tR_9jMW5UuGvMcL4iTqmbOJUfRJT3FeuZgJbvj0" />
+  <meta name="clckd" content="5763988ab5e9d311fd9a779c7ee1544c" />
   {noindex && <meta name="robots" content="noindex,follow" />}
   <link rel="canonical" href={canonicalUrl.href}>
   {alternates.map((alt) => (
@@ -103,5 +104,15 @@ const fullLd = defaultBreadcrumb ? [defaultBreadcrumb] : ldGraph;
   <div id="fb-desktop-slider" aria-hidden="true" hidden></div>
   <AdSlot slotType="sticky-mobile" reservedHeight="50px" />
   <Footer />
+  <script>
+    if ((window as any).PUBLIC_ADS_ENABLED) {
+      import('../lib/adManager').then((m) => {
+        const p = window.location.pathname;
+        m.initSocialBar(p);
+        m.initSafeClickPopunder(p);
+        m.initNativeBanners(p);
+      }).catch(() => {});
+    }
+  </script>
 </body>
 </html>
