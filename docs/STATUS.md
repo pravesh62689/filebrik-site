@@ -34,8 +34,8 @@ Domain: deferred, buy only from ad earnings
 - **IndexNow (`45824397463`)**: Automated IndexNow ping workflow green after CI.
 - **Audit Report**: Full checklist recorded in [docs/AUDIT-2026-11-26.md](docs/AUDIT-2026-11-26.md).
 - **GSC HTML Meta Verification Tag**: Live on `https://filebrik.pages.dev/` (`<meta name="google-site-verification" content="EuP7tR_9jMW5UuGvMcL4iTqmbOJUfRJT3FeuZgJbvj0">`, verified via `curl` exit 0).
-- **Search Console & Bing Submission**: GSC URL-prefix property `https://filebrik.pages.dev/` **verified via HTML tag**; `https://filebrik.pages.dev/sitemap-index.xml` submitted to Google Search Console; property + sitemap imported into Bing Webmaster Tools.
-- **Ad-Network Pre-Approval Readiness**: Removed placeholder `ads.txt` entries, added repo-driven `src/data/adZones.json` switch (`enabled: false`), and prepared `docs/after-approval.md`. Applications held until pages show as indexed in GSC.
+- **Search Console & Bing Submission**: GSC `siteOwner` verified via API (`gsc-audit.mjs`), `sitemap-index.xml` submitted (`errors: 0`), `56` sitemap URLs inspected (`1` `Submitted and indexed`, `55` `URL is unknown to Google`, `0` canonical mismatches); property + sitemap imported into Bing Webmaster Tools.
+- **Ad-Network Status**: Adsterra (`6231440`) approved and live (`32499187` Popunder, `32499188` Native Banner, `32499189` Social Bar) with `adZones.json` `enabled: true`; Clickadu (`clckd` meta tag live, awaiting Verify click).
 
 ## 5. Release Log
 - `2026-11-26` · **P0 Preflight**: Verified `git pull`, `gh auth status`, Node `v22.23.2`, disk space; updated `.gitignore` (`secrets/`, `.env*`, `token*.json`, `client_secret*.json`, `.pw-profile*`, `handoff/`); extracted `tools/browser-kit.js` and copied to clipboard.
