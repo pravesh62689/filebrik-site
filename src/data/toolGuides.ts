@@ -420,7 +420,7 @@ export const TOOL_GUIDES: Record<string, ToolGuideData> = {
     ],
     overviewParagraphs: [
       'Extracting a concise ringtone, trimming awkward silence from the start of a voice memo, or cutting a clean quote from a recorded interview usually requires bloated desktop audio suites or uploading private recordings to cloud converters. Modern browsers natively expose Web Audio decoding APIs capable of reading decoded PCM Float32Array samples directly in JavaScript.',
-      'FileBrik decodes your source track purely in memory, calculates exact integer startFrame and endFrame sample indices from your timestamps, clamps safely inside track duration, interleaves stereo or mono samples into 16-bit signed integers, and prepends a valid 44-byte RIFF/WAVE header for instant lossless playback.',
+      'FileBrik decodes your source track purely in memory, calculates exact integer startFrame and endFrame sample indices from your timestamps, clamps safely inside track duration, interleaves stereo or mono samples into 16-bit signed integers, and prepends a valid 44-byte RIFF/WAVE header for instant lossless playback. This zero-upload workflow keeps podcast drafts, lecture snippets, and personal audio memos completely private on your device while delivering frame-accurate cuts in seconds.',
     ],
     faqs: [
       {
