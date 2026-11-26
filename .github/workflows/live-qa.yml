@@ -33,6 +33,7 @@ jobs:
           FAILED=0
           for route in "/" "/tools/compress-pdf/" "/tools/exam-photo-signature-resizer/"; do
             echo "Auditing live mobile performance for ${BASE_URL}${route}..."
+            curl -fsS "${BASE_URL}${route}" > /dev/null || true
             lighthouse "${BASE_URL}${route}" \
               --output=json \
               --output-path=./lh-live.json \
