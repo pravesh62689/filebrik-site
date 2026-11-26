@@ -1,8 +1,9 @@
 # FileBrik Project Status & Architecture Report
 
-**Current Status**: Phase 2 Complete • Browser QA & Lighthouse CI Green  
+**Current Status**: Phase 2 & PDF Preset Verification Complete • CI Green (`45764355126`)  
 **Design State**: **design to be swapped** (built using pure CSS design tokens and standalone preview screens in `design/exports`; pending Stitch zip import from `Downloads/stitch_*.zip`).  
-**Cloudflare Pages URL**: *Pending user Git integration connection*
+**Production URL**: `https://filebrik.pages.dev` *(pending Cloudflare Pages Git integration deploy)*  
+Domain: deferred, buy only from ad earnings
 
 ## 1. Technical Architecture
 - **Framework**: Astro 5 (Static Output, bundled CSS & local client-side `pdf-lib` / HTML5 Canvas)

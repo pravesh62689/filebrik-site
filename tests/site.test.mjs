@@ -9,7 +9,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
 
 function presetGroup(id) {
-  const groups = ['upsc','ssc','ibps','rrb','nta','passport','pan','uppsc','bpsc','mpsc','tnpsc','rpsc'];
+  const groups = ['upsc', 'ssc', 'ibps', 'rrb', 'nta', 'passport', 'pan', 'uppsc', 'bpsc', 'mpsc', 'tnpsc', 'rpsc'];
   for (const g of groups) if (id.startsWith(g)) return g;
   return id;
 }
@@ -84,4 +84,24 @@ test('Legal and trust pages exist: privacy, terms, contact', () => {
   assert.ok(fs.existsSync(path.join(pagesDir, 'privacy.astro')));
   assert.ok(fs.existsSync(path.join(pagesDir, 'terms.astro')));
   assert.ok(fs.existsSync(path.join(pagesDir, 'contact.astro')));
+});
+
+test('Zero-budget permanent pages.dev SEO & docs configuration', () => {
+  const astroConfig = fs.readFileSync(path.join(rootDir, 'astro.config.mjs'), 'utf8');
+  assert.match(astroConfig, /https:\/\/filebrik\.pages\.dev/);
+
+  const robotsPath = path.join(rootDir, 'public/robots.txt');
+  assert.ok(fs.existsSync(robotsPath), 'public/robots.txt must exist');
+  const robots = fs.readFileSync(robotsPath, 'utf8');
+  assert.match(robots, /Sitemap:\s*https:\/\/filebrik\.pages\.dev\/sitemap-index\.xml/);
+
+  const layout = fs.readFileSync(path.join(rootDir, 'src/layouts/Layout.astro'), 'utf8');
+  assert.match(layout, /https:\/\/filebrik\.pages\.dev/);
+  assert.ok(!/filebrik\.com/.test(layout), 'Layout.astro must not contain unowned filebrik.com');
+
+  const launchDoc = fs.readFileSync(path.join(rootDir, 'docs/launch-steps.md'), 'utf8');
+  const statusDoc = fs.readFileSync(path.join(rootDir, 'docs/STATUS.md'), 'utf8');
+  assert.match(launchDoc, /Domain: deferred, buy only from ad earnings/);
+  assert.match(statusDoc, /Domain: deferred, buy only from ad earnings/);
+  assert.ok(!/spaceship/i.test(launchDoc + statusDoc), 'Spaceship domain steps must be removed');
 });

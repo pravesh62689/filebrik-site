@@ -6,20 +6,20 @@
 - **Hook (0-3s)**: "Did UPSC portal just reject your photo because of 'Invalid DPI or Size'?"
 - **Visual**: Screen recording showing red error banner on UPSC application portal.
 - **Problem (3-8s)**: "Cyber cafes charge ₹100 and still get the aspect ratio wrong."
-- **Solution (8-20s)**: "Go to FileBrik.com. Select 'UPSC Civil Services' preset. Drop your selfie. It auto-crops, injects 300 DPI, and compresses under 300KB instantly."
+- **Solution (8-20s)**: "Go to filebrik.pages.dev. Select 'UPSC Civil Services' preset. Drop your selfie. It auto-crops, injects 300 DPI, and compresses under 200KB instantly."
 - **CTA (20-25s)**: "100% private, files never leave your phone. Link in bio!"
 
 ### Script 2: Why You Should NEVER Upload Bank Statements to Free PDF Sites
 - **Hook (0-3s)**: "Stop uploading your private bank statements to random PDF tools!"
 - **Problem (3-10s)**: "Most free PDF compressors upload your confidential financial records to overseas cloud servers."
 - **Solution (10-20s)**: "Use FileBrik. It compresses PDFs entirely inside your browser memory using WebAssembly. No server uploads. Instant and zero latency."
-- **CTA (20-25s)**: "Bookmark FileBrik.com for 100% private document editing."
+- **CTA (20-25s)**: "Bookmark filebrik.pages.dev for 100% private document editing."
 
 ### Script 3: SSC CGL Signature Error 10-20KB Solved
 - **Hook (0-3s)**: "Stuck on SSC signature upload? 'File size must be 10KB to 20KB'?"
 - **Visual**: Candidate frustrated at laptop screen.
-- **Solution (3-15s)**: "FileBrik Exam Resizer has a dedicated SSC preset. Drop your signature, it converts to crisp black & white and guarantees a file size between 10KB and 20KB."
-- **CTA (15-20s)**: "Zero signup, zero ads on tool screen. FileBrik.com!"
+- **Solution (3-15s)**: "FileBrik Exam Resizer has a dedicated SSC preset. Drop your signature, it compresses cleanly between 10KB and 20KB."
+- **CTA (15-20s)**: "Zero signup, zero ads on tool screen. filebrik.pages.dev!"
 
 ### Script 4: Print 6 Passport Photos from Your Phone for ₹5
 - **Hook (0-3s)**: "Stop paying ₹150 for 6 passport photos!"
@@ -29,7 +29,7 @@
 ### Script 5: Shrink PDF from 50MB to 500KB on Your Phone
 - **Hook (0-3s)**: "Email bounced because your PDF exceeds 25MB?"
 - **Solution (3-15s)**: "Open FileBrik Compress PDF. Drop your file, pick 'Email Friendly 500KB'. Done in 2 seconds right on your iPhone or Android."
-- **CTA (15-20s)**: "Try it now on FileBrik.com."
+- **CTA (15-20s)**: "Try it now on filebrik.pages.dev."
 
 ### Scripts 6 to 30: Quick-Hit Matrix
 6. **NEET UG 4x6 Postcard Photo**: How to format the large postcard photo without distortion.

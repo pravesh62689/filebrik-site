@@ -47,12 +47,37 @@ for (const route of ALL_ROUTES) {
   });
 }
 
-// 2. /sw.js and /ads.txt return 200
-test('/sw.js and /ads.txt return 200', async ({ request }) => {
+// 2. /sw.js, /ads.txt, /robots.txt, /sitemap-index.xml, and /sitemap-0.xml return 200 with pages.dev URLs
+test('/sw.js, /ads.txt, /robots.txt, and XML sitemaps return 200 with pages.dev URLs', async ({ request }) => {
   const sw = await request.get('/sw.js');
   expect(sw.status()).toBe(200);
   const ads = await request.get('/ads.txt');
   expect(ads.status()).toBe(200);
+
+  const robots = await request.get('/robots.txt');
+  expect(robots.status()).toBe(200);
+  expect(await robots.text()).toContain('Sitemap: https://filebrik.pages.dev/sitemap-index.xml');
+
+  const smIndex = await request.get('/sitemap-index.xml');
+  expect(smIndex.status()).toBe(200);
+  expect(await smIndex.text()).toContain('https://filebrik.pages.dev/sitemap-0.xml');
+
+  const sm0 = await request.get('/sitemap-0.xml');
+  expect(sm0.status()).toBe(200);
+  const sm0Text = await sm0.text();
+  expect(sm0Text).toContain('https://filebrik.pages.dev/');
+  expect(sm0Text).toContain('https://filebrik.pages.dev/tools/exam-photo-signature-resizer/');
+});
+
+// 2b. Every route has canonical & og:url pointed at https://filebrik.pages.dev
+test('Canonicals and OG URLs point to https://filebrik.pages.dev', async ({ page }) => {
+  for (const route of ALL_ROUTES) {
+    await page.goto(route, { waitUntil: 'domcontentloaded' });
+    const canonical = await page.locator('link[rel="canonical"]').getAttribute('href');
+    const ogUrl = await page.locator('meta[property="og:url"]').getAttribute('content');
+    expect(canonical).toBe(`https://filebrik.pages.dev${route}`);
+    expect(ogUrl).toBe(`https://filebrik.pages.dev${route}`);
+  }
 });
 
 // 3. No horizontal overflow at 390px across all routes + video slider never loads at 390px + mobile ad height < 25%

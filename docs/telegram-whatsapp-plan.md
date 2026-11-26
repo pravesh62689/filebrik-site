@@ -17,11 +17,11 @@
 > - Official presets for UPSC, SSC, IBPS, NEET & PAN card.
 > - Auto-scales to exact 200/300 DPI and binary-compresses under 50KB.
 > - 100% Client-side: Your personal photo never gets uploaded to any server.
-> 🔗 https://filebrik.com/tools/exam-photo-signature-resizer
+> 🔗 https://filebrik.pages.dev/tools/exam-photo-signature-resizer/
 
 ### Template 2: Confidential PDF Compression
 > **Need to compress bank statements or salary slips for visa/loan?**
 > Standard free tools upload your private PDFs to overseas servers.
 > FileBrik compresses 100% in your browser memory:
 > - Zero server uploads • Works offline • No file size limits.
-> 🔗 https://filebrik.com/tools/compress-pdf
+> 🔗 https://filebrik.pages.dev/tools/compress-pdf/

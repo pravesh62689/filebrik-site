@@ -12,8 +12,11 @@ interface Props {
 }
 
 const { title, description, toolSlug } = Astro.props;
-const canonicalUrl = new URL(Astro.url.pathname, Astro.site || 'https://filebrik.com');
+const siteOrigin = Astro.site?.origin || 'https://filebrik.pages.dev';
+const normalizedPath = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
+const canonicalUrl = new URL(normalizedPath, siteOrigin);
 const adsEnabled = import.meta.env.PUBLIC_ADS_ENABLED === 'true';
+const gscVerification = import.meta.env.PUBLIC_GSC_VERIFICATION || '';
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -22,7 +25,9 @@ const adsEnabled = import.meta.env.PUBLIC_ADS_ENABLED === 'true';
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{title} | FileBrik</title>
   <meta name="description" content={description}>
+  {gscVerification && <meta name="google-site-verification" content={gscVerification} />}
   <link rel="canonical" href={canonicalUrl.href}>
+  <link rel="sitemap" href="/sitemap-index.xml">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
   <!-- Open Graph / Meta -->
