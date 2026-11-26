@@ -30,6 +30,7 @@ jobs:
         env:
           BASE_URL: ${{ inputs.base_url }}
         run: |
+          FAILED=0
           for route in "/" "/tools/compress-pdf/" "/tools/exam-photo-signature-resizer/"; do
             echo "Auditing live mobile performance for ${BASE_URL}${route}..."
             lighthouse "${BASE_URL}${route}" \
@@ -37,13 +38,17 @@ jobs:
               --output-path=./lh-live.json \
               --chrome-flags="--headless=new --no-sandbox --disable-dev-shm-usage" \
               --only-categories=performance
-            SCORE=$(node -e "const r=require('./lh-live.json'); console.log(Math.round((r.categories.performance.score || 0)*100));")
+            SCORE=$(node -e "const r=require('./lh-live.json'); const fcp=r.audits['first-contentful-paint']?.displayValue; const lcp=r.audits['largest-contentful-paint']?.displayValue; console.log(Math.round((r.categories.performance.score || 0)*100) + ' (FCP=' + fcp + ', LCP=' + lcp + ')');")
+            SCORE_NUM=$(node -e "const r=require('./lh-live.json'); console.log(Math.round((r.categories.performance.score || 0)*100));")
             echo "Live Mobile Performance score for ${route}: ${SCORE}"
-            if [ "$SCORE" -lt 90 ]; then
-              echo "::error::Live mobile performance for ${route} is ${SCORE} (< 90)"
-              exit 1
+            if [ "$SCORE_NUM" -lt 90 ]; then
+              echo "::error::Live mobile performance for ${route} is ${SCORE_NUM} (< 90)"
+              FAILED=1
             fi
           done
+          if [ "$FAILED" -ne 0 ]; then
+            exit 1
+          fi
       - name: Upload Playwright report on failure
         if: failure()
         uses: actions/upload-artifact@v4
