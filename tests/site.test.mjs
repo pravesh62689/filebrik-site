@@ -30,7 +30,8 @@ test('Public static files: ads.txt and sw.js exist', () => {
   assert.ok(fs.existsSync(adZonesPath), 'src/data/adZones.json must exist');
   const adZones = JSON.parse(fs.readFileSync(adZonesPath, 'utf8'));
   assert.strictEqual(typeof adZones.enabled, 'boolean');
-  assert.strictEqual(adZones.enabled, false, 'adZones.enabled must stay false until network approval');
+  assert.strictEqual(adZones.enabled, true, 'adZones.enabled is true after Adsterra 6231440 approval');
+  assert.strictEqual(adZones.networks?.adsterra?.siteId, '6231440');
 
   const headers = fs.readFileSync(headersPath, 'utf8');
   assert.ok(headers.includes('X-Content-Type-Options'), '_headers must include security policies');

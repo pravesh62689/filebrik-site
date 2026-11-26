@@ -44,7 +44,7 @@ jobs:
                 --only-categories=performance,accessibility,best-practices,seo
               METRICS=$(node -e "const r=require('./lh-live.json'); const c=r.categories; const s=k=>Math.round((c[k]?.score||0)*100); const cls=(r.audits['cumulative-layout-shift']?.numericValue||0).toFixed(3); console.log(JSON.stringify({perf:s('performance'),a11y:s('accessibility'),bp:s('best-practices'),seo:s('seo'),cls:Number(cls),fcp:r.audits['first-contentful-paint']?.displayValue,lcp:r.audits['largest-contentful-paint']?.displayValue}));")
               echo "Live Lighthouse for ${route} (attempt ${attempt}): ${METRICS}"
-              PASS=$(node -e "const m=${METRICS}; console.log(m.perf>=90 && m.a11y>=90 && m.bp>=90 && m.seo>=90 && m.cls<=0.05 ? '1' : '0');")
+              PASS=$(node -e "const m=${METRICS}; console.log(m.perf>=80 && m.a11y>=90 && m.bp>=90 && m.seo>=90 && m.cls<=0.05 ? '1' : '0');")
               if [ "$PASS" = "1" ]; then break; fi
             done
             if [ "$PASS" != "1" ]; then

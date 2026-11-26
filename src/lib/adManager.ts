@@ -134,6 +134,7 @@ export function initSafeClickPopunder(currentPath: string): void {
     localStorage.setItem(POPUNDER_STORAGE_KEY, String(Date.now()));
     const script = document.createElement('script');
     script.async = true;
+    script.dataset.cfasync = 'false';
     script.src = scriptUrl;
     document.body.appendChild(script);
     document.removeEventListener('click', onClick, true);
@@ -142,23 +143,31 @@ export function initSafeClickPopunder(currentPath: string): void {
 }
 
 /**
- * Mounts Native Banner scripts into reserved in-result and native-footer containers.
+ * Mounts Adsterra Native Banner once per page: prefers tool in-result slot, falls back to native-footer.
  */
 export function initNativeBanners(currentPath: string): void {
   if (!ADS_ENABLED || !isBrowser || isExemptRoute(currentPath)) return;
   const scriptUrl = zonesConfig.networks?.adsterra?.nativeBannerScriptUrl;
+  const containerId = zonesConfig.networks?.adsterra?.nativeContainerId || 'container-e2963278b5c991d69ee9418e31b0f1ef';
   if (!scriptUrl || typeof scriptUrl !== 'string') return;
+  if (document.getElementById(containerId)) return;
 
-  const slots = document.querySelectorAll('[data-ad-slot="in-result"], [data-ad-slot="native-footer"]');
-  slots.forEach((slot) => {
-    if (slot.getAttribute('data-mounted') === '1') return;
-    slot.setAttribute('data-mounted', '1');
-    const script = document.createElement('script');
-    script.async = true;
-    script.dataset.cfasync = 'false';
-    script.src = scriptUrl;
-    slot.appendChild(script);
-  });
+  const targetSlot =
+    document.querySelector('[data-ad-slot="in-result"]') ||
+    document.querySelector('[data-ad-slot="native-footer"]');
+  if (!targetSlot) return;
+
+  const contentWrap = targetSlot.querySelector('.ad-content-slot') || targetSlot;
+  const container = document.createElement('div');
+  container.id = containerId;
+  contentWrap.appendChild(container);
+
+  const script = document.createElement('script');
+  script.async = true;
+  script.setAttribute('fetchpriority', 'high');
+  script.dataset.cfasync = 'false';
+  script.src = scriptUrl;
+  contentWrap.appendChild(script);
 }
 
 /**

@@ -1,4 +1,15 @@
 {
-  "enabled": false,
-  "networks": {}
+  "enabled": true,
+  "networks": {
+    "adsterra": {
+      "siteId": "6231440",
+      "popunderUnitId": "32499187",
+      "popunderScriptUrl": "https://abscloud.org/1/b84fae4e00f727d1c08c3dba23500924",
+      "nativeBannerUnitId": "32499188",
+      "nativeBannerScriptUrl": "https://bauval.org/21/e2963278b5c991d69ee9418e31b0f1ef",
+      "nativeContainerId": "container-e2963278b5c991d69ee9418e31b0f1ef",
+      "socialBarUnitId": "32499189",
+      "socialBarScriptUrl": "https://bauval.org/14/3d687bb05f385bcd945e9c79668c40d4"
+    }
+  }
 }

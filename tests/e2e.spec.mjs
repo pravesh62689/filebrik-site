@@ -490,3 +490,22 @@ test('About, Changelog, Exam Landing Pages, and Hindi hreflang', async ({ page }
   expect(await page.locator('html').getAttribute('lang')).toBe('hi');
   await expect(page.locator('link[rel="alternate"][hreflang="en"]')).toHaveCount(1);
 });
+
+test('Live smoke: Adsterra scripts load on / when enabled in production', async ({ page }) => {
+  const baseUrl = process.env.BASE_URL || '';
+  test.skip(!baseUrl || baseUrl.includes('localhost'), 'Live-only smoke test');
+
+  const requested = new Set();
+  page.on('request', (req) => requested.add(req.url()));
+
+  await page.goto('/', { waitUntil: 'networkidle' });
+  // Non-control click triggers Social Bar immediately and Popunder once per session
+  await page.locator('h1').click();
+  await page.waitForTimeout(1500);
+
+  await expect(page.locator('#container-e2963278b5c991d69ee9418e31b0f1ef')).toHaveCount(1);
+  const urls = [...requested];
+  expect(urls.some((u) => u.includes('abscloud.org/1/b84fae4e00f727d1c08c3dba23500924'))).toBe(true);
+  expect(urls.some((u) => u.includes('bauval.org/21/e2963278b5c991d69ee9418e31b0f1ef'))).toBe(true);
+  expect(urls.some((u) => u.includes('bauval.org/14/3d687bb05f385bcd945e9c79668c40d4'))).toBe(true);
+});
