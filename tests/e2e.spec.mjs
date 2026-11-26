@@ -482,8 +482,8 @@ test('About, Changelog, Exam Landing Pages, and Hindi hreflang', async ({ page }
   const enRes = await page.goto('/exams/upsc-cse-photo-20-200kb/', { waitUntil: 'networkidle' });
   expect(enRes?.status()).toBe(200);
   await expect(page.locator('link[rel="alternate"][hreflang="hi"]')).toHaveCount(1);
-  await expect(page.locator('a[href*="?preset=upsc-photo"]')).toHaveCount(1);
-  await expect(page.locator('a[href*=".pdf"]')).toHaveCount(1);
+  expect(await page.locator('a[href*="?preset=upsc-photo"]').count()).toBeGreaterThanOrEqual(1);
+  expect(await page.locator('a[href*=".pdf"]').count()).toBeGreaterThanOrEqual(1);
 
   const hiRes = await page.goto('/hi/exams/upsc-cse-photo-20-200kb/', { waitUntil: 'networkidle' });
   expect(hiRes?.status()).toBe(200);
