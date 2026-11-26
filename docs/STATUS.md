@@ -1,8 +1,8 @@
 # FileBrik Project Status & Architecture Report
 
-**Current Status**: Phase 2 & PDF Verification Complete • Deployed Live (`0ec9a75`) • Live QA & CI Green (`45776561136` / `45774196300`) • GSC Verified & Sitemaps Submitted (Google + Bing)  
+**Current Status**: Audit Fixes & Live QA Complete • Deployed Live (`569c679`) • CI Green (`45831952415`) • Live QA Green (`45832528918`: Perf 100 / A11y 98–100 / BP 100 / SEO 100) • IndexNow Green (`45824397463`) • GSC Verified & Sitemaps Submitted (Google + Bing)  
 **Design State**: **design to be swapped** (built using pure CSS design tokens and standalone preview screens in `design/exports`; pending Stitch zip import from `Downloads/stitch_*.zip`).  
-**Production URL**: `https://filebrik.pages.dev` *(live on Cloudflare Pages Git integration from `main` @ `0ec9a75`)*  
+**Production URL**: `https://filebrik.pages.dev` *(live on Cloudflare Pages Git integration from `main` @ `569c679`)*  
 Domain: deferred, buy only from ad earnings
 
 ## 1. Technical Architecture
@@ -28,9 +28,11 @@ Domain: deferred, buy only from ad earnings
 - **6/20 presets retained as `"check official notice"`** with source PDF links attached (`ssc-photo`, `rrb-photo`, `rpsc-photo`: portals moved to live camera capture; `passport-seva-photo`: PDF specifies `630×810` px & `4.5×3.5` cm without KB bounds; `pan-photo`, `pan-signature`: Income Tax portal PDF returned HTTP 403 WAF block).
 
 ## 4. Verification & Browser QA
-- **CI Push Pipeline (`45774196300` on `457e35e`)**: All 3 jobs green (`build-and-test`: 5/5, `e2e`: 44/44, `lighthouse` mobile: `/` = **99**, `/tools/compress-pdf/` = **100**, `/tools/exam-photo-signature-resizer/` = **100**).
-- **Live E2E Against `https://filebrik.pages.dev` (Live QA `45776561136` on deployed `0ec9a75`)**: **44/44 passing** (`35.5s`) across Mobile Chrome (`390×844`) & Desktop Chrome (all 14 routes HTTP 200 with 0 console/network errors, `/sw.js`, `/ads.txt`, `/robots.txt`, `/sitemap-index.xml`, `/sitemap-0.xml` 200, canonical & OG URLs pointing to `https://filebrik.pages.dev`, 0px horizontal overflow at 390px, mobile ad height `< 25%`, desktop video slider inactive at 390px, plus functional merge-pdf, compress-to-KB `[20, 50] KB`, WebP, passport `630×810`, and 14 verified PDF exam presets).
-- **Live Lighthouse Mobile Performance (`https://filebrik.pages.dev`, Live QA `45776561136`)**: `/` = **99** (`FCP=1.0s, LCP=1.0s`), `/tools/compress-pdf/` = **100** (`FCP=0.8s, LCP=0.8s`), `/tools/exam-photo-signature-resizer/` = **100** (`FCP=0.8s, LCP=0.8s`).
+- **CI Push Pipeline (`45831952415` on `569c679`)**: All 3 jobs green (`build-and-test`: 6/6, `e2e`: 48/48 across Mobile/Desktop Chrome, `lighthouse` mobile: ≥90).
+- **Live E2E Against `https://filebrik.pages.dev` (Live QA `45832528918` on deployed `569c679`)**: **48/48 passing** across Mobile Chrome (`390×844`) & Desktop Chrome (all routes + `404` + IndexNow key + `og-default.png`, JSON-LD, ≥400 words & ≥3 internal links per tool, zero upload requests across all 10 tools).
+- **Live Lighthouse Mobile (`https://filebrik.pages.dev`, Live QA `45832528918`)**: `/` = `perf:100, a11y:100, bp:100, seo:100, cls:0, fcp:0.9s, lcp:0.9s`; `/tools/compress-pdf/` = `perf:100, a11y:98, bp:100, seo:100, cls:0, fcp:1.0s, lcp:1.0s`; `/tools/exam-photo-signature-resizer/` = `perf:100, a11y:98, bp:100, seo:100, cls:0, fcp:1.0s, lcp:1.0s`.
+- **IndexNow (`45824397463`)**: Automated IndexNow ping workflow green after CI.
+- **Audit Report**: Full checklist recorded in [docs/AUDIT-2026-11-26.md](docs/AUDIT-2026-11-26.md).
 - **GSC HTML Meta Verification Tag**: Live on `https://filebrik.pages.dev/` (`<meta name="google-site-verification" content="EuP7tR_9jMW5UuGvMcL4iTqmbOJUfRJT3FeuZgJbvj0">`, verified via `curl` exit 0).
 - **Search Console & Bing Submission**: GSC URL-prefix property `https://filebrik.pages.dev/` **verified via HTML tag**; `https://filebrik.pages.dev/sitemap-index.xml` submitted to Google Search Console; property + sitemap imported into Bing Webmaster Tools.
 - **Ad-Network Pre-Approval Readiness**: Removed placeholder `ads.txt` entries, added repo-driven `src/data/adZones.json` switch (`enabled: false`), and prepared `docs/after-approval.md`. Applications held until pages show as indexed in GSC.
