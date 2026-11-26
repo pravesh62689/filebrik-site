@@ -2,11 +2,19 @@
 // src/pages/tools/jpg-to-pdf.astro
 import Layout from '../../layouts/Layout.astro';
 import AdSlot from '../../components/AdSlot.astro';
+import ToolArticle from '../../components/ToolArticle.astro';
+import { TOOL_GUIDES, buildToolJsonLd } from '../../data/toolGuides';
+
+const title = 'JPG to PDF Converter Client-Side';
+const description = 'Convert multiple JPG, PNG, and WebP images into a single clean printable PDF file.';
+const guide = TOOL_GUIDES['jpg-to-pdf'];
+const ld = buildToolJsonLd('jpg-to-pdf', title, description);
 ---
 <Layout
-  title="JPG to PDF Converter Client-Side"
-  description="Convert multiple JPG, PNG, and WebP images into a single clean printable PDF file."
+  title={title}
+  description={description}
   toolSlug="jpg-to-pdf"
+  jsonLd={ld}
 >
   <main class="tool-page-wrap">
     <div class="fb-container">
@@ -32,6 +40,8 @@ import AdSlot from '../../components/AdSlot.astro';
             <p id="resultText"></p>
             <a id="downloadBtn" class="fb-btn fb-btn-success" href="#" download="images.pdf">Download PDF</a>
           </div>
+
+          <ToolArticle {...guide} />
         </div>
 
         <aside class="tool-sidebar">

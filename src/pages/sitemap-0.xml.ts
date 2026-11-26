@@ -8,7 +8,7 @@ export const GET: APIRoute = ({ site }) => {
 
   const routes: string[] = ['/'];
   for (const entry of fs.readdirSync(pagesDir)) {
-    if (entry.endsWith('.astro') && entry !== 'index.astro') {
+    if (entry.endsWith('.astro') && entry !== 'index.astro' && entry !== '404.astro') {
       routes.push(`/${entry.replace(/\.astro$/, '')}/`);
     }
   }

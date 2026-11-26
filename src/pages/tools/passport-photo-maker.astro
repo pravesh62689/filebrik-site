@@ -2,11 +2,19 @@
 // src/pages/tools/passport-photo-maker.astro
 import Layout from '../../layouts/Layout.astro';
 import AdSlot from '../../components/AdSlot.astro';
+import ToolArticle from '../../components/ToolArticle.astro';
+import { TOOL_GUIDES, buildToolJsonLd } from '../../data/toolGuides';
+
+const title = 'Passport Photo Maker & Printable Sheet';
+const description = 'Create official 630x810 px (35x45mm) and 2x2 inch (600x600 px) passport photos plus 4x6 printable sheets.';
+const guide = TOOL_GUIDES['passport-photo-maker'];
+const ld = buildToolJsonLd('passport-photo-maker', title, description);
 ---
 <Layout
-  title="Passport Photo Maker & Printable Sheet"
-  description="Create official 630x810 px (35x45mm) and 2x2 inch (600x600 px) passport photos plus 4x6 printable sheets."
+  title={title}
+  description={description}
   toolSlug="passport-photo-maker"
+  jsonLd={ld}
 >
   <main class="tool-page-wrap">
     <div class="fb-container">
@@ -39,13 +47,15 @@ import AdSlot from '../../components/AdSlot.astro';
             <h4>✓ Passport Photo Ready (<span id="dimLabel">630×810 px</span>)</h4>
             <p id="resultText"></p>
             <div class="preview-wrap">
-              <img id="previewImg" alt="Passport photo output" style="max-height:240px;border:1px solid #cbd5e1;" />
+              <img id="previewImg" alt="Passport photo output" width="300" height="385" style="width:auto;max-height:240px;border:1px solid #cbd5e1;" />
             </div>
             <div class="btn-row">
               <a id="downloadBtn" class="fb-btn fb-btn-success" href="#" download="passport-630x810.jpg">Download Single Photo</a>
               <a id="downloadSheetBtn" class="fb-btn fb-btn-secondary" href="#" download="passport-4x6-sheet.jpg">Download 4×6 Printable Sheet</a>
             </div>
           </div>
+
+          <ToolArticle {...guide} />
         </div>
 
         <aside class="tool-sidebar">

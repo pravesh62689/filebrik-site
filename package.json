@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
+    "prebuild": "node scripts/copy-pdf-worker.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
@@ -13,7 +14,8 @@
   },
   "dependencies": {
     "astro": "^5.0.0",
-    "pdf-lib": "^1.17.1"
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^6.5.438"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",

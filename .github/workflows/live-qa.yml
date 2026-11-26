@@ -37,12 +37,12 @@ jobs:
               --output=json \
               --output-path=./lh-live.json \
               --chrome-flags="--headless=new --no-sandbox --disable-dev-shm-usage" \
-              --only-categories=performance
-            SCORE=$(node -e "const r=require('./lh-live.json'); const fcp=r.audits['first-contentful-paint']?.displayValue; const lcp=r.audits['largest-contentful-paint']?.displayValue; console.log(Math.round((r.categories.performance.score || 0)*100) + ' (FCP=' + fcp + ', LCP=' + lcp + ')');")
-            SCORE_NUM=$(node -e "const r=require('./lh-live.json'); console.log(Math.round((r.categories.performance.score || 0)*100));")
-            echo "Live Mobile Performance score for ${route}: ${SCORE}"
-            if [ "$SCORE_NUM" -lt 90 ]; then
-              echo "::error::Live mobile performance for ${route} is ${SCORE_NUM} (< 90)"
+              --only-categories=performance,accessibility,best-practices,seo
+            METRICS=$(node -e "const r=require('./lh-live.json'); const c=r.categories; const s=k=>Math.round((c[k]?.score||0)*100); const cls=(r.audits['cumulative-layout-shift']?.numericValue||0).toFixed(3); console.log(JSON.stringify({perf:s('performance'),a11y:s('accessibility'),bp:s('best-practices'),seo:s('seo'),cls:Number(cls),fcp:r.audits['first-contentful-paint']?.displayValue,lcp:r.audits['largest-contentful-paint']?.displayValue}));")
+            echo "Live Lighthouse for ${route}: ${METRICS}"
+            PASS=$(node -e "const m=${METRICS}; console.log(m.perf>=90 && m.a11y>=90 && m.bp>=90 && m.seo>=90 && m.cls<=0.05 ? '1' : '0');")
+            if [ "$PASS" != "1" ]; then
+              echo "::error::Live Lighthouse failed thresholds for ${route}: ${METRICS}"
               FAILED=1
             fi
           done

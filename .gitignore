@@ -2,6 +2,7 @@
 node_modules/
 dist/
 .astro/
+public/workers/
 
 # Environment and secrets
 .env

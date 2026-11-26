@@ -2,14 +2,21 @@
 // src/pages/tools/exam-photo-signature-resizer.astro
 import Layout from '../../layouts/Layout.astro';
 import AdSlot from '../../components/AdSlot.astro';
+import ToolArticle from '../../components/ToolArticle.astro';
 import examPresets from '../../data/examPresets.json';
+import { TOOL_GUIDES, buildToolJsonLd } from '../../data/toolGuides';
 
 const presets = Array.isArray(examPresets) ? examPresets : (examPresets as any).presets;
+const title = 'Exam Photo & Signature Resizer — 20–50 KB';
+const description = 'Auto-resize candidate photos and signatures to exact dimensions, KB size limits, and 200/300 DPI for UPSC, IBPS, NEET, and state PSC portals.';
+const guide = TOOL_GUIDES['exam-photo-signature-resizer'];
+const ld = buildToolJsonLd('exam-photo-signature-resizer', title, description);
 ---
 <Layout
-  title="Exam Photo & Signature Resizer - UPSC, SSC, IBPS, NEET Portals"
-  description="Auto-resize candidate photos and signatures to exact dimensions, KB size limits, and 200/300 DPI for government exam online applications."
+  title={title}
+  description={description}
   toolSlug="exam-photo-signature-resizer"
+  jsonLd={ld}
 >
   <main class="tool-page-wrap">
     <div class="fb-container">
@@ -69,11 +76,13 @@ const presets = Array.isArray(examPresets) ? examPresets : (examPresets as any).
           <div id="outputSection" class="output-card" style="display:none; margin-top:2rem;">
             <h3>✓ Ready for Portal Upload</h3>
             <div class="preview-item">
-              <img id="outputPreview" alt="Resized candidate file" />
+              <img id="outputPreview" alt="Resized candidate file" width="350" height="450" style="height:auto;" />
               <span id="outputMeta" class="preview-meta"></span>
               <a id="downloadOutput" class="fb-btn fb-btn-success" download="portal-ready.jpg">Download Formatted JPG</a>
             </div>
           </div>
+
+          <ToolArticle {...guide} />
         </div>
 
         <aside class="tool-sidebar">

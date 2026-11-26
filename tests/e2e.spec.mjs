@@ -339,3 +339,135 @@ test('Tool e2e: exam-photo-signature-resizer verified presets land inside KB & p
   const sscPdfHref = await page.locator('#specPdfUrl').getAttribute('href');
   expect(sscPdfHref).toContain('.pdf');
 });
+
+// 9. SEO, metadata, real 404, IndexNow key, OG image, JSON-LD, and >= 400 words per tool page
+test('SEO & Release Audit: fb-build, OG/Twitter, JSON-LD, IndexNow, 404, >=400 words on all tools', async ({ page, request }) => {
+  const keyRes = await request.get('/9a4f8e2c7b1d4058e9a3c2f1b7d60482.txt');
+  expect(keyRes.status()).toBe(200);
+  expect((await keyRes.text()).trim()).toBe('9a4f8e2c7b1d4058e9a3c2f1b7d60482');
+
+  const ogRes = await request.get('/og-default.png');
+  expect(ogRes.status()).toBe(200);
+
+  const notFoundRes = await request.get('/definitely-missing-audit-404-route/');
+  expect(notFoundRes.status()).toBe(404);
+
+  for (const route of ALL_ROUTES) {
+    await page.goto(route, { waitUntil: 'domcontentloaded' });
+    const seo = await page.evaluate(() => {
+      const fbBuild = document.querySelector('meta[name="fb-build"]')?.getAttribute('content') || '';
+      const ogImg = document.querySelector('meta[property="og:image"]')?.getAttribute('content') || '';
+      const twCard = document.querySelector('meta[name="twitter:card"]')?.getAttribute('content') || '';
+      const ldScripts = Array.from(document.querySelectorAll('script[type="application/ld+json"]')).map((s) => s.textContent || '');
+      const titleLen = document.title.length;
+      const mainText = (document.querySelector('main')?.innerText || '').trim();
+      const words = mainText ? mainText.split(/\s+/).length : 0;
+      const links = document.querySelectorAll('main a[href^="/"]').length;
+      return { fbBuild, ogImg, twCard, ldScripts, titleLen, words, links };
+    });
+    expect(seo.fbBuild.length, `fb-build missing on ${route}`).toBeGreaterThanOrEqual(4);
+    expect(seo.ogImg, `og:image missing on ${route}`).toContain('/og-default.png');
+    expect(seo.twCard, `twitter:card missing on ${route}`).toBe('summary_large_image');
+    expect(seo.titleLen, `titleLen=${seo.titleLen} on ${route}`).toBeGreaterThanOrEqual(30);
+    expect(seo.titleLen, `titleLen=${seo.titleLen} on ${route}`).toBeLessThanOrEqual(60);
+    expect(seo.ldScripts.length, `JSON-LD missing on ${route}`).toBeGreaterThanOrEqual(1);
+    for (const raw of seo.ldScripts) expect(() => JSON.parse(raw)).not.toThrow();
+    if (route.startsWith('/tools/')) {
+      expect(seo.words, `${route} words=${seo.words} < 400`).toBeGreaterThanOrEqual(400);
+      expect(seo.links, `${route} internal links=${seo.links} < 3`).toBeGreaterThanOrEqual(3);
+    }
+  }
+});
+
+// 10. Remaining 5 tools E2E + zero outbound upload network requests assertion
+test('Tools e2e: compress-pdf, split-pdf, jpg-to-pdf, pdf-to-jpg, audio-trimmer with 0 upload requests', async ({ page }) => {
+  test.setTimeout(90000);
+  const uploadRequests = [];
+  page.on('request', (req) => {
+    if (['POST', 'PUT', 'PATCH'].includes(req.method())) {
+      uploadRequests.push(`${req.method()} ${req.url()}`);
+    }
+  });
+
+  const twoPagePdf = await PDFDocument.create();
+  twoPagePdf.addPage([300, 300]);
+  twoPagePdf.addPage([300, 300]);
+  const pdfBuf = Buffer.from(await twoPagePdf.save());
+
+  // compress-pdf
+  await page.goto('/tools/compress-pdf/', { waitUntil: 'networkidle' });
+  await page.setInputFiles('#pdfInput', { name: 'sample.pdf', mimeType: 'application/pdf', buffer: pdfBuf });
+  await page.click('#compressBtn');
+  await expect(page.locator('#resultBox')).toBeVisible({ timeout: 10000 });
+  const compBytes = await page.evaluate(async () => Array.from(new Uint8Array(await (await fetch(document.getElementById('downloadBtn').getAttribute('href'))).arrayBuffer())));
+  expect((await PDFDocument.load(new Uint8Array(compBytes))).getPageCount()).toBe(2);
+
+  // split-pdf
+  await page.goto('/tools/split-pdf/', { waitUntil: 'networkidle' });
+  await page.setInputFiles('#fileInput', { name: 'multi.pdf', mimeType: 'application/pdf', buffer: pdfBuf });
+  await page.fill('#pageRange', '2');
+  await page.click('#actionBtn');
+  await expect(page.locator('#resultBox')).toBeVisible({ timeout: 10000 });
+  const splitBytes = await page.evaluate(async () => Array.from(new Uint8Array(await (await fetch(document.getElementById('downloadBtn').getAttribute('href'))).arrayBuffer())));
+  expect((await PDFDocument.load(new Uint8Array(splitBytes))).getPageCount()).toBe(1);
+
+  // jpg-to-pdf
+  await page.goto('/tools/jpg-to-pdf/', { waitUntil: 'networkidle' });
+  const samplePng = await page.evaluate(async () => {
+    const c = document.createElement('canvas'); c.width = 120; c.height = 90;
+    const ctx = c.getContext('2d'); ctx.fillStyle = '#0D9488'; ctx.fillRect(0, 0, 120, 90);
+    return Array.from(new Uint8Array(await (await new Promise((r) => c.toBlob(r, 'image/png'))).arrayBuffer()));
+  });
+  await page.setInputFiles('#fileInput', { name: 'card.png', mimeType: 'image/png', buffer: Buffer.from(samplePng) });
+  await page.click('#actionBtn');
+  await expect(page.locator('#resultBox')).toBeVisible({ timeout: 10000 });
+  const j2pBytes = await page.evaluate(async () => Array.from(new Uint8Array(await (await fetch(document.getElementById('downloadBtn').getAttribute('href'))).arrayBuffer())));
+  expect((await PDFDocument.load(new Uint8Array(j2pBytes))).getPageCount()).toBe(1);
+
+  // pdf-to-jpg
+  await page.goto('/tools/pdf-to-jpg/', { waitUntil: 'networkidle' });
+  await page.setInputFiles('#fileInput', { name: 'render.pdf', mimeType: 'application/pdf', buffer: pdfBuf });
+  await page.click('#actionBtn');
+  await expect(page.locator('#resultBox')).toBeVisible({ timeout: 20000 });
+  const p2j = await page.evaluate(async () => {
+    const dl = document.getElementById('downloadBtn');
+    const b = new Uint8Array(await (await fetch(dl.getAttribute('href'))).arrayBuffer());
+    return { pages: dl.dataset.pages, soi0: b[0], soi1: b[1] };
+  });
+  expect(p2j.pages).toBe('2');
+  expect(p2j.soi0).toBe(0xff);
+  expect(p2j.soi1).toBe(0xd8);
+
+  // audio-trimmer
+  await page.goto('/tools/audio-trimmer/', { waitUntil: 'networkidle' });
+  const wavBuf = await page.evaluate(() => {
+    const sr = 22050, len = 22050, dataBytes = len * 2, buf = new ArrayBuffer(44 + dataBytes), v = new DataView(buf);
+    const w = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+    w(0, 'RIFF'); v.setUint32(4, 36 + dataBytes, true); w(8, 'WAVE'); w(12, 'fmt '); v.setUint32(16, 16, true);
+    v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true);
+    v.setUint16(32, 2, true); v.setUint16(34, 16, true); w(36, 'data'); v.setUint32(40, dataBytes, true);
+    for (let i = 0; i < len; i++) v.setInt16(44 + i * 2, Math.round(Math.sin(i / 20) * 8000), true);
+    return Array.from(new Uint8Array(buf));
+  });
+  await page.setInputFiles('#fileInput', { name: 'tone.wav', mimeType: 'audio/wav', buffer: Buffer.from(wavBuf) });
+  await expect(page.locator('#actionBtn')).toBeEnabled({ timeout: 10000 });
+  await page.fill('#startSec', '0');
+  await page.fill('#endSec', '0.25');
+  await page.click('#actionBtn');
+  await expect(page.locator('#resultBox')).toBeVisible({ timeout: 10000 });
+  const trimmed = await page.evaluate(async () => {
+    const dl = document.getElementById('downloadBtn');
+    const b = new Uint8Array(await (await fetch(dl.getAttribute('href'))).arrayBuffer());
+    return {
+      riff: String.fromCharCode(...b.slice(0, 4)),
+      wave: String.fromCharCode(...b.slice(8, 12)),
+      dur: Number(dl.dataset.duration),
+      len: b.byteLength,
+    };
+  });
+  expect(trimmed.riff).toBe('RIFF');
+  expect(trimmed.wave).toBe('WAVE');
+  expect(trimmed.dur).toBeCloseTo(0.25, 1);
+  expect(trimmed.len).toBeLessThan(wavBuf.length);
+  expect(uploadRequests).toHaveLength(0);
+});

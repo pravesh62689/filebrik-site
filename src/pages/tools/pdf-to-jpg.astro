@@ -2,44 +2,59 @@
 // src/pages/tools/pdf-to-jpg.astro
 import Layout from '../../layouts/Layout.astro';
 import AdSlot from '../../components/AdSlot.astro';
+import ToolArticle from '../../components/ToolArticle.astro';
+import { TOOL_GUIDES, buildToolJsonLd } from '../../data/toolGuides';
+
+const title = 'PDF to JPG Converter Client-Side';
+const description = 'Render PDF document pages into high-resolution JPG or PNG image files offline inside your browser.';
+const guide = TOOL_GUIDES['pdf-to-jpg'];
+const ld = buildToolJsonLd('pdf-to-jpg', title, description);
 ---
-<Layout
-  title="PDF to JPG Converter Client-Side"
-  description="Render PDF document pages into high-resolution JPG or WebP image files."
-  toolSlug="pdf-to-jpg"
->
+<Layout title={title} description={description} toolSlug="pdf-to-jpg" jsonLd={ld}>
   <main class="tool-page-wrap">
     <div class="fb-container">
       <div class="tool-grid-layout">
         <div class="tool-main-pane">
           <div class="privacy-pill">🛡️ 100% Client-Side Memory • Zero Cloud Storage</div>
           <h1 class="tool-header-title">PDF to JPG Converter</h1>
-          <p class="tool-header-sub">Convert PDF document pages into crisp, shareable image formats entirely in your browser.</p>
+          <p class="tool-header-sub">Render PDF document pages into crisp JPEG or PNG images directly inside your browser using Mozilla PDF.js.</p>
 
           <div class="fb-dropzone" id="dropzone">
             <div class="drop-icon">📸</div>
-            <h3>Drop your files here</h3>
-            <p>or click to select from your device</p>
-            <input type="file" id="fileInput" style="display:none;" />
+            <h3>Drop your PDF file here</h3>
+            <p>or click to select a PDF document from your device</p>
+            <input type="file" id="fileInput" accept="application/pdf,.pdf" style="display:none;" />
           </div>
 
           <div class="settings-box">
-            <div class="form-row">
-              <label>Processing Option</label>
-              <select class="fb-select" id="toolOption">
-                <option value="default">Standard Optimization (Recommended)</option>
-                <option value="high">High Quality Retention</option>
-                <option value="max">Maximum Compression</option>
-              </select>
+            <div class="form-grid-2">
+              <div class="form-row">
+                <label for="formatSelect">Output Image Format</label>
+                <select class="fb-select" id="formatSelect">
+                  <option value="image/jpeg">JPEG (.jpg) — Compact &amp; Portal Ready</option>
+                  <option value="image/png">PNG (.png) — Lossless Crisp Text</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <label for="scaleSelect">Render Scale / Clarity</label>
+                <select class="fb-select" id="scaleSelect">
+                  <option value="1.5">1.5x Balanced Clarity</option>
+                  <option value="2.0" selected>2.0x Crisp HD Default</option>
+                  <option value="1.0">1.0x Standard Fast Render</option>
+                </select>
+              </div>
             </div>
-            <button id="actionBtn" class="fb-btn fb-btn-primary" disabled>Process File</button>
+            <button id="actionBtn" class="fb-btn fb-btn-primary" disabled>Convert PDF Pages</button>
           </div>
 
           <div id="resultBox" class="result-box" style="display:none;">
-            <h4>✓ Processing Complete</h4>
-            <p id="resultText">File generated successfully in browser memory.</p>
-            <a id="downloadBtn" class="fb-btn fb-btn-success" href="#" download="processed-pdf-to-jpg">Download Result</a>
+            <h4>✓ Pages Rendered Client-Side</h4>
+            <p id="resultText"></p>
+            <a id="downloadBtn" class="fb-btn fb-btn-success" href="#" download="page-1.jpg">Download Page 1</a>
+            <div id="pagesList" class="pages-list"></div>
           </div>
+
+          <ToolArticle {...guide} />
         </div>
 
         <aside class="tool-sidebar">
@@ -49,12 +64,17 @@ import AdSlot from '../../components/AdSlot.astro';
     </div>
   </main>
 
-  <script is:inline>
-    const dropzone = document.getElementById('dropzone');
-    const input = document.getElementById('fileInput');
-    const btn = document.getElementById('actionBtn');
-    const resultBox = document.getElementById('resultBox');
-    let loaded = null;
+  <script>
+    const dropzone = document.getElementById('dropzone')!;
+    const input = document.getElementById('fileInput') as HTMLInputElement;
+    const formatSelect = document.getElementById('formatSelect') as HTMLSelectElement;
+    const scaleSelect = document.getElementById('scaleSelect') as HTMLSelectElement;
+    const btn = document.getElementById('actionBtn') as HTMLButtonElement;
+    const resultBox = document.getElementById('resultBox')!;
+    const resultText = document.getElementById('resultText')!;
+    const downloadBtn = document.getElementById('downloadBtn') as HTMLAnchorElement;
+    const pagesList = document.getElementById('pagesList')!;
+    let loaded: File | null = null;
 
     dropzone.addEventListener('click', () => input.click());
     dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag-active'); });
@@ -62,30 +82,83 @@ import AdSlot from '../../components/AdSlot.astro';
     dropzone.addEventListener('drop', (e) => {
       e.preventDefault();
       dropzone.classList.remove('drag-active');
-      if (e.dataTransfer.files[0]) handle(e.dataTransfer.files[0]);
+      if (e.dataTransfer?.files[0]) handle(e.dataTransfer.files[0]);
     });
-    input.addEventListener('change', () => { if (input.files[0]) handle(input.files[0]); });
+    input.addEventListener('change', () => { if (input.files?.[0]) handle(input.files[0]); });
 
-    function handle(f) {
+    function handle(f: File) {
+      if (f.type !== 'application/pdf' && !f.name.toLowerCase().endsWith('.pdf')) return;
       loaded = f;
-      dropzone.querySelector('h3').textContent = f.name;
-      dropzone.querySelector('p').textContent = (f.size / 1024).toFixed(1) + ' KB';
+      dropzone.querySelector('h3')!.textContent = f.name;
+      dropzone.querySelector('p')!.textContent = (f.size / 1024).toFixed(1) + ' KB';
       btn.disabled = false;
     }
 
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       if (!loaded) return;
       btn.disabled = true;
-      btn.textContent = 'Processing in memory...';
-      setTimeout(() => {
-        const url = URL.createObjectURL(loaded);
-        const downloadBtn = document.getElementById('downloadBtn');
-        downloadBtn.href = url;
-        downloadBtn.download = 'processed-' + loaded.name;
+      btn.textContent = 'Rasterizing pages in browser...';
+      pagesList.innerHTML = '';
+
+      try {
+        const pdfjsLib = await import('pdfjs-dist');
+        pdfjsLib.GlobalWorkerOptions.workerSrc = '/workers/pdf.worker.min.mjs';
+
+        const data = new Uint8Array(await loaded.arrayBuffer());
+        const doc = await pdfjsLib.getDocument({ data }).promise;
+        const mime = formatSelect.value;
+        const ext = mime === 'image/png' ? 'png' : 'jpg';
+        const scale = parseFloat(scaleSelect.value) || 2.0;
+
+        let firstUrl = '';
+        let firstName = '';
+        let firstMime = mime;
+        const total = doc.numPages;
+
+        for (let pageNum = 1; pageNum <= total; pageNum++) {
+          const page = await doc.getPage(pageNum);
+          const viewport = page.getViewport({ scale });
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.ceil(viewport.width);
+          canvas.height = Math.ceil(viewport.height);
+          const ctx = canvas.getContext('2d')!;
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          await page.render({ canvasContext: ctx, canvas, viewport }).promise;
+
+          const blob = await new Promise<Blob>((resolve, reject) =>
+            canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('Image render failed'))), mime, 0.92)
+          );
+          const url = URL.createObjectURL(blob);
+          const baseName = loaded.name.replace(/\.pdf$/i, '') || 'document';
+          const outName = `${baseName}-page-${pageNum}.${ext}`;
+
+          if (pageNum === 1) {
+            firstUrl = url;
+            firstName = outName;
+            firstMime = blob.type;
+          }
+
+          const card = document.createElement('div');
+          card.className = 'rendered-page-row';
+          card.innerHTML = `<span>Page ${pageNum}: ${canvas.width}×${canvas.height} px (${(blob.size / 1024).toFixed(1)} KB)</span><a class="fb-btn fb-btn-secondary" href="${url}" download="${outName}">Save ${ext.toUpperCase()}</a>`;
+          pagesList.appendChild(card);
+        }
+
+        downloadBtn.href = firstUrl;
+        downloadBtn.download = firstName;
+        downloadBtn.dataset.mime = firstMime;
+        downloadBtn.dataset.pages = String(total);
+        resultText.textContent = `Rendered ${total} page(s) to ${ext.toUpperCase()} directly inside browser RAM.`;
         resultBox.style.display = 'block';
-        btn.textContent = 'Completed';
+      } catch (err: any) {
+        resultText.textContent = 'Error rendering PDF: ' + (err?.message || 'Unknown error');
+        resultBox.style.display = 'block';
+      } finally {
+        btn.textContent = 'Convert PDF Pages';
         btn.disabled = false;
-      }, 600);
+      }
     });
   </script>
 </Layout>
@@ -96,12 +169,14 @@ import AdSlot from '../../components/AdSlot.astro';
   .privacy-pill { display: inline-block; background: #ECFDF5; color: #047857; font-size: 0.8rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: var(--fb-radius-md); margin-bottom: 1rem; }
   .tool-header-title { font-size: 2.25rem; font-weight: 900; margin-bottom: 0.5rem; }
   .tool-header-sub { font-size: 1rem; color: var(--fb-text-muted); margin-bottom: 2rem; }
-  .fb-dropzone { border: 2px dashed var(--fb-border); border-radius: var(--fb-radius-xl); padding: 3.5rem 2rem; text-align: center; cursor: pointer; background: var(--fb-surface); transition: all 0.2s; margin-bottom: 2rem; }
+  .fb-dropzone { border: 2px dashed var(--fb-border); border-radius: var(--fb-radius-lg); padding: 3.5rem 2rem; text-align: center; cursor: pointer; background: var(--fb-surface); margin-bottom: 2rem; }
   .drop-icon { font-size: 3rem; margin-bottom: 1rem; }
   .settings-box { background: var(--fb-surface); border: 1px solid var(--fb-border); border-radius: var(--fb-radius-lg); padding: 1.5rem; margin-bottom: 2rem; }
+  .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
   .form-row { margin-bottom: 1.25rem; }
   .form-row label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; }
-  .fb-select { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--fb-border); border-radius: var(--fb-radius-md); font-size: 0.95rem; font-family: inherit; }
   .result-box { background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: var(--fb-radius-lg); padding: 1.5rem; margin-bottom: 2rem; }
-  @media (max-width: 900px) { .tool-grid-layout { grid-template-columns: 1fr; } }
+  .pages-list { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.65rem; }
+  :global(.rendered-page-row) { display: flex; justify-content: space-between; align-items: center; gap: 1rem; background: var(--fb-surface); padding: 0.6rem 0.85rem; border-radius: var(--fb-radius-md); border: 1px solid var(--fb-border); font-size: 0.85rem; }
+  @media (max-width: 900px) { .tool-grid-layout { grid-template-columns: 1fr; } .form-grid-2 { grid-template-columns: 1fr; } }
 </style>

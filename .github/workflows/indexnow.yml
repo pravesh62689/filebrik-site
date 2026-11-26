@@ -1,0 +1,44 @@
+name: IndexNow Submit
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["FileBrik CI"]
+    branches: [ main ]
+    types: [ completed ]
+
+jobs:
+  submit-indexnow:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for live key file and ping IndexNow
+        run: |
+          KEY="9a4f8e2c7b1d4058e9a3c2f1b7d60482"
+          HOST="filebrik.pages.dev"
+          KEY_LOC="https://${HOST}/${KEY}.txt"
+          for i in $(seq 1 12); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$KEY_LOC")
+            echo "Attempt $i: $KEY_LOC -> HTTP $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            sleep 15
+          done
+          node -e '
+            (async () => {
+              const sm = await fetch("https://filebrik.pages.dev/sitemap-0.xml").then(r => r.text());
+              const urls = [...sm.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
+              if (!urls.length) throw new Error("No sitemap URLs found");
+              const res = await fetch("https://api.indexnow.org/indexnow", {
+                method: "POST",
+                headers: { "Content-Type": "application/json; charset=utf-8" },
+                body: JSON.stringify({
+                  host: "filebrik.pages.dev",
+                  key: "9a4f8e2c7b1d4058e9a3c2f1b7d60482",
+                  keyLocation: "https://filebrik.pages.dev/9a4f8e2c7b1d4058e9a3c2f1b7d60482.txt",
+                  urlList: urls
+                })
+              });
+              console.log("IndexNow HTTP:", res.status, "URLs:", urls.length);
+              if (res.status < 200 || res.status >= 300) process.exit(1);
+            })();
+          '

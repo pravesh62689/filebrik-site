@@ -2,44 +2,52 @@
 // src/pages/tools/audio-trimmer.astro
 import Layout from '../../layouts/Layout.astro';
 import AdSlot from '../../components/AdSlot.astro';
+import ToolArticle from '../../components/ToolArticle.astro';
+import { TOOL_GUIDES, buildToolJsonLd } from '../../data/toolGuides';
+
+const title = 'Audio Trimmer & WAV Cutter Client-Side';
+const description = 'Cut and trim MP3, WAV, and OGG audio clips offline using native Web Audio decoding and 16-bit PCM WAV export.';
+const guide = TOOL_GUIDES['audio-trimmer'];
+const ld = buildToolJsonLd('audio-trimmer', title, description);
 ---
-<Layout
-  title="Audio Trimmer & Cutter Client-Side"
-  description="Cut and trim MP3, WAV, and AAC audio recordings with millisecond waveform precision."
-  toolSlug="audio-trimmer"
->
+<Layout title={title} description={description} toolSlug="audio-trimmer" jsonLd={ld}>
   <main class="tool-page-wrap">
     <div class="fb-container">
       <div class="tool-grid-layout">
         <div class="tool-main-pane">
           <div class="privacy-pill">🛡️ 100% Client-Side Memory • Zero Cloud Storage</div>
-          <h1 class="tool-header-title">Audio Trimmer & Cutter</h1>
-          <p class="tool-header-sub">Trim voice recordings, ringtones, and podcast snippets client-side using Web Audio API.</p>
+          <h1 class="tool-header-title">Audio Trimmer &amp; WAV Cutter</h1>
+          <p class="tool-header-sub">Trim voice memos, recordings, and sound clips accurately via native browser Web Audio API without uploading audio bytes.</p>
 
           <div class="fb-dropzone" id="dropzone">
             <div class="drop-icon">🎵</div>
-            <h3>Drop your files here</h3>
-            <p>or click to select from your device</p>
-            <input type="file" id="fileInput" style="display:none;" />
+            <h3>Drop your audio file here</h3>
+            <p>or click to select WAV, MP3, OGG, or M4A from your device</p>
+            <input type="file" id="fileInput" accept="audio/*" style="display:none;" />
           </div>
 
           <div class="settings-box">
-            <div class="form-row">
-              <label>Processing Option</label>
-              <select class="fb-select" id="toolOption">
-                <option value="default">Standard Optimization (Recommended)</option>
-                <option value="high">High Quality Retention</option>
-                <option value="max">Maximum Compression</option>
-              </select>
+            <p id="audioMeta" class="audio-meta">Load an audio track to inspect sample rate and total duration.</p>
+            <div class="form-grid-2">
+              <div class="form-row">
+                <label for="startSec">Start Time (seconds)</label>
+                <input type="number" id="startSec" class="fb-input" value="0" min="0" step="0.1" />
+              </div>
+              <div class="form-row">
+                <label for="endSec">End Time (seconds)</label>
+                <input type="number" id="endSec" class="fb-input" value="1" min="0.1" step="0.1" />
+              </div>
             </div>
-            <button id="actionBtn" class="fb-btn fb-btn-primary" disabled>Process File</button>
+            <button id="actionBtn" class="fb-btn fb-btn-primary" disabled>Trim &amp; Export WAV</button>
           </div>
 
           <div id="resultBox" class="result-box" style="display:none;">
-            <h4>✓ Processing Complete</h4>
-            <p id="resultText">File generated successfully in browser memory.</p>
-            <a id="downloadBtn" class="fb-btn fb-btn-success" href="#" download="processed-audio-trimmer">Download Result</a>
+            <h4>✓ Audio Trimmed in Memory</h4>
+            <p id="resultText"></p>
+            <a id="downloadBtn" class="fb-btn fb-btn-success" href="#" download="trimmed.wav">Download Trimmed WAV</a>
           </div>
+
+          <ToolArticle {...guide} />
         </div>
 
         <aside class="tool-sidebar">
@@ -49,12 +57,78 @@ import AdSlot from '../../components/AdSlot.astro';
     </div>
   </main>
 
-  <script is:inline>
-    const dropzone = document.getElementById('dropzone');
-    const input = document.getElementById('fileInput');
-    const btn = document.getElementById('actionBtn');
-    const resultBox = document.getElementById('resultBox');
-    let loaded = null;
+  <script>
+    const dropzone = document.getElementById('dropzone')!;
+    const input = document.getElementById('fileInput') as HTMLInputElement;
+    const startInput = document.getElementById('startSec') as HTMLInputElement;
+    const endInput = document.getElementById('endSec') as HTMLInputElement;
+    const audioMeta = document.getElementById('audioMeta')!;
+    const btn = document.getElementById('actionBtn') as HTMLButtonElement;
+    const resultBox = document.getElementById('resultBox')!;
+    const resultText = document.getElementById('resultText')!;
+    const downloadBtn = document.getElementById('downloadBtn') as HTMLAnchorElement;
+    let loadedFile: File | null = null;
+    let decodedBuffer: AudioBuffer | null = null;
+
+    function encodeWavPcm16(channels: Float32Array[], sampleRate: number, startFrame: number, endFrame: number): ArrayBuffer {
+      const numChannels = channels.length;
+      const numSamples = Math.max(1, endFrame - startFrame);
+      const dataBytes = numSamples * numChannels * 2;
+      const buf = new ArrayBuffer(44 + dataBytes);
+      const view = new DataView(buf);
+
+      const writeAscii = (off: number, str: string) => {
+        for (let i = 0; i < str.length; i++) view.setUint8(off + i, str.charCodeAt(i));
+      };
+      writeAscii(0, 'RIFF');
+      view.setUint32(4, 36 + dataBytes, true);
+      writeAscii(8, 'WAVE');
+      writeAscii(12, 'fmt ');
+      view.setUint32(16, 16, true); // PCM subchunk
+      view.setUint16(20, 1, true); // PCM format
+      view.setUint16(22, numChannels, true);
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, sampleRate * numChannels * 2, true);
+      view.setUint16(32, numChannels * 2, true);
+      view.setUint16(34, 16, true);
+      writeAscii(36, 'data');
+      view.setUint32(40, dataBytes, true);
+
+      let offset = 44;
+      for (let i = startFrame; i < startFrame + numSamples; i++) {
+        for (let ch = 0; ch < numChannels; ch++) {
+          const s = Math.max(-1, Math.min(1, channels[ch][i] || 0));
+          view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+          offset += 2;
+        }
+      }
+      return buf;
+    }
+
+    async function handleFile(f: File) {
+      loadedFile = f;
+      dropzone.querySelector('h3')!.textContent = f.name;
+      dropzone.querySelector('p')!.textContent = (f.size / 1024).toFixed(1) + ' KB — decoding...';
+      btn.disabled = true;
+
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      const ctx = new AudioCtx();
+      try {
+        const ab = await f.arrayBuffer();
+        decodedBuffer = await ctx.decodeAudioData(ab);
+        const dur = decodedBuffer.duration;
+        startInput.value = '0';
+        endInput.value = dur >= 1 ? (dur * 0.5).toFixed(2) : dur.toFixed(2);
+        endInput.max = dur.toFixed(2);
+        audioMeta.textContent = `Loaded ${dur.toFixed(2)}s • ${decodedBuffer.sampleRate} Hz • ${decodedBuffer.numberOfChannels} ch`;
+        dropzone.querySelector('p')!.textContent = (f.size / 1024).toFixed(1) + ' KB';
+        btn.disabled = false;
+      } catch (err: any) {
+        audioMeta.textContent = 'Unable to decode audio track: ' + (err?.message || 'unsupported codec');
+      } finally {
+        await ctx.close().catch(() => {});
+      }
+    }
 
     dropzone.addEventListener('click', () => input.click());
     dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag-active'); });
@@ -62,30 +136,33 @@ import AdSlot from '../../components/AdSlot.astro';
     dropzone.addEventListener('drop', (e) => {
       e.preventDefault();
       dropzone.classList.remove('drag-active');
-      if (e.dataTransfer.files[0]) handle(e.dataTransfer.files[0]);
+      if (e.dataTransfer?.files[0]) void handleFile(e.dataTransfer.files[0]);
     });
-    input.addEventListener('change', () => { if (input.files[0]) handle(input.files[0]); });
-
-    function handle(f) {
-      loaded = f;
-      dropzone.querySelector('h3').textContent = f.name;
-      dropzone.querySelector('p').textContent = (f.size / 1024).toFixed(1) + ' KB';
-      btn.disabled = false;
-    }
+    input.addEventListener('change', () => { if (input.files?.[0]) void handleFile(input.files[0]); });
 
     btn.addEventListener('click', () => {
-      if (!loaded) return;
-      btn.disabled = true;
-      btn.textContent = 'Processing in memory...';
-      setTimeout(() => {
-        const url = URL.createObjectURL(loaded);
-        const downloadBtn = document.getElementById('downloadBtn');
-        downloadBtn.href = url;
-        downloadBtn.download = 'processed-' + loaded.name;
-        resultBox.style.display = 'block';
-        btn.textContent = 'Completed';
-        btn.disabled = false;
-      }, 600);
+      if (!loadedFile || !decodedBuffer) return;
+      const sr = decodedBuffer.sampleRate;
+      const dur = decodedBuffer.duration;
+      const sSec = Math.max(0, Math.min(dur - 0.05, parseFloat(startInput.value) || 0));
+      const eSec = Math.max(sSec + 0.05, Math.min(dur, parseFloat(endInput.value) || dur));
+      const startFrame = Math.floor(sSec * sr);
+      const endFrame = Math.max(startFrame + 1, Math.min(decodedBuffer.length, Math.floor(eSec * sr)));
+
+      const channels: Float32Array[] = [];
+      for (let c = 0; c < decodedBuffer.numberOfChannels; c++) {
+        channels.push(decodedBuffer.getChannelData(c));
+      }
+
+      const wavBuf = encodeWavPcm16(channels, sr, startFrame, endFrame);
+      const blob = new Blob([wavBuf], { type: 'audio/wav' });
+      const actualDur = (endFrame - startFrame) / sr;
+      downloadBtn.href = URL.createObjectURL(blob);
+      downloadBtn.download = loadedFile.name.replace(/\.[^.]+$/, '') + '-trimmed.wav';
+      downloadBtn.dataset.mime = 'audio/wav';
+      downloadBtn.dataset.duration = actualDur.toFixed(2);
+      resultText.textContent = `Trimmed slice: ${sSec.toFixed(2)}s → ${eSec.toFixed(2)}s (${actualDur.toFixed(2)}s, ${(blob.size / 1024).toFixed(1)} KB PCM WAV).`;
+      resultBox.style.display = 'block';
     });
   </script>
 </Layout>
@@ -96,12 +173,13 @@ import AdSlot from '../../components/AdSlot.astro';
   .privacy-pill { display: inline-block; background: #ECFDF5; color: #047857; font-size: 0.8rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: var(--fb-radius-md); margin-bottom: 1rem; }
   .tool-header-title { font-size: 2.25rem; font-weight: 900; margin-bottom: 0.5rem; }
   .tool-header-sub { font-size: 1rem; color: var(--fb-text-muted); margin-bottom: 2rem; }
-  .fb-dropzone { border: 2px dashed var(--fb-border); border-radius: var(--fb-radius-xl); padding: 3.5rem 2rem; text-align: center; cursor: pointer; background: var(--fb-surface); transition: all 0.2s; margin-bottom: 2rem; }
+  .fb-dropzone { border: 2px dashed var(--fb-border); border-radius: var(--fb-radius-lg); padding: 3.5rem 2rem; text-align: center; cursor: pointer; background: var(--fb-surface); margin-bottom: 2rem; }
   .drop-icon { font-size: 3rem; margin-bottom: 1rem; }
   .settings-box { background: var(--fb-surface); border: 1px solid var(--fb-border); border-radius: var(--fb-radius-lg); padding: 1.5rem; margin-bottom: 2rem; }
+  .audio-meta { font-size: 0.88rem; color: var(--fb-text-muted); margin-bottom: 1rem; font-weight: 600; }
+  .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
   .form-row { margin-bottom: 1.25rem; }
   .form-row label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; }
-  .fb-select { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--fb-border); border-radius: var(--fb-radius-md); font-size: 0.95rem; font-family: inherit; }
   .result-box { background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: var(--fb-radius-lg); padding: 1.5rem; margin-bottom: 2rem; }
-  @media (max-width: 900px) { .tool-grid-layout { grid-template-columns: 1fr; } }
+  @media (max-width: 900px) { .tool-grid-layout { grid-template-columns: 1fr; } .form-grid-2 { grid-template-columns: 1fr; } }
 </style>

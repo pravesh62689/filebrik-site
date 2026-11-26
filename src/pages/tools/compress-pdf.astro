@@ -3,11 +3,19 @@
 import Layout from '../../layouts/Layout.astro';
 import AdSlot from '../../components/AdSlot.astro';
 import AffiliateCard from '../../components/AffiliateCard.astro';
+import ToolArticle from '../../components/ToolArticle.astro';
+import { TOOL_GUIDES, buildToolJsonLd } from '../../data/toolGuides';
+
+const title = 'Compress PDF - 100% Client-Side';
+const description = 'Compress PDF files to target sizes (100KB, 200KB, 500KB) entirely in your browser memory. Zero file uploads.';
+const guide = TOOL_GUIDES['compress-pdf'];
+const ld = buildToolJsonLd('compress-pdf', title, description);
 ---
 <Layout
-  title="Compress PDF - 100% Client-Side"
-  description="Compress PDF files to target sizes (100KB, 200KB, 500KB) entirely in your browser memory. Zero file uploads."
+  title={title}
+  description={description}
   toolSlug="compress-pdf"
+  jsonLd={ld}
 >
   <main class="tool-page-wrap">
     <div class="fb-container">
@@ -54,11 +62,13 @@ import AffiliateCard from '../../components/AffiliateCard.astro';
           <div class="next-tools-box">
             <h4>Recommended Next Steps:</h4>
             <div class="tool-links-row">
-              <a href="/tools/merge-pdf">Merge with Another PDF →</a>
-              <a href="/tools/pdf-to-jpg">Extract Pages to JPG →</a>
-              <a href="/tools/split-pdf">Split Selected Pages →</a>
+              <a href="/tools/merge-pdf/">Merge with Another PDF →</a>
+              <a href="/tools/pdf-to-jpg/">Extract Pages to JPG →</a>
+              <a href="/tools/split-pdf/">Split Selected Pages →</a>
             </div>
           </div>
+
+          <ToolArticle {...guide} />
         </div>
 
         <aside class="tool-sidebar">

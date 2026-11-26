@@ -1,5 +1,6 @@
 ---
 // src/layouts/Layout.astro
+import { execSync } from 'node:child_process';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { isAdsEnabled } from '../lib/adManager';
@@ -10,13 +11,43 @@ interface Props {
   title: string;
   description: string;
   toolSlug?: string;
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
-const { title, description, toolSlug } = Astro.props;
+const { title, description, toolSlug, noindex = false, jsonLd } = Astro.props;
 const siteOrigin = Astro.site?.origin || 'https://filebrik.pages.dev';
 const normalizedPath = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
 const canonicalUrl = new URL(normalizedPath, siteOrigin);
+const ogImageUrl = new URL('/og-default.png', siteOrigin).href;
 const adsEnabled = isAdsEnabled(import.meta.env.PUBLIC_ADS_ENABLED);
+
+const rawSha =
+  process.env.CF_PAGES_COMMIT_SHA ||
+  process.env.GITHUB_SHA ||
+  (() => {
+    try {
+      return execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
+    } catch {
+      return 'local';
+    }
+  })();
+const buildSha = rawSha.slice(0, 7);
+
+const ldGraph = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
+const defaultBreadcrumb =
+  ldGraph.length > 0
+    ? null
+    : {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteOrigin}/` },
+          ...(normalizedPath !== '/'
+            ? [{ '@type': 'ListItem', position: 2, name: title, item: canonicalUrl.href }]
+            : []),
+        ],
+      };
+const fullLd = defaultBreadcrumb ? [defaultBreadcrumb] : ldGraph;
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -25,17 +56,28 @@ const adsEnabled = isAdsEnabled(import.meta.env.PUBLIC_ADS_ENABLED);
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{title} | FileBrik</title>
   <meta name="description" content={description}>
+  <meta name="fb-build" content={buildSha}>
   <meta name="google-site-verification" content="EuP7tR_9jMW5UuGvMcL4iTqmbOJUfRJT3FeuZgJbvj0" />
+  {noindex && <meta name="robots" content="noindex,follow" />}
   <link rel="canonical" href={canonicalUrl.href}>
   <link rel="sitemap" href="/sitemap-index.xml">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
-  <!-- Open Graph / Meta -->
+  <!-- Open Graph / Twitter -->
   <meta property="og:type" content="website">
   <meta property="og:url" content={canonicalUrl.href}>
   <meta property="og:title" content={`${title} | FileBrik`}>
   <meta property="og:description" content={description}>
+  <meta property="og:image" content={ogImageUrl}>
   <meta property="og:site_name" content="FileBrik">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content={`${title} | FileBrik`}>
+  <meta name="twitter:description" content={description}>
+  <meta name="twitter:image" content={ogImageUrl}>
+
+  {fullLd.length > 0 && (
+    <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@graph': fullLd })} />
+  )}
 
   <script is:inline define:vars={{ adsEnabled }}>
     window.PUBLIC_ADS_ENABLED = adsEnabled;

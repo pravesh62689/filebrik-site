@@ -2,11 +2,19 @@
 // src/pages/tools/image-converter.astro
 import Layout from '../../layouts/Layout.astro';
 import AdSlot from '../../components/AdSlot.astro';
+import ToolArticle from '../../components/ToolArticle.astro';
+import { TOOL_GUIDES, buildToolJsonLd } from '../../data/toolGuides';
+
+const title = 'Image Format Converter';
+const description = 'Fast client-side conversion between WebP, PNG, and JPEG image formats.';
+const guide = TOOL_GUIDES['image-converter'];
+const ld = buildToolJsonLd('image-converter', title, description);
 ---
 <Layout
-  title="Image Format Converter"
-  description="Fast client-side conversion between WebP, PNG, and JPEG image formats."
+  title={title}
+  description={description}
   toolSlug="image-converter"
+  jsonLd={ld}
 >
   <main class="tool-page-wrap">
     <div class="fb-container">
@@ -44,6 +52,8 @@ import AdSlot from '../../components/AdSlot.astro';
             <p id="resultText"></p>
             <a id="downloadBtn" class="fb-btn fb-btn-success" href="#" download="converted.webp">Download Converted Image</a>
           </div>
+
+          <ToolArticle {...guide} />
         </div>
 
         <aside class="tool-sidebar">

@@ -2,11 +2,19 @@
 // src/pages/tools/merge-pdf.astro
 import Layout from '../../layouts/Layout.astro';
 import AdSlot from '../../components/AdSlot.astro';
+import ToolArticle from '../../components/ToolArticle.astro';
+import { TOOL_GUIDES, buildToolJsonLd } from '../../data/toolGuides';
+
+const title = 'Merge PDF Files - 100% Client-Side';
+const description = 'Combine multiple PDF documents into a single organized file in seconds. Zero cloud upload.';
+const guide = TOOL_GUIDES['merge-pdf'];
+const ld = buildToolJsonLd('merge-pdf', title, description);
 ---
 <Layout
-  title="Merge PDF Files - 100% Client-Side"
-  description="Combine multiple PDF documents into a single organized file in seconds. Zero cloud upload."
+  title={title}
+  description={description}
   toolSlug="merge-pdf"
+  jsonLd={ld}
 >
   <main class="tool-page-wrap">
     <div class="fb-container">
@@ -34,6 +42,8 @@ import AdSlot from '../../components/AdSlot.astro';
             <p id="resultMeta"></p>
             <a id="downloadBtn" class="fb-btn fb-btn-success" href="#" download="merged.pdf">Download Merged PDF</a>
           </div>
+
+          <ToolArticle {...guide} />
         </div>
 
         <aside class="tool-sidebar">

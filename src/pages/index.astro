@@ -1,10 +1,23 @@
 ---
 // src/pages/index.astro
 import Layout from '../layouts/Layout.astro';
+const homeLd = [
+  {
+    '@type': 'WebSite',
+    name: 'FileBrik',
+    url: 'https://filebrik.pages.dev/',
+    description: '100% client-side PDF, image, and exam photo utilities.',
+  },
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: 'https://filebrik.pages.dev/' }],
+  },
+];
 ---
 <Layout
   title="100% Private, Client-Side PDF & Media Tools"
   description="Free, secure, client-side PDF compression, merging, image resizing to KB, exam photo adjustments, and audio trimming with zero cloud uploads."
+  jsonLd={homeLd}
 >
   <main>
     <section class="hero-section">

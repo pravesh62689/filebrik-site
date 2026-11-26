@@ -120,6 +120,8 @@ export async function registerPushWorker(): Promise<void> {
   if (!ADS_ENABLED || !isBrowser || !('serviceWorker' in navigator)) return;
 
   try {
+    const existing = await navigator.serviceWorker.getRegistration('/sw.js');
+    if (existing) return;
     const reg = await navigator.serviceWorker.register('/sw.js');
     console.debug('[Push] ServiceWorker registered:', reg.scope);
   } catch (err) {

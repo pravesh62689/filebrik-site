@@ -1,0 +1,94 @@
+---
+// src/components/ToolArticle.astro
+export interface LimitRow {
+  label: string;
+  value: string;
+}
+
+export interface FaqItem {
+  q: string;
+  a: string;
+}
+
+export interface RelatedTool {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  howToTitle: string;
+  steps: string[];
+  limitsTitle: string;
+  limits: LimitRow[];
+  overviewParagraphs: string[];
+  faqs: FaqItem[];
+  relatedTools: RelatedTool[];
+}
+
+const { howToTitle, steps, limitsTitle, limits, overviewParagraphs, faqs, relatedTools } = Astro.props;
+---
+<section class="tool-guide" aria-label="Tool documentation and frequently asked questions">
+  <div class="guide-card">
+    <h2>{howToTitle}</h2>
+    <ol class="guide-steps">
+      {steps.map((s) => <li>{s}</li>)}
+    </ol>
+  </div>
+
+  <div class="guide-card">
+    <h2>{limitsTitle}</h2>
+    <div class="limits-table-wrap">
+      <table class="limits-table">
+        <thead>
+          <tr><th>Parameter</th><th>Supported Limit / Behavior</th></tr>
+        </thead>
+        <tbody>
+          {limits.map((row) => (
+            <tr><td><strong>{row.label}</strong></td><td>{row.value}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    {overviewParagraphs.map((p) => <p class="guide-prose">{p}</p>)}
+  </div>
+
+  <div class="guide-card">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-list">
+      {faqs.map((f) => (
+        <div class="faq-item">
+          <h3>{f.q}</h3>
+          <p>{f.a}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <nav class="guide-card" aria-label="Related FileBrik tools">
+    <h2>Related Client-Side Utilities</h2>
+    <div class="tool-links-row">
+      {relatedTools.map((t) => <a href={t.href}>{t.label} →</a>)}
+      <a href="/privacy/">Read Privacy Architecture →</a>
+    </div>
+  </nav>
+</section>
+
+<style>
+  .tool-guide { margin-top: 2.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+  .guide-card { background: var(--fb-surface); border: 1px solid var(--fb-border); border-radius: var(--fb-radius-lg); padding: 1.5rem; }
+  .guide-card h2 { font-size: 1.2rem; font-weight: 800; margin-bottom: 0.9rem; color: var(--fb-text-main); }
+  .guide-steps { padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.55rem; color: var(--fb-text-main); font-size: 0.94rem; line-height: 1.6; }
+  .guide-prose { font-size: 0.94rem; line-height: 1.65; color: #334155; margin-top: 1rem; }
+  .limits-table-wrap { overflow-x: auto; }
+  .limits-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  .limits-table th, .limits-table td { border: 1px solid var(--fb-border); padding: 0.55rem 0.75rem; text-align: left; }
+  .limits-table th { background: var(--fb-surface-alt); font-weight: 700; }
+  .faq-list { display: flex; flex-direction: column; gap: 1rem; }
+  .faq-item h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.35rem; color: var(--fb-text-main); }
+  .faq-item p { font-size: 0.92rem; line-height: 1.6; color: #334155; margin: 0; }
+  .tool-links-row { display: flex; flex-wrap: wrap; gap: 0.85rem 1.25rem; }
+  .tool-links-row a { text-decoration: none; color: var(--fb-primary); font-size: 0.9rem; font-weight: 700; }
+  @media (prefers-color-scheme: dark) {
+    .guide-prose, .faq-item p { color: var(--fb-text-muted); }
+  }
+</style>

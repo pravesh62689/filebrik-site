@@ -115,3 +115,31 @@ test('Zero-budget permanent pages.dev SEO & docs configuration', () => {
   assert.match(statusDoc, /Domain: deferred, buy only from ad earnings/);
   assert.ok(!/spaceship/i.test(launchDoc + statusDoc), 'Spaceship domain steps must be removed');
 });
+
+test('Audit fixes: IndexNow key, 404 page, OG image, fb-build meta, and unique tool guide copy', () => {
+  const indexNowKey = '9a4f8e2c7b1d4058e9a3c2f1b7d60482';
+  const keyPath = path.join(rootDir, 'public', `${indexNowKey}.txt`);
+  assert.ok(fs.existsSync(keyPath), 'IndexNow key txt must exist in public/');
+  assert.equal(fs.readFileSync(keyPath, 'utf8').trim(), indexNowKey);
+  assert.ok(fs.existsSync(path.join(rootDir, 'public/og-default.png')), 'public/og-default.png must exist');
+  assert.ok(fs.existsSync(path.join(rootDir, 'src/pages/404.astro')), 'src/pages/404.astro must exist');
+
+  const sm0 = fs.readFileSync(path.join(rootDir, 'src/pages/sitemap-0.xml.ts'), 'utf8');
+  assert.match(sm0, /404\.astro/);
+
+  const layout = fs.readFileSync(path.join(rootDir, 'src/layouts/Layout.astro'), 'utf8');
+  assert.match(layout, /name="fb-build"/);
+  assert.match(layout, /property="og:image"/);
+  assert.match(layout, /name="twitter:card"/);
+  assert.match(layout, /application\/ld\+json/);
+
+  const guidesSrc = fs.readFileSync(path.join(rootDir, 'src/data/toolGuides.ts'), 'utf8');
+  const slugs = [
+    'compress-pdf', 'merge-pdf', 'split-pdf', 'jpg-to-pdf', 'pdf-to-jpg',
+    'exam-photo-signature-resizer', 'compress-image-kb', 'image-converter',
+    'passport-photo-maker', 'audio-trimmer',
+  ];
+  for (const s of slugs) {
+    assert.ok(guidesSrc.includes(`'${s}':`), `TOOL_GUIDES must define ${s}`);
+  }
+});

@@ -2,11 +2,19 @@
 // src/pages/tools/split-pdf.astro
 import Layout from '../../layouts/Layout.astro';
 import AdSlot from '../../components/AdSlot.astro';
+import ToolArticle from '../../components/ToolArticle.astro';
+import { TOOL_GUIDES, buildToolJsonLd } from '../../data/toolGuides';
+
+const title = 'Split PDF Pages Client-Side';
+const description = 'Extract individual pages or custom page ranges into standalone PDF documents.';
+const guide = TOOL_GUIDES['split-pdf'];
+const ld = buildToolJsonLd('split-pdf', title, description);
 ---
 <Layout
-  title="Split PDF Pages Client-Side"
-  description="Extract individual pages or custom page ranges into standalone PDF documents."
+  title={title}
+  description={description}
   toolSlug="split-pdf"
+  jsonLd={ld}
 >
   <main class="tool-page-wrap">
     <div class="fb-container">
@@ -36,6 +44,8 @@ import AdSlot from '../../components/AdSlot.astro';
             <p id="resultText"></p>
             <a id="downloadBtn" class="fb-btn fb-btn-success" href="#" download="split.pdf">Download Split PDF</a>
           </div>
+
+          <ToolArticle {...guide} />
         </div>
 
         <aside class="tool-sidebar">

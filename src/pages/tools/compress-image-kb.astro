@@ -2,11 +2,19 @@
 // src/pages/tools/compress-image-kb.astro
 import Layout from '../../layouts/Layout.astro';
 import AdSlot from '../../components/AdSlot.astro';
+import ToolArticle from '../../components/ToolArticle.astro';
+import { TOOL_GUIDES, buildToolJsonLd } from '../../data/toolGuides';
+
+const title = 'Compress Image to Exact KB';
+const description = 'Target strict 20KB, 50KB, 100KB, or 200KB limits for government and university upload portals.';
+const guide = TOOL_GUIDES['compress-image-kb'];
+const ld = buildToolJsonLd('compress-image-kb', title, description);
 ---
 <Layout
-  title="Compress Image to Exact KB"
-  description="Target strict 20KB, 50KB, 100KB, or 200KB limits for government and university upload portals."
+  title={title}
+  description={description}
   toolSlug="compress-image-kb"
+  jsonLd={ld}
 >
   <main class="tool-page-wrap">
     <div class="fb-container">
@@ -51,6 +59,8 @@ import AdSlot from '../../components/AdSlot.astro';
             <p id="resultText"></p>
             <a id="downloadBtn" class="fb-btn fb-btn-success" href="#" download="compressed.jpg">Download Compressed Image</a>
           </div>
+
+          <ToolArticle {...guide} />
         </div>
 
         <aside class="tool-sidebar">
