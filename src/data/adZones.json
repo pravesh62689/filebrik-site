@@ -5,7 +5,7 @@
     "popunder": {
       "id": "32499187",
       "name": "Popunder_1",
-      "enabled": true,
+      "enabled": false,
       "src": "https://abscloud.org/1/b84fae4e00f727d1c08c3dba23500924"
     },
     "native": {
@@ -18,7 +18,7 @@
     "socialbar": {
       "id": "32499189",
       "name": "SocialBar_1",
-      "enabled": true,
+      "enabled": false,
       "src": "https://bauval.org/14/3d687bb05f385bcd945e9c79668c40d4"
     },
     "smartlink": {
@@ -39,7 +39,7 @@
     "160x600": {
       "id": "32510060",
       "name": "160x600_1",
-      "enabled": true,
+      "enabled": false,
       "key": "61124993cf18803904e77895cc6e2acd",
       "width": 160,
       "height": 600,
@@ -57,7 +57,7 @@
     "468x60": {
       "id": "32510062",
       "name": "468x60_1",
-      "enabled": true,
+      "enabled": false,
       "key": "4cd4a7a22c43b4a2d52197314dd07b1d",
       "width": 468,
       "height": 60,
@@ -66,7 +66,7 @@
     "160x300": {
       "id": "32510063",
       "name": "160x300_1",
-      "enabled": true,
+      "enabled": false,
       "key": "2721c0b3335e7ff32abf0ce0a34288bd",
       "width": 160,
       "height": 300,
