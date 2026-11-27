@@ -1,0 +1,110 @@
+---
+// Reusable Adsterra ad unit component (one include per unit, toggleable via src/data/adZones.json).
+import adZones from '../data/adZones.json';
+import { isAdsEnabled, isExemptRoute } from '../lib/adManager';
+
+interface Props {
+  unit: 'popunder' | 'native' | 'socialbar' | 'smartlink' | '300x250' | '160x600' | '728x90' | '468x60' | '160x300' | '320x50';
+  label?: string;
+}
+
+const { unit, label = 'More downloads' } = Astro.props;
+const adsEnabled = isAdsEnabled(import.meta.env.PUBLIC_ADS_ENABLED);
+const exempt = isExemptRoute(Astro.url.pathname);
+const cfg = (adZones.units as Record<string, any>)[unit];
+const active = Boolean(adsEnabled && !exempt && cfg?.enabled);
+---
+{active && unit === 'popunder' && (
+  <script data-cfasync="false" src={cfg.src}></script>
+)}
+
+{active && unit === 'socialbar' && (
+  <script data-cfasync="false" src={cfg.src}></script>
+)}
+
+{active && unit === 'native' && (
+  <div class="ad-unit-wrap ad-unit-native" data-ad-unit={cfg.id} style="min-height: 120px;">
+    <script async fetchpriority="high" data-cfasync="false" src={cfg.src}></script>
+    <div id={cfg.containerId}></div>
+  </div>
+)}
+
+{active && unit === 'smartlink' && (
+  <div class="ad-unit-smartlink" data-ad-unit={cfg.id}>
+    <a href={cfg.href} target="_blank" rel="nofollow noopener" class="fb-btn fb-btn-secondary smartlink-btn">
+      {label}
+    </a>
+  </div>
+)}
+
+{active && (unit === '300x250' || unit === '160x600' || unit === '728x90' || unit === '468x60' || unit === '160x300' || unit === '320x50') && (
+  <div
+    class={`ad-unit-wrap ad-unit-banner ad-banner-${unit}`}
+    data-ad-unit={cfg.id}
+    style={`min-width: ${cfg.width}px; min-height: ${cfg.height}px;`}
+  >
+    <script is:inline define:vars={{ adKey: cfg.key, adWidth: cfg.width, adHeight: cfg.height }}>
+      atOptions = {
+        'key': adKey,
+        'format': 'iframe',
+        'height': adHeight,
+        'width': adWidth,
+        'params': {}
+      };
+    </script>
+    <script data-cfasync="false" src={cfg.src}></script>
+  </div>
+)}
+
+<style>
+  .ad-unit-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem auto;
+    overflow: hidden;
+  }
+  .ad-unit-native {
+    width: 100%;
+    max-width: 960px;
+  }
+  .ad-unit-smartlink {
+    display: flex;
+    justify-content: center;
+    margin: 0.75rem 0;
+  }
+  .ad-banner-728x90,
+  .ad-banner-468x60 {
+    display: flex;
+  }
+  @media (max-width: 767px) {
+    .ad-banner-728x90,
+    .ad-banner-468x60 {
+      display: none !important;
+      min-width: 0 !important;
+      min-height: 0 !important;
+      margin: 0 !important;
+    }
+  }
+  .ad-banner-320x50 {
+    display: none;
+  }
+  @media (max-width: 767px) {
+    .ad-banner-320x50 {
+      display: flex;
+    }
+  }
+  .ad-banner-160x600,
+  .ad-banner-160x300 {
+    display: flex;
+  }
+  @media (max-width: 1023px) {
+    .ad-banner-160x600,
+    .ad-banner-160x300 {
+      display: none !important;
+      min-width: 0 !important;
+      min-height: 0 !important;
+      margin: 0 !important;
+    }
+  }
+</style>

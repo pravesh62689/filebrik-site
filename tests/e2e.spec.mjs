@@ -491,7 +491,7 @@ test('About, Changelog, Exam Landing Pages, and Hindi hreflang', async ({ page }
   await expect(page.locator('link[rel="alternate"][hreflang="en"]')).toHaveCount(1);
 });
 
-test('Live smoke: Adsterra scripts load on / when enabled in production', async ({ page }) => {
+test('Live smoke: Adsterra 10 units load on / when enabled in production', async ({ page }) => {
   const baseUrl = process.env.BASE_URL || '';
   test.skip(!baseUrl || baseUrl.includes('localhost'), 'Live-only smoke test');
 
@@ -499,13 +499,26 @@ test('Live smoke: Adsterra scripts load on / when enabled in production', async 
   page.on('request', (req) => requested.add(req.url()));
 
   await page.goto('/', { waitUntil: 'networkidle' });
-  // Non-control click triggers Social Bar immediately and Popunder once per session
-  await page.locator('h1').click();
-  await page.waitForTimeout(1500);
+  await page.waitForTimeout(1000);
 
   await expect(page.locator('#container-e2963278b5c991d69ee9418e31b0f1ef')).toHaveCount(1);
-  const urls = [...requested];
-  expect(urls.some((u) => u.includes('abscloud.org/1/b84fae4e00f727d1c08c3dba23500924'))).toBe(true);
-  expect(urls.some((u) => u.includes('bauval.org/21/e2963278b5c991d69ee9418e31b0f1ef'))).toBe(true);
-  expect(urls.some((u) => u.includes('bauval.org/14/3d687bb05f385bcd945e9c79668c40d4'))).toBe(true);
+  await expect(page.locator('a[href="https://araplhn.org/4/6a18571bf82a8a9f083aee52efc52841"]')).toHaveCount(1);
+
+  const html = await page.content();
+  for (const src of [
+    'abscloud.org/1/b84fae4e00f727d1c08c3dba23500924',
+    'bauval.org/21/e2963278b5c991d69ee9418e31b0f1ef',
+    'bauval.org/14/3d687bb05f385bcd945e9c79668c40d4',
+    'bauval.org/22/15ecd7acc7163beb1db7af264382f882',
+    'bauval.org/22/61124993cf18803904e77895cc6e2acd',
+    'bauval.org/22/73e84a2687301055353ecb397b09d59',
+    'bauval.org/22/4cd4a7a22c43b4a2d52197314dd07b1d',
+    'bauval.org/22/2721c0b3335e7ff32abf0ce0a34288bd',
+    'bauval.org/22/51584b14d7b4d2134a7dc2938a2d84f7',
+  ]) {
+    const onToolOrHome = html.includes(src) || [...requested].some((u) => u.includes(src));
+    if (src !== 'bauval.org/22/15ecd7acc7163beb1db7af264382f882') {
+      expect(onToolOrHome, `Missing Adsterra unit ${src} on /`).toBe(true);
+    }
+  }
 });

@@ -1,5 +1,7 @@
 ---
 // src/components/ToolArticle.astro
+import AdsterraUnit from './AdsterraUnit.astro';
+
 export interface LimitRow {
   label: string;
   value: string;
@@ -27,6 +29,7 @@ interface Props {
 
 const { howToTitle, steps, limitsTitle, limits, overviewParagraphs, faqs, relatedTools } = Astro.props;
 ---
+<AdsterraUnit unit="300x250" />
 <section class="tool-guide" aria-label="Tool documentation and frequently asked questions">
   <div class="guide-card">
     <h2>{howToTitle}</h2>

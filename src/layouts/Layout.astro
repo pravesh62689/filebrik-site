@@ -3,7 +3,7 @@
 import { execSync } from 'node:child_process';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import AdSlot from '../components/AdSlot.astro';
+import AdsterraUnit from '../components/AdsterraUnit.astro';
 import { isAdsEnabled } from '../lib/adManager';
 import '../styles/tokens.css';
 import '../styles/global.css';
@@ -94,25 +94,50 @@ const fullLd = defaultBreadcrumb ? [defaultBreadcrumb] : ldGraph;
       });
     }
   </script>
+  <AdsterraUnit unit="popunder" />
 </head>
 <body data-tool-slug={toolSlug || ''}>
   <Header />
-  <slot />
   <div class="fb-container">
-    <AdSlot slotType="native-footer" reservedHeight="120px" />
+    <AdsterraUnit unit="728x90" />
+    <AdsterraUnit unit="320x50" />
+  </div>
+  <div class="fb-page-shell">
+    <div class="fb-main-col">
+      <slot />
+    </div>
+    <aside class="fb-side-rail" aria-label="Sponsored">
+      <AdsterraUnit unit="160x600" />
+      <AdsterraUnit unit="160x300" />
+    </aside>
+  </div>
+  <div class="fb-container">
+    <AdsterraUnit unit="468x60" />
+    <AdsterraUnit unit="native" />
+    <AdsterraUnit unit="smartlink" label="More downloads" />
   </div>
   <div id="fb-desktop-slider" aria-hidden="true" hidden></div>
-  <AdSlot slotType="sticky-mobile" reservedHeight="50px" />
   <Footer />
-  <script>
-    if ((window as any).PUBLIC_ADS_ENABLED) {
-      import('../lib/adManager').then((m) => {
-        const p = window.location.pathname;
-        m.initSocialBar(p);
-        m.initSafeClickPopunder(p);
-        m.initNativeBanners(p);
-      }).catch(() => {});
-    }
-  </script>
+  <AdsterraUnit unit="socialbar" />
 </body>
+<style>
+  .fb-page-shell {
+    position: relative;
+  }
+  .fb-side-rail {
+    display: none;
+  }
+  @media (min-width: 1440px) {
+    .fb-side-rail {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      position: fixed;
+      top: 5.5rem;
+      right: 1rem;
+      width: 160px;
+      z-index: 20;
+    }
+  }
+</style>
 </html>

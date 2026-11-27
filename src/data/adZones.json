@@ -1,5 +1,87 @@
 {
   "enabled": true,
+  "siteId": "6231440",
+  "units": {
+    "popunder": {
+      "id": "32499187",
+      "name": "Popunder_1",
+      "enabled": true,
+      "src": "https://abscloud.org/1/b84fae4e00f727d1c08c3dba23500924"
+    },
+    "native": {
+      "id": "32499188",
+      "name": "NativeBanner_1",
+      "enabled": true,
+      "src": "https://bauval.org/21/e2963278b5c991d69ee9418e31b0f1ef",
+      "containerId": "container-e2963278b5c991d69ee9418e31b0f1ef"
+    },
+    "socialbar": {
+      "id": "32499189",
+      "name": "SocialBar_1",
+      "enabled": true,
+      "src": "https://bauval.org/14/3d687bb05f385bcd945e9c79668c40d4"
+    },
+    "smartlink": {
+      "id": "32510058",
+      "name": "Smartlink_1",
+      "enabled": true,
+      "href": "https://araplhn.org/4/6a18571bf82a8a9f083aee52efc52841"
+    },
+    "300x250": {
+      "id": "32510059",
+      "name": "300x250_1",
+      "enabled": true,
+      "key": "15ecd7acc7163beb1db7af264382f882",
+      "width": 300,
+      "height": 250,
+      "src": "https://bauval.org/22/15ecd7acc7163beb1db7af264382f882"
+    },
+    "160x600": {
+      "id": "32510060",
+      "name": "160x600_1",
+      "enabled": true,
+      "key": "61124993cf18803904e77895cc6e2acd",
+      "width": 160,
+      "height": 600,
+      "src": "https://bauval.org/22/61124993cf18803904e77895cc6e2acd"
+    },
+    "728x90": {
+      "id": "32510061",
+      "name": "728x90_1",
+      "enabled": true,
+      "key": "73e84a2687301055353ecb397b09d59",
+      "width": 728,
+      "height": 90,
+      "src": "https://bauval.org/22/73e84a2687301055353ecb397b09d59"
+    },
+    "468x60": {
+      "id": "32510062",
+      "name": "468x60_1",
+      "enabled": true,
+      "key": "4cd4a7a22c43b4a2d52197314dd07b1d",
+      "width": 468,
+      "height": 60,
+      "src": "https://bauval.org/22/4cd4a7a22c43b4a2d52197314dd07b1d"
+    },
+    "160x300": {
+      "id": "32510063",
+      "name": "160x300_1",
+      "enabled": true,
+      "key": "2721c0b3335e7ff32abf0ce0a34288bd",
+      "width": 160,
+      "height": 300,
+      "src": "https://bauval.org/22/2721c0b3335e7ff32abf0ce0a34288bd"
+    },
+    "320x50": {
+      "id": "32510064",
+      "name": "320x50_1",
+      "enabled": true,
+      "key": "51584b14d7b4d2134a7dc2938a2d84f7",
+      "width": 320,
+      "height": 50,
+      "src": "https://bauval.org/22/51584b14d7b4d2134a7dc2938a2d84f7"
+    }
+  },
   "networks": {
     "adsterra": {
       "siteId": "6231440",
@@ -9,7 +91,8 @@
       "nativeBannerScriptUrl": "https://bauval.org/21/e2963278b5c991d69ee9418e31b0f1ef",
       "nativeContainerId": "container-e2963278b5c991d69ee9418e31b0f1ef",
       "socialBarUnitId": "32499189",
-      "socialBarScriptUrl": "https://bauval.org/14/3d687bb05f385bcd945e9c79668c40d4"
+      "socialBarScriptUrl": "https://bauval.org/14/3d687bb05f385bcd945e9c79668c40d4",
+      "smartlinkUrl": "https://araplhn.org/4/6a18571bf82a8a9f083aee52efc52841"
     }
   }
 }
