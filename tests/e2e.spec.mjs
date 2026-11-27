@@ -384,7 +384,7 @@ test('Tools e2e: compress-pdf, split-pdf, jpg-to-pdf, pdf-to-jpg, audio-trimmer 
   test.setTimeout(90000);
   const uploadRequests = [];
   page.on('request', (req) => {
-    if (['POST', 'PUT', 'PATCH'].includes(req.method())) {
+    if (['POST', 'PUT', 'PATCH'].includes(req.method()) && !req.url().includes('cloudflareinsights.com')) {
       uploadRequests.push(`${req.method()} ${req.url()}`);
     }
   });
