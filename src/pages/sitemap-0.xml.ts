@@ -21,6 +21,7 @@ export const GET: APIRoute = ({ site }) => {
       }
     }
   }
+  routes.push('/exams/');
   for (const ex of EXAM_LANDING_PAGES) {
     routes.push(`/exams/${ex.slug}/`);
     if (ex.hi) routes.push(`/hi/exams/${ex.slug}/`);

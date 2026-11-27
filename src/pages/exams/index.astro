@@ -1,0 +1,63 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
+import examPresets from '../../data/examPresets.json';
+import { EXAM_LANDING_PAGES } from '../../data/examLandingPages';
+
+const siteOrigin = 'https://filebrik.pages.dev';
+const ld = {
+  '@type': 'CollectionPage',
+  name: 'All Verified Exam Photo & Signature Guides',
+  url: `${siteOrigin}/exams/`,
+  description: 'Complete directory of verified Indian government exam photo and signature size guides with official PDF citations.',
+};
+---
+<Layout
+  title="All Exam Photo & Signature Size Guides"
+  description="Browse all 30+ verified Indian exam photo and signature size guides (UPSC, SSC, IBPS, RRB, NEET, JEE, Passport, PAN) with official PDF specs."
+  jsonLd={ld}
+>
+  <main class="exams-hub">
+    <div class="fb-container">
+      <div class="hub-head">
+        <a href="/" class="hub-back">Home</a> / <span>Exam Guides</span>
+        <h1>Verified Exam Photo &amp; Signature Guides</h1>
+        <p>Every guide links to its official notification PDF, exact KB/pixel table, and a pre-configured browser resizer.</p>
+        <a href="/tools/exam-photo-signature-resizer/" class="fb-btn fb-btn-primary">Open Exam Photo Resizer</a>
+      </div>
+
+      <div class="hub-grid">
+        {EXAM_LANDING_PAGES.map((ex) => {
+          const preset = examPresets.find((p) => p.id === ex.presetId);
+          return (
+            <div class="fb-card hub-card">
+              <div class="hub-card-top">
+                <span class="hub-badge"><Icon name="check" size={14} /> {preset ? `${preset.minKB}–${preset.maxKB} KB` : 'Verified'}</span>
+                {ex.hi && <a href={`/hi/exams/${ex.slug}/`} class="hub-hi-link">हिंदी</a>}
+              </div>
+              <h2><a href={`/exams/${ex.slug}/`}>{ex.examName}</a></h2>
+              <p>{ex.summary}</p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .exams-hub { padding: 2.5rem 0 4rem; }
+  .hub-head { margin-bottom: 2rem; max-width: 720px; }
+  .hub-back { color: var(--fb-primary); font-weight: 600; text-decoration: none; }
+  .hub-head h1 { font-size: 2rem; font-weight: 800; margin: 0.75rem 0 0.5rem; }
+  .hub-head p { color: var(--fb-text-muted); margin-bottom: 1rem; }
+  .hub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 1rem; }
+  .hub-card { padding: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; }
+  .hub-card-top { display: flex; justify-content: space-between; align-items: center; }
+  .hub-badge { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.75rem; font-weight: 700; color: var(--fb-primary); background: var(--fb-primary-light); padding: 0.2rem 0.55rem; border-radius: var(--fb-radius-full); }
+  .hub-hi-link { font-size: 0.78rem; font-weight: 700; color: var(--fb-primary); text-decoration: none; }
+  .hub-card h2 { font-size: 1.05rem; margin: 0.25rem 0 0; }
+  .hub-card h2 a { text-decoration: none; color: var(--fb-text-main); }
+  .hub-card h2 a:hover { color: var(--fb-primary); }
+  .hub-card p { font-size: 0.85rem; color: var(--fb-text-muted); margin: 0; line-height: 1.5; }
+</style>
